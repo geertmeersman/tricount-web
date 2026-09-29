@@ -7,7 +7,7 @@ services:
       landing.name: "tricount"
       landing.description: "Tricount expense tracker"
     volumes:
-      - ./data:/app/data
+      - /docker/volumes/tricount/data:/app/data
     restart: unless-stopped
     networks:
       - internal
