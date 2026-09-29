@@ -10,8 +10,8 @@ services:
       - /docker/volumes/tricount/data:/app/data
     restart: unless-stopped
     networks:
-      - internal
+      - websites
 
 networks:
-  internal:
+  websites:
     external: true
