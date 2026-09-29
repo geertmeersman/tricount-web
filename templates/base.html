@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Tricount{% endblock %}</title>
+  <meta name="description" content="{% block description %}Beheer je gedeelde uitgaven{% endblock %}">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Tricount">
+  <!-- Open Graph -->
+  <meta property="og:title" content="{% block og_title %}Tricount{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Beheer je gedeelde uitgaven{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='social.png', _external=True) }}{% endblock %}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.url }}">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}Tricount{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Beheer je gedeelde uitgaven{% endblock %}">
+  <meta name="twitter:image" content="{{ url_for('static', filename='social.png', _external=True) }}">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+{% block navbar %}
+<nav class="bg-blue-600 text-white px-4 py-3 flex items-center justify-between shadow">
+  <a href="{{ url_for('index') }}" class="flex items-center gap-2">
+    <img src="{{ url_for('static', filename='favicon.png') }}" class="w-7 h-7" alt="Tricount">
+    <span class="font-bold">Tricount</span>
+  </a>
+  {% if current_user.is_authenticated %}
+  <div class="flex items-center gap-3">
+    {% if current_user.is_admin %}
+    <a href="{{ url_for('admin') }}" class="text-white/80 hover:text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    </a>
+    {% endif %}
+    <a href="{{ url_for('profile') }}" class="text-sm bg-white/20 hover:bg-white/30 px-3 py-1 rounded hidden sm:inline">{{ current_user.username }}</a>
+    {% set current_lang = request.cookies.get('lang', request.accept_languages.best_match(['nl','en','fr'], default='nl')) %}
+    <div class="relative" id="langMenu">
+      <button onclick="document.getElementById('langDropdown').classList.toggle('hidden')"
+        class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded font-medium uppercase">{{ current_lang }}</button>
+      <div id="langDropdown" class="hidden absolute right-0 mt-1 bg-white rounded-lg shadow-lg overflow-hidden z-50">
+        {% for lang, label in [('nl','NL'),('en','EN'),('fr','FR')] %}
+        {% if lang != current_lang %}
+        <a href="{{ url_for('set_lang', lang=lang) }}"
+          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ label }}</a>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    <a href="{{ url_for('logout') }}" class="text-sm bg-white/20 hover:bg-white/30 px-3 py-1 rounded">{{ _("Logout") }}</a>
+  </div>
+  {% endif %}
+</nav>
+{% endblock %}
+
+<div class="max-w-2xl mx-auto px-4 py-6">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="mb-4 px-4 py-3 rounded text-sm
+      {{ 'bg-green-100 text-green-800' if category == 'success' else
+         'bg-red-100 text-red-800' if category == 'danger' else
+         'bg-yellow-100 text-yellow-800' if category == 'warning' else
+         'bg-blue-100 text-blue-800' }}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</div>
+
+<footer class="text-center text-xs text-gray-400 py-6 mt-4">
+  {{ _("Copyright", year=now.year) }}
+</footer>
+
+<script>
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('langMenu')?.contains(e.target)) {
+    document.getElementById('langDropdown')?.classList.add('hidden');
+  }
+});
+</script>
+
+</body>
+</html>

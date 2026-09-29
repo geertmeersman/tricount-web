@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Login") }}{% endblock %}
+{% block navbar %}{% endblock %}
+{% block content %}
+<div class="max-w-sm mx-auto pt-10">
+  <div class="text-center mb-6">
+    <img src="{{ url_for('static', filename='favicon.png') }}" class="w-16 h-16 mx-auto mb-3">
+    <h1 class="text-2xl font-bold text-gray-800">Tricount Web</h1>
+    <p class="text-sm text-gray-500 mt-1">{{ _("App description") }}</p>
+  </div>
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">{{ _("Login") }}</h2>
+    <form method="POST" class="space-y-3">
+      <input type="text" name="username" placeholder="{{ _('Username') }}" required autofocus
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <input type="password" name="password" placeholder="{{ _('Password') }}" required
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Login") }}</button>
+    </form>
+    <p class="mt-4 text-center text-sm text-gray-500">
+      <a href="{{ url_for('register') }}" class="text-blue-600 hover:underline">{{ _("No account yet") }}</a>
+    </p>
+  </div>
+  {% set current_lang = request.cookies.get('lang', request.accept_languages.best_match(['nl','en','fr'], default='nl')) %}
+  <div class="flex justify-center gap-3 mt-4">
+    {% for lang, label in [('nl','NL'),('en','EN'),('fr','FR')] %}
+    <a href="{{ url_for('set_lang', lang=lang) }}"
+      class="text-sm px-3 py-1 rounded-lg {{ 'bg-blue-600 text-white font-medium' if lang == current_lang else 'text-gray-400 hover:text-gray-600' }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

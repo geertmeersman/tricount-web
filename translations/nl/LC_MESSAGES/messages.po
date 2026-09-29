@@ -1,0 +1,334 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "My Tricounts"
+msgstr "Mijn Tricounts"
+
+msgid "Manage your shared expenses"
+msgstr "Beheer je gedeelde uitgaven"
+
+msgid "Login"
+msgstr "Inloggen"
+
+msgid "Logout"
+msgstr "Uitloggen"
+
+msgid "Register"
+msgstr "Registreren"
+
+msgid "Users"
+msgstr "Gebruikers"
+
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+msgid "Password"
+msgstr "Wachtwoord"
+
+msgid "Password min 6 chars"
+msgstr "Wachtwoord (min. 6 tekens)"
+
+msgid "No account yet"
+msgstr "Nog geen account? Registreer"
+
+msgid "Already have account"
+msgstr "Al een account? Inloggen"
+
+msgid "First user becomes admin"
+msgstr "Eerste gebruiker wordt automatisch admin."
+
+msgid "Create admin account"
+msgstr "Admin account aanmaken"
+
+msgid "Create account"
+msgstr "Account aanmaken"
+
+msgid "Invalid credentials"
+msgstr "Ongeldige gebruikersnaam of wachtwoord."
+
+msgid "Password too short"
+msgstr "Wachtwoord moet minstens 6 tekens zijn."
+
+msgid "Username taken"
+msgstr "Gebruikersnaam al in gebruik."
+
+msgid "Account created"
+msgstr "Account aangemaakt. Je kan nu inloggen."
+
+msgid "Account created admin"
+msgstr "Account aangemaakt (admin). Je kan nu inloggen."
+
+msgid "Add tricount"
+msgstr "Toevoegen"
+
+msgid "Token placeholder"
+msgstr "Token (bv. tABC123xyz)"
+
+msgid "Label optional"
+msgstr "Label (optioneel)"
+
+msgid "Token hint"
+msgstr "Token uit de Tricount deellink: tricount.com/r/tABC123xyz"
+
+msgid "No tricounts yet"
+msgstr "Nog geen tricounts. Voeg er een toe via de sharing token."
+
+msgid "Tricount added"
+msgstr "Tricount toegevoegd!"
+
+msgid "Tricount removed"
+msgstr "Tricount verwijderd."
+
+msgid "Label saved"
+msgstr "Label opgeslagen."
+
+msgid "Loading"
+msgstr "Laden..."
+
+msgid "Connecting"
+msgstr "Verbinden..."
+
+msgid "Ready"
+msgstr "Klaar!"
+
+msgid "Connection error"
+msgstr "Verbindingsfout"
+
+msgid "Members"
+msgstr "Leden"
+
+msgid "Balances"
+msgstr "Saldi"
+
+msgid "Everyone settled"
+msgstr "✅ Iedereen is quitte!"
+
+msgid "Must pay"
+msgstr "moet"
+
+msgid "Paid"
+msgstr "✅ Betaald"
+
+msgid "Confirm payment"
+msgstr "Betaling registreren"
+
+msgid "Pays"
+msgstr "betaalt"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Confirm"
+msgstr "✅ Bevestigen"
+
+msgid "Add transaction"
+msgstr "+ Transactie"
+
+msgid "Recurring"
+msgstr "🔁 Herhalend"
+
+msgid "Label"
+msgstr "🏷️ Opslaan"
+
+msgid "Remove from list"
+msgstr "Verwijderen uit mijn lijst"
+
+msgid "Confirm remove"
+msgstr "Verwijderen uit jouw lijst?"
+
+msgid "Transactions"
+msgstr "Transacties"
+
+msgid "No transactions"
+msgstr "Geen transacties."
+
+msgid "Paid by"
+msgstr "betaald door"
+
+msgid "Edit transaction"
+msgstr "✏️ Aanpassen"
+
+msgid "Description"
+msgstr "Omschrijving"
+
+msgid "Amount"
+msgstr "Bedrag"
+
+msgid "Paid by label"
+msgstr "Betaald door"
+
+msgid "Split among"
+msgstr "Verdelen onder"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Save"
+msgstr "Opslaan"
+
+msgid "Transaction added"
+msgstr "Transactie toegevoegd!"
+
+msgid "Transaction updated"
+msgstr "Transactie aangepast!"
+
+msgid "Recurring expenses"
+msgstr "🔁 Herhalende expenses"
+
+msgid "New recurring"
+msgstr "+ Nieuw"
+
+msgid "Back"
+msgstr "← Terug"
+
+msgid "Frequency"
+msgstr "Frequentie"
+
+msgid "Start date"
+msgstr "Eerste uitvoering"
+
+msgid "Start date hint"
+msgstr "Kies vandaag of een datum in het verleden → wordt meteen toegevoegd."
+
+msgid "daily"
+msgstr "Dagelijks"
+
+msgid "weekly"
+msgstr "Wekelijks"
+
+msgid "monthly"
+msgstr "Maandelijks"
+
+msgid "yearly"
+msgstr "Jaarlijks"
+
+msgid "Next run"
+msgstr "Volgende run"
+
+msgid "Paused"
+msgstr "(gepauzeerd)"
+
+msgid "Pause"
+msgstr "Pauzeer"
+
+msgid "Resume"
+msgstr "Hervat"
+
+msgid "Delete"
+msgstr "✕"
+
+msgid "Log"
+msgstr "Log"
+
+msgid "Recurring added"
+msgstr "Herhalende expense aangemaakt!"
+
+msgid "Recurring deleted"
+msgstr "Herhalende expense verwijderd."
+
+msgid "No recurring"
+msgstr "Nog geen herhalende expenses."
+
+msgid "User management"
+msgstr "👥 Gebruikersbeheer"
+
+msgid "Admin"
+msgstr "admin"
+
+msgid "You"
+msgstr "jij"
+
+msgid "Make admin"
+msgstr "Admin maken"
+
+msgid "Revoke admin"
+msgstr "Admin intrekken"
+
+msgid "Delete user"
+msgstr "Verwijderen"
+
+msgid "Confirm delete user"
+msgstr "Gebruiker verwijderen?"
+
+msgid "Cannot delete self"
+msgstr "Je kan jezelf niet verwijderen."
+
+msgid "User deleted"
+msgstr "Gebruiker verwijderd."
+
+msgid "No access"
+msgstr "Geen toegang."
+
+msgid "Copyright"
+msgstr "© %(year)s Geert Meersman"
+
+msgid "Equal"
+msgstr "Gelijk"
+
+msgid "Parts"
+msgstr "Delen"
+
+msgid "Amounts"
+msgstr "Bedragen"
+
+msgid "Ratio hint"
+msgstr "Verhouding t.o.v. elkaar, bv. 1/2/1"
+
+msgid "Total"
+msgstr "Totaal"
+
+msgid "Remaining"
+msgstr "resterend"
+
+msgid "Profile"
+msgstr "Profiel"
+
+msgid "Tricount App ID"
+msgstr "Tricount App ID"
+
+msgid "Copy"
+msgstr "Kopiëren"
+
+msgid "Link hint"
+msgstr "Gebruik dit App ID in de Tricount app → Instellingen → Verbonden apps."
+
+msgid "No credentials"
+msgstr "Geen credentials gevonden."
+
+msgid "Confirm regenerate"
+msgstr "Nieuwe credentials genereren? Je moet daarna opnieuw linken in de Tricount app."
+
+msgid "Regenerate credentials"
+msgstr "Nieuwe credentials genereren"
+
+msgid "Credentials regenerated"
+msgstr "Nieuwe credentials gegenereerd. Koppel opnieuw in de Tricount app."
+
+msgid "Admin menu"
+msgstr "Admin"
+
+msgid "Change password"
+msgstr "Wachtwoord wijzigen"
+
+msgid "Current password"
+msgstr "Huidig wachtwoord"
+
+msgid "New password"
+msgstr "Nieuw wachtwoord"
+
+msgid "Confirm new password"
+msgstr "Bevestig nieuw wachtwoord"
+
+msgid "Current password incorrect"
+msgstr "Huidig wachtwoord is onjuist."
+
+msgid "Passwords do not match"
+msgstr "Wachtwoorden komen niet overeen."
+
+msgid "Password changed"
+msgstr "Wachtwoord gewijzigd!"
+
+msgid "App description"
+msgstr "Web interface voor je Tricount uitgaven"

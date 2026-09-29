@@ -1,0 +1,22 @@
+/* Progress bar animatie */
+#progressBar {
+  transition: width 0.3s ease;
+}
+
+/* Tricount kaarten hover */
+.tricount-item {
+  transition: box-shadow 0.15s ease;
+}
+.tricount-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(2px);
+}
+
+/* Transactie rijen */
+.tx-row {
+  transition: background-color 0.1s ease;
+}

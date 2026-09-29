@@ -1,0 +1,334 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "My Tricounts"
+msgstr "Mes Tricounts"
+
+msgid "Manage your shared expenses"
+msgstr "Gérez vos dépenses partagées"
+
+msgid "Login"
+msgstr "Connexion"
+
+msgid "Logout"
+msgstr "Déconnexion"
+
+msgid "Register"
+msgstr "S'inscrire"
+
+msgid "Users"
+msgstr "Utilisateurs"
+
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Password min 6 chars"
+msgstr "Mot de passe (min. 6 caractères)"
+
+msgid "No account yet"
+msgstr "Pas encore de compte ? S'inscrire"
+
+msgid "Already have account"
+msgstr "Déjà un compte ? Se connecter"
+
+msgid "First user becomes admin"
+msgstr "Le premier utilisateur devient automatiquement admin."
+
+msgid "Create admin account"
+msgstr "Créer un compte admin"
+
+msgid "Create account"
+msgstr "Créer un compte"
+
+msgid "Invalid credentials"
+msgstr "Nom d'utilisateur ou mot de passe invalide."
+
+msgid "Password too short"
+msgstr "Le mot de passe doit contenir au moins 6 caractères."
+
+msgid "Username taken"
+msgstr "Nom d'utilisateur déjà utilisé."
+
+msgid "Account created"
+msgstr "Compte créé. Vous pouvez maintenant vous connecter."
+
+msgid "Account created admin"
+msgstr "Compte créé (admin). Vous pouvez maintenant vous connecter."
+
+msgid "Add tricount"
+msgstr "Ajouter"
+
+msgid "Token placeholder"
+msgstr "Token (ex. tABC123xyz)"
+
+msgid "Label optional"
+msgstr "Étiquette (optionnel)"
+
+msgid "Token hint"
+msgstr "Token du lien de partage Tricount : tricount.com/r/tABC123xyz"
+
+msgid "No tricounts yet"
+msgstr "Pas encore de tricounts. Ajoutez-en un via le token de partage."
+
+msgid "Tricount added"
+msgstr "Tricount ajouté !"
+
+msgid "Tricount removed"
+msgstr "Tricount supprimé."
+
+msgid "Label saved"
+msgstr "Étiquette sauvegardée."
+
+msgid "Loading"
+msgstr "Chargement..."
+
+msgid "Connecting"
+msgstr "Connexion..."
+
+msgid "Ready"
+msgstr "Prêt !"
+
+msgid "Connection error"
+msgstr "Erreur de connexion"
+
+msgid "Members"
+msgstr "Membres"
+
+msgid "Balances"
+msgstr "Soldes"
+
+msgid "Everyone settled"
+msgstr "✅ Tout le monde est quitte !"
+
+msgid "Must pay"
+msgstr "doit payer"
+
+msgid "Paid"
+msgstr "✅ Payé"
+
+msgid "Confirm payment"
+msgstr "Enregistrer le paiement"
+
+msgid "Pays"
+msgstr "paie"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Confirm"
+msgstr "✅ Confirmer"
+
+msgid "Add transaction"
+msgstr "+ Transaction"
+
+msgid "Recurring"
+msgstr "🔁 Récurrent"
+
+msgid "Label"
+msgstr "🏷️ Sauvegarder"
+
+msgid "Remove from list"
+msgstr "Supprimer de ma liste"
+
+msgid "Confirm remove"
+msgstr "Supprimer de votre liste ?"
+
+msgid "Transactions"
+msgstr "Transactions"
+
+msgid "No transactions"
+msgstr "Aucune transaction."
+
+msgid "Paid by"
+msgstr "payé par"
+
+msgid "Edit transaction"
+msgstr "✏️ Modifier"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Amount"
+msgstr "Montant"
+
+msgid "Paid by label"
+msgstr "Payé par"
+
+msgid "Split among"
+msgstr "Répartir entre"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Save"
+msgstr "Sauvegarder"
+
+msgid "Transaction added"
+msgstr "Transaction ajoutée !"
+
+msgid "Transaction updated"
+msgstr "Transaction modifiée !"
+
+msgid "Recurring expenses"
+msgstr "🔁 Dépenses récurrentes"
+
+msgid "New recurring"
+msgstr "+ Nouveau"
+
+msgid "Back"
+msgstr "← Retour"
+
+msgid "Frequency"
+msgstr "Fréquence"
+
+msgid "Start date"
+msgstr "Première occurrence"
+
+msgid "Start date hint"
+msgstr "Choisissez aujourd'hui ou une date passée → sera ajouté immédiatement."
+
+msgid "daily"
+msgstr "Quotidien"
+
+msgid "weekly"
+msgstr "Hebdomadaire"
+
+msgid "monthly"
+msgstr "Mensuel"
+
+msgid "yearly"
+msgstr "Annuel"
+
+msgid "Next run"
+msgstr "Prochaine exécution"
+
+msgid "Paused"
+msgstr "(en pause)"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Resume"
+msgstr "Reprendre"
+
+msgid "Delete"
+msgstr "✕"
+
+msgid "Log"
+msgstr "Journal"
+
+msgid "Recurring added"
+msgstr "Dépense récurrente créée !"
+
+msgid "Recurring deleted"
+msgstr "Dépense récurrente supprimée."
+
+msgid "No recurring"
+msgstr "Pas encore de dépenses récurrentes."
+
+msgid "User management"
+msgstr "👥 Gestion des utilisateurs"
+
+msgid "Admin"
+msgstr "admin"
+
+msgid "You"
+msgstr "vous"
+
+msgid "Make admin"
+msgstr "Rendre admin"
+
+msgid "Revoke admin"
+msgstr "Révoquer admin"
+
+msgid "Delete user"
+msgstr "Supprimer"
+
+msgid "Confirm delete user"
+msgstr "Supprimer l'utilisateur ?"
+
+msgid "Cannot delete self"
+msgstr "Vous ne pouvez pas vous supprimer."
+
+msgid "User deleted"
+msgstr "Utilisateur supprimé."
+
+msgid "No access"
+msgstr "Accès refusé."
+
+msgid "Copyright"
+msgstr "© %(year)s Geert Meersman"
+
+msgid "Equal"
+msgstr "Égal"
+
+msgid "Parts"
+msgstr "Parts"
+
+msgid "Amounts"
+msgstr "Montants"
+
+msgid "Ratio hint"
+msgstr "Proportion relative, ex. 1/2/1"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Remaining"
+msgstr "restant"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Tricount App ID"
+msgstr "Tricount App ID"
+
+msgid "Copy"
+msgstr "Copier"
+
+msgid "Link hint"
+msgstr "Utilisez cet App ID dans l'app Tricount → Paramètres → Applications connectées."
+
+msgid "No credentials"
+msgstr "Aucune accréditation trouvée."
+
+msgid "Confirm regenerate"
+msgstr "Générer de nouvelles accréditations ? Vous devrez re-lier dans l'app Tricount."
+
+msgid "Regenerate credentials"
+msgstr "Régénérer les accréditations"
+
+msgid "Credentials regenerated"
+msgstr "Nouvelles accréditations générées. Veuillez re-lier dans l'app Tricount."
+
+msgid "Admin menu"
+msgstr "Admin"
+
+msgid "Change password"
+msgstr "Changer le mot de passe"
+
+msgid "Current password"
+msgstr "Mot de passe actuel"
+
+msgid "New password"
+msgstr "Nouveau mot de passe"
+
+msgid "Confirm new password"
+msgstr "Confirmer le nouveau mot de passe"
+
+msgid "Current password incorrect"
+msgstr "Le mot de passe actuel est incorrect."
+
+msgid "Passwords do not match"
+msgstr "Les mots de passe ne correspondent pas."
+
+msgid "Password changed"
+msgstr "Mot de passe modifié !"
+
+msgid "App description"
+msgstr "Interface web pour vos dépenses Tricount"

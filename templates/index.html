@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ _("My Tricounts") }}{% endblock %}
+{% block description %}{{ _("Manage your shared expenses") }}{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-bold">{{ _("My Tricounts") }}</h1>
+  <div class="flex gap-2">
+    <button id="refreshBtn"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/>
+        <polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+    </button>
+    <button onclick="document.getElementById('addForm').classList.toggle('hidden')"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div id="addForm" class="hidden bg-white rounded-xl shadow p-4 mb-4">
+  <form method="POST" action="{{ url_for('add_tricount') }}" class="space-y-2">
+    <input type="text" name="token" placeholder="{{ _('Token placeholder') }}" required
+      class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <input type="text" name="label" placeholder="{{ _('Label optional') }}"
+      class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Add tricount") }}</button>
+  </form>
+  <p class="mt-2 text-xs text-gray-400">{{ _("Token hint") }}</p>
+</div>
+
+<!-- Progress bar -->
+<div id="progressWrap" class="mb-4 hidden">
+  <div class="flex justify-between text-xs text-gray-400 mb-1">
+    <span id="progressLabel">{{ _("Loading") }}</span>
+    <span id="progressCount"></span>
+  </div>
+  <div class="w-full bg-gray-200 rounded-full h-1.5">
+    <div id="progressBar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-300" style="width:0%"></div>
+  </div>
+</div>
+
+<div id="tricountList" class="space-y-2"></div>
+<p id="emptyMsg" class="hidden text-gray-400 text-sm text-center mt-10">{{ _("No tricounts yet") }}</p>
+
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script>
+const _i18n = {
+  loading:  {{ _("Loading") | tojson }},
+  error:    {{ _("Connection error") | tojson }},
+  archived: {{ _('Paused') | tojson }},
+  you:      {{ _("You") | tojson }},
+  members:  {{ _("Members") | tojson }},
+  loaded:   {{ _("Ready") | tojson }},
+  noTricounts: {{ _("No tricounts yet") | tojson }},
+};
+loadTricounts({{ tokens | tojson }});
+document.getElementById('refreshBtn').onclick = () => loadTricounts({{ tokens | tojson }}, true);
+</script>
+{% endblock %}

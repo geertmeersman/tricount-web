@@ -1,0 +1,17 @@
+services:
+  tricount:
+    build: .
+    container_name: tricount
+    labels:
+      landing.icon: "money"
+      landing.name: "tricount"
+      landing.description: "Tricount expense tracker"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    networks:
+      - internal
+
+networks:
+  internal:
+    external: true

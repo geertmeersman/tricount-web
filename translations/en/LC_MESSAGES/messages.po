@@ -1,0 +1,334 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "My Tricounts"
+msgstr "My Tricounts"
+
+msgid "Manage your shared expenses"
+msgstr "Manage your shared expenses"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Register"
+msgstr "Register"
+
+msgid "Users"
+msgstr "Users"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Password min 6 chars"
+msgstr "Password (min. 6 characters)"
+
+msgid "No account yet"
+msgstr "No account yet? Register"
+
+msgid "Already have account"
+msgstr "Already have an account? Login"
+
+msgid "First user becomes admin"
+msgstr "First user automatically becomes admin."
+
+msgid "Create admin account"
+msgstr "Create admin account"
+
+msgid "Create account"
+msgstr "Create account"
+
+msgid "Invalid credentials"
+msgstr "Invalid username or password."
+
+msgid "Password too short"
+msgstr "Password must be at least 6 characters."
+
+msgid "Username taken"
+msgstr "Username already taken."
+
+msgid "Account created"
+msgstr "Account created. You can now log in."
+
+msgid "Account created admin"
+msgstr "Account created (admin). You can now log in."
+
+msgid "Add tricount"
+msgstr "Add"
+
+msgid "Token placeholder"
+msgstr "Token (e.g. tABC123xyz)"
+
+msgid "Label optional"
+msgstr "Label (optional)"
+
+msgid "Token hint"
+msgstr "Token from the Tricount share link: tricount.com/r/tABC123xyz"
+
+msgid "No tricounts yet"
+msgstr "No tricounts yet. Add one using a sharing token."
+
+msgid "Tricount added"
+msgstr "Tricount added!"
+
+msgid "Tricount removed"
+msgstr "Tricount removed."
+
+msgid "Label saved"
+msgstr "Label saved."
+
+msgid "Loading"
+msgstr "Loading..."
+
+msgid "Connecting"
+msgstr "Connecting..."
+
+msgid "Ready"
+msgstr "Ready!"
+
+msgid "Connection error"
+msgstr "Connection error"
+
+msgid "Members"
+msgstr "Members"
+
+msgid "Balances"
+msgstr "Balances"
+
+msgid "Everyone settled"
+msgstr "✅ Everyone is settled!"
+
+msgid "Must pay"
+msgstr "owes"
+
+msgid "Paid"
+msgstr "✅ Paid"
+
+msgid "Confirm payment"
+msgstr "Register payment"
+
+msgid "Pays"
+msgstr "pays"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Confirm"
+msgstr "✅ Confirm"
+
+msgid "Add transaction"
+msgstr "+ Transaction"
+
+msgid "Recurring"
+msgstr "🔁 Recurring"
+
+msgid "Label"
+msgstr "🏷️ Save"
+
+msgid "Remove from list"
+msgstr "Remove from my list"
+
+msgid "Confirm remove"
+msgstr "Remove from your list?"
+
+msgid "Transactions"
+msgstr "Transactions"
+
+msgid "No transactions"
+msgstr "No transactions."
+
+msgid "Paid by"
+msgstr "paid by"
+
+msgid "Edit transaction"
+msgstr "✏️ Edit"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Amount"
+msgstr "Amount"
+
+msgid "Paid by label"
+msgstr "Paid by"
+
+msgid "Split among"
+msgstr "Split among"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Transaction added"
+msgstr "Transaction added!"
+
+msgid "Transaction updated"
+msgstr "Transaction updated!"
+
+msgid "Recurring expenses"
+msgstr "🔁 Recurring expenses"
+
+msgid "New recurring"
+msgstr "+ New"
+
+msgid "Back"
+msgstr "← Back"
+
+msgid "Frequency"
+msgstr "Frequency"
+
+msgid "Start date"
+msgstr "First occurrence"
+
+msgid "Start date hint"
+msgstr "Choose today or a past date → will be added immediately."
+
+msgid "daily"
+msgstr "Daily"
+
+msgid "weekly"
+msgstr "Weekly"
+
+msgid "monthly"
+msgstr "Monthly"
+
+msgid "yearly"
+msgstr "Yearly"
+
+msgid "Next run"
+msgstr "Next run"
+
+msgid "Paused"
+msgstr "(paused)"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Resume"
+msgstr "Resume"
+
+msgid "Delete"
+msgstr "✕"
+
+msgid "Log"
+msgstr "Log"
+
+msgid "Recurring added"
+msgstr "Recurring expense created!"
+
+msgid "Recurring deleted"
+msgstr "Recurring expense deleted."
+
+msgid "No recurring"
+msgstr "No recurring expenses yet."
+
+msgid "User management"
+msgstr "👥 User management"
+
+msgid "Admin"
+msgstr "admin"
+
+msgid "You"
+msgstr "you"
+
+msgid "Make admin"
+msgstr "Make admin"
+
+msgid "Revoke admin"
+msgstr "Revoke admin"
+
+msgid "Delete user"
+msgstr "Delete"
+
+msgid "Confirm delete user"
+msgstr "Delete user?"
+
+msgid "Cannot delete self"
+msgstr "You cannot delete yourself."
+
+msgid "User deleted"
+msgstr "User deleted."
+
+msgid "No access"
+msgstr "Access denied."
+
+msgid "Copyright"
+msgstr "© %(year)s Geert Meersman"
+
+msgid "Equal"
+msgstr "Equal"
+
+msgid "Parts"
+msgstr "Parts"
+
+msgid "Amounts"
+msgstr "Amounts"
+
+msgid "Ratio hint"
+msgstr "Ratio relative to each other, e.g. 1/2/1"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Remaining"
+msgstr "remaining"
+
+msgid "Profile"
+msgstr "Profile"
+
+msgid "Tricount App ID"
+msgstr "Tricount App ID"
+
+msgid "Copy"
+msgstr "Copy"
+
+msgid "Link hint"
+msgstr "Use this App ID in the Tricount app → Settings → Connected apps."
+
+msgid "No credentials"
+msgstr "No credentials found."
+
+msgid "Confirm regenerate"
+msgstr "Generate new credentials? You will need to re-link in the Tricount app."
+
+msgid "Regenerate credentials"
+msgstr "Regenerate credentials"
+
+msgid "Credentials regenerated"
+msgstr "New credentials generated. Please re-link in the Tricount app."
+
+msgid "Admin menu"
+msgstr "Admin"
+
+msgid "Change password"
+msgstr "Change password"
+
+msgid "Current password"
+msgstr "Current password"
+
+msgid "New password"
+msgstr "New password"
+
+msgid "Confirm new password"
+msgstr "Confirm new password"
+
+msgid "Current password incorrect"
+msgstr "Current password is incorrect."
+
+msgid "Passwords do not match"
+msgstr "Passwords do not match."
+
+msgid "Password changed"
+msgstr "Password changed!"
+
+msgid "App description"
+msgstr "Web interface for your Tricount expenses"

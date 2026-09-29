@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Tricount{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-4">
+  <h1 id="pageTitle" class="text-xl font-bold truncate">{{ _("Loading") }}</h1>
+  <div class="flex items-center gap-2 ml-2 shrink-0">
+    <button onclick="document.getElementById('editSection').classList.toggle('hidden')"
+      class="text-sm text-gray-400 hover:text-gray-600">⚙️</button>
+    <a href="{{ url_for('index') }}" class="text-sm text-blue-600 hover:underline">{{ _("Back") }}</a>
+  </div>
+</div>
+
+<!-- Progress -->
+<div id="progressWrap" class="mb-4">
+  <div class="text-xs text-gray-400 mb-1" id="progressLabel">{{ _("Connecting") }}</div>
+  <div class="w-full bg-gray-200 rounded-full h-1.5">
+    <div id="progressBar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-500" style="width:5%"></div>
+  </div>
+</div>
+
+<!-- Content (hidden until loaded) -->
+<div id="content" class="hidden space-y-4">
+
+  <!-- Leden -->
+  <div id="membersList" class="flex flex-wrap gap-2"></div>
+
+  <!-- Saldi -->
+  <div class="bg-white rounded-xl shadow p-4">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase mb-3">{{ _("Balances") }}</h2>
+    <div id="debts" class="space-y-2 mb-3"></div>
+    <div id="balances" class="border-t pt-2 space-y-1"></div>
+  </div>
+
+  <!-- Acties -->
+  <div id="actions" class="flex gap-2"></div>
+
+  <!-- Edit sectie (verborgen) -->
+  <div id="editSection" class="hidden bg-white rounded-xl shadow p-4 space-y-3">
+    <form method="POST" action="{{ url_for('update_label', token=token) }}" class="flex gap-2">
+      <input type="text" name="label" value="{{ label or '' }}" placeholder="{{ _('Label optional') }}"
+        class="flex-1 border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm shrink-0">{{ _("Label") }}</button>
+    </form>
+    <form method="POST" action="{{ url_for('remove_tricount', token=token) }}">
+      <button onclick="return confirm('{{ _('Confirm remove') }}')"
+        class="w-full border border-red-300 text-red-500 hover:bg-red-50 py-1.5 rounded-lg text-sm">{{ _("Remove from list") }}</button>
+    </form>
+  </div>
+
+  <!-- Transacties -->
+  <div class="bg-white rounded-xl shadow divide-y">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase px-4 py-3">{{ _("Transactions") }}</h2>
+    <div id="transactions"></div>
+  </div>
+
+</div>
+
+<!-- Modals container -->
+<div id="modals"></div>
+
+<script src="{{ url_for('static', filename='js/tricount.js') }}"></script>
+<script>
+const _t = {
+  loading:        {{ _("Loading") | tojson }},
+  connecting:     {{ _("Connecting") | tojson }},
+  ready:          {{ _("Ready") | tojson }},
+  connError:      {{ _("Connection error") | tojson }},
+  everyoneSettled:{{ _("Everyone settled") | tojson }},
+  mustPay:        {{ _("Must pay") | tojson }},
+  paid:           {{ _("Paid") | tojson }},
+  confirmPayment: {{ _("Confirm payment") | tojson }},
+  pays:           {{ _("Pays") | tojson }},
+  cancel:         {{ _("Cancel") | tojson }},
+  confirm:        {{ _("Confirm") | tojson }},
+  addTransaction: {{ _("Add transaction") | tojson }},
+  recurring:      {{ _("Recurring") | tojson }},
+  noTransactions: {{ _("No transactions") | tojson }},
+  paidBy:         {{ _("Paid by") | tojson }},
+  editTransaction:{{ _("Edit transaction") | tojson }},
+  you:            {{ _("You") | tojson }},
+};
+loadTricountDetail({{ token | tojson }});
+</script>
+{% endblock %}
