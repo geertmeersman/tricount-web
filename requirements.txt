@@ -5,3 +5,4 @@ bcrypt==4.2.0
 APScheduler==3.10.4
 python-dateutil==2.9.0
 Flask-Babel==4.0.0
+Flask-Limiter==3.5.0

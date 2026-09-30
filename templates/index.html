@@ -20,12 +20,19 @@
         <line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
     </button>
+    <button onclick="document.getElementById('newTricountModal').classList.remove('hidden')"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-green-600 hover:bg-green-700 text-white shadow transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+    </button>
   </div>
 </div>
 
 <div id="addForm" class="hidden bg-white rounded-xl shadow p-4 mb-4">
   <form method="POST" action="{{ url_for('add_tricount') }}" class="space-y-2">
     <input type="text" name="token" placeholder="{{ _('Token placeholder') }}" required
+      oninput="const m = this.value.match(/tricount\.com\/t(\S+)/); if(m) this.value = 't' + m[1];"
       class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
     <input type="text" name="label" placeholder="{{ _('Label optional') }}"
       class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
@@ -47,6 +54,58 @@
 
 <div id="tricountList" class="space-y-2"></div>
 <p id="emptyMsg" class="hidden text-gray-400 text-sm text-center mt-10">{{ _("No tricounts yet") }}</p>
+
+<!-- Nieuwe tricount modal -->
+<div id="newTricountModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
+     onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
+    <h3 class="font-semibold text-lg">{{ _("New tricount") }}</h3>
+    <form method="POST" action="{{ url_for('create_tricount') }}" class="space-y-3">
+      <input type="text" name="title" placeholder="{{ _('Title') }}" required autofocus
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <input type="text" name="emoji" placeholder="{{ _('Emoji optional') }}" maxlength="2"
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <select name="currency" required
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="EUR" selected>🇪🇺 EUR — Euro</option>
+        <option value="USD">🇺🇸 USD — US Dollar</option>
+        <option value="GBP">🇬🇧 GBP — British Pound</option>
+        <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+        <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+        <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+        <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+        <option value="CNY">🇨🇳 CNY — Chinese Yuan</option>
+        <option value="SEK">🇸🇪 SEK — Swedish Krona</option>
+        <option value="NOK">🇳🇴 NOK — Norwegian Krone</option>
+        <option value="DKK">🇩🇰 DKK — Danish Krone</option>
+        <option value="PLN">🇵🇱 PLN — Polish Zloty</option>
+        <option value="CZK">🇨🇿 CZK — Czech Koruna</option>
+        <option value="HUF">🇭🇺 HUF — Hungarian Forint</option>
+        <option value="RON">🇷🇴 RON — Romanian Leu</option>
+        <option value="TRY">🇹🇷 TRY — Turkish Lira</option>
+        <option value="BRL">🇧🇷 BRL — Brazilian Real</option>
+        <option value="MXN">🇲🇽 MXN — Mexican Peso</option>
+        <option value="INR">🇮🇳 INR — Indian Rupee</option>
+        <option value="KRW">🇰🇷 KRW — South Korean Won</option>
+        <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+        <option value="HKD">🇭🇰 HKD — Hong Kong Dollar</option>
+        <option value="NZD">🇳🇿 NZD — New Zealand Dollar</option>
+        <option value="ZAR">🇿🇦 ZAR — South African Rand</option>
+        <option value="THB">🇹🇭 THB — Thai Baht</option>
+        <option value="MAD">🇲🇦 MAD — Moroccan Dirham</option>
+        <option value="AED">🇦🇪 AED — UAE Dirham</option>
+      </select>
+      <div>
+        <input type="text" name="members" placeholder="{{ _('Members placeholder') }}" required
+          class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <p class="text-xs text-gray-400 mt-1">{{ _("Members hint") }}</p>
+      </div>
+      <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Create") }}</button>
+    </form>
+    <button onclick="document.getElementById('newTricountModal').classList.add('hidden')"
+      class="w-full border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">{{ _("Cancel") }}</button>
+  </div>
+</div>
 
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 <script>

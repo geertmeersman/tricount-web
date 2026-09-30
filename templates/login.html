@@ -17,9 +17,6 @@
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
       <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Login") }}</button>
     </form>
-    <p class="mt-4 text-center text-sm text-gray-500">
-      <a href="{{ url_for('register') }}" class="text-blue-600 hover:underline">{{ _("No account yet") }}</a>
-    </p>
   </div>
   {% set current_lang = request.cookies.get('lang', request.accept_languages.best_match(['nl','en','fr'], default='nl')) %}
   <div class="flex justify-center gap-3 mt-4">

@@ -5,9 +5,26 @@
 <div class="flex items-center justify-between mb-4">
   <h1 id="pageTitle" class="text-xl font-bold truncate">{{ _("Loading") }}</h1>
   <div class="flex items-center gap-2 ml-2 shrink-0">
-    <button onclick="document.getElementById('editSection').classList.toggle('hidden')"
-      class="text-sm text-gray-400 hover:text-gray-600">⚙️</button>
-    <a href="{{ url_for('index') }}" class="text-sm text-blue-600 hover:underline">{{ _("Back") }}</a>
+    <button onclick="document.getElementById('editModal').classList.remove('hidden')"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+    <button id="shareBtn" onclick="shareTricount()"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+    </button>
+    <a href="{{ url_for('index') }}"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
   </div>
 </div>
 
@@ -22,6 +39,9 @@
 <!-- Content (hidden until loaded) -->
 <div id="content" class="hidden space-y-4">
 
+  <!-- Persoonlijke samenvatting -->
+  <div id="mySummary" class="space-y-2"></div>
+
   <!-- Leden -->
   <div id="membersList" class="flex flex-wrap gap-2"></div>
 
@@ -35,29 +55,60 @@
   <!-- Acties -->
   <div id="actions" class="flex gap-2"></div>
 
-  <!-- Edit sectie (verborgen) -->
-  <div id="editSection" class="hidden bg-white rounded-xl shadow p-4 space-y-3">
-    <form method="POST" action="{{ url_for('update_label', token=token) }}" class="flex gap-2">
-      <input type="text" name="label" value="{{ label or '' }}" placeholder="{{ _('Label optional') }}"
-        class="flex-1 border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm shrink-0">{{ _("Label") }}</button>
-    </form>
-    <form method="POST" action="{{ url_for('remove_tricount', token=token) }}">
-      <button onclick="return confirm('{{ _('Confirm remove') }}')"
-        class="w-full border border-red-300 text-red-500 hover:bg-red-50 py-1.5 rounded-lg text-sm">{{ _("Remove from list") }}</button>
-    </form>
-  </div>
-
   <!-- Transacties -->
   <div class="bg-white rounded-xl shadow divide-y">
-    <h2 class="text-sm font-semibold text-gray-500 uppercase px-4 py-3">{{ _("Transactions") }}</h2>
+    <div class="flex items-center gap-2 px-4 py-3">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase flex-1">{{ _("Transactions") }}</h2>
+      <span class="text-xs text-gray-400" id="txTotalAll"></span>
+      <input id="txSearch" type="search" placeholder="{{ _('Search') }}"
+        oninput="filterTransactions(this.value)"
+        class="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-36">
+    </div>
     <div id="transactions"></div>
+    <div class="flex justify-between items-center px-4 py-3 bg-blue-50 rounded-b-xl">
+      <span class="text-sm font-semibold text-blue-600">{{ _("Total") }}</span>
+      <span class="text-sm font-bold text-blue-600"><span id="txTotal">0.00</span> <span id="txCurrency"></span></span>
+    </div>
   </div>
 
 </div>
 
 <!-- Modals container -->
 <div id="modals"></div>
+
+<!-- Edit modal -->
+<div id="editModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
+     onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
+    <h3 class="font-semibold text-lg">⚙️ {{ _("Edit tricount") }}</h3>
+
+    <div>
+      <label class="text-xs text-gray-500 font-medium mb-1 block">{{ _("Label optional") }}</label>
+      <form method="POST" action="{{ url_for('update_label', token=token) }}" class="flex gap-2">
+        <input type="text" name="label" value="{{ label or '' }}" placeholder="{{ _('Label optional') }}"
+          class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm shrink-0">{{ _("Save") }}</button>
+      </form>
+    </div>
+
+    <a href="{{ url_for('tricount_select_member', token=token) }}"
+      class="block w-full text-center border border-blue-300 text-blue-600 hover:bg-blue-50 py-2 rounded-lg text-sm">{{ _("Change member") }}</a>
+
+    <div class="border-t pt-4">
+      <p class="text-xs text-gray-400 mb-2">{{ _("Type to confirm remove") }}</p>
+      <form method="POST" action="{{ url_for('remove_tricount', token=token) }}" class="space-y-2">
+        <input type="text" id="removeConfirmInput" placeholder="{{ _('Delete verb') }}"
+          oninput="document.getElementById('removeBtn').disabled = this.value !== _t.deleteVerb"
+          class="w-full border border-red-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+        <button id="removeBtn" disabled
+          class="w-full bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2 rounded-lg text-sm font-medium">{{ _("Remove from list") }}</button>
+      </form>
+    </div>
+
+    <button onclick="document.getElementById('editModal').classList.add('hidden')"
+      class="w-full border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">{{ _("Cancel") }}</button>
+  </div>
+</div>
 
 <script src="{{ url_for('static', filename='js/tricount.js') }}"></script>
 <script>
@@ -79,6 +130,13 @@ const _t = {
   paidBy:         {{ _("Paid by") | tojson }},
   editTransaction:{{ _("Edit transaction") | tojson }},
   you:            {{ _("You") | tojson }},
+  search:         {{ _("Search") | tojson }},
+  noResults:      {{ _("No results") | tojson }},
+  editTricount:   {{ _("Edit tricount") | tojson }},
+  removeFromList: {{ _("Remove from list") | tojson }},
+  deleteVerb:     {{ _("Delete verb") | tojson }},
+  youOwe:         {{ _("You owe") | tojson }},
+  youAreOwed:     {{ _("You are owed") | tojson }},
 };
 loadTricountDetail({{ token | tojson }});
 </script>

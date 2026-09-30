@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Who are you?") }}{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-bold">{{ _("Who are you?") }}</h1>
+  <a href="{{ url_for('index') }}"
+    class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+  </a>
+</div>
+
+<div class="bg-white rounded-xl shadow p-4">
+  <p class="text-sm text-gray-500 mb-4">{{ _("Select member hint") }}</p>
+  <form method="POST" class="space-y-2">
+    <label class="flex items-center gap-3 px-3 py-2 rounded-lg border hover:bg-gray-50 cursor-pointer">
+      <input type="radio" name="member_uuid" value="" class="text-blue-600">
+      <span class="text-sm text-gray-400 italic">{{ _("Nobody (spectator)") }}</span>
+    </label>
+    {% for m in t.members %}
+    <label class="flex items-center gap-3 px-3 py-2 rounded-lg border hover:bg-gray-50 cursor-pointer">
+      <input type="radio" name="member_uuid" value="{{ m.uuid }}" class="text-blue-600">
+      <span class="text-sm font-medium">{{ m.display_name }}</span>
+    </label>
+    {% endfor %}
+    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium mt-2">{{ _("Save") }}</button>
+  </form>
+</div>
+{% endblock %}

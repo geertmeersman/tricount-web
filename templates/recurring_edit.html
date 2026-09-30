@@ -13,12 +13,12 @@
   <form method="POST" class="space-y-4">
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">{{ _("Description") }}</label>
-      <input type="text" name="description" required autofocus
+      <input type="text" name="description" value="{{ row.description }}" required autofocus
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
     </div>
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">{{ _("Amount") }}</label>
-      <input type="number" name="amount" step="0.01" min="0.01" required
+      <input type="number" name="amount" step="0.01" min="0.01" value="{{ row.amount }}" required
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
     </div>
     <div>
@@ -26,7 +26,7 @@
       <select name="payer" required
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         {% for m in t.members %}
-        <option value="{{ m.uuid }}">{{ m.display_name }}</option>
+        <option value="{{ m.uuid }}" {{ 'selected' if m.uuid == row.payer_uuid }}>{{ m.display_name }}</option>
         {% endfor %}
       </select>
     </div>
@@ -35,7 +35,8 @@
       <div class="space-y-1">
         {% for m in t.members %}
         <label class="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="split_among" value="{{ m.uuid }}" checked
+          <input type="checkbox" name="split_among" value="{{ m.uuid }}"
+            {{ 'checked' if m.uuid in split_uuids }}
             class="rounded border-gray-300 text-blue-600">
           {{ m.display_name }}
         </label>
@@ -47,17 +48,16 @@
       <select name="frequency" required
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         {% for f in frequencies %}
-        <option value="{{ f }}">{{ _(f) }}</option>
+        <option value="{{ f }}" {{ 'selected' if f == row.frequency }}>{{ _(f) }}</option>
         {% endfor %}
       </select>
     </div>
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">{{ _("Start date") }}</label>
-      <input type="date" name="start_date" value="{{ today }}" required
+      <input type="date" name="start_date" value="{{ row.start_date }}" required
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <p class="text-xs text-gray-400 mt-1">{{ _("Start date hint") }}</p>
     </div>
-    <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Recurring added") }}</button>
+    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Save") }}</button>
   </form>
 </div>
 {% endblock %}

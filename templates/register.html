@@ -16,6 +16,7 @@
     <div class="mb-4 bg-blue-50 text-blue-700 text-sm px-3 py-2 rounded">{{ _("First user becomes admin") }}</div>
     {% endif %}
     <form method="POST" class="space-y-3">
+      {% if invite_token %}<input type="hidden" name="invite_token" value="{{ invite_token }}">{% endif %}
       <input type="text" name="username" placeholder="{{ _('Username') }}" required autofocus
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
       <input type="password" name="password" placeholder="{{ _('Password min 6 chars') }}" required
@@ -25,6 +26,11 @@
     <p class="mt-4 text-center text-sm text-gray-500">
       <a href="{{ url_for('login') }}" class="text-blue-600 hover:underline">{{ _("Already have account") }}</a>
     </p>
+    <div class="mt-4 border-t pt-3 space-y-1.5">
+      <p class="text-xs text-gray-400 leading-relaxed">{{ _("Register local account note") }}</p>
+      <p class="text-xs text-gray-400 leading-relaxed">{{ _("Password storage info") }}</p>
+      <p class="text-xs text-gray-400 leading-relaxed">{{ _("Tricount API credit") | safe }}</p>
+    </div>
   </div>
   {% set current_lang = request.cookies.get('lang', request.accept_languages.best_match(['nl','en','fr'], default='nl')) %}
   <div class="flex justify-center gap-3 mt-4">

@@ -64,13 +64,13 @@ msgid "Add tricount"
 msgstr "Toevoegen"
 
 msgid "Token placeholder"
-msgstr "Token (bv. tABC123xyz)"
+msgstr "Token (bv. stNvUXxxxxx)"
 
 msgid "Label optional"
 msgstr "Label (optioneel)"
 
 msgid "Token hint"
-msgstr "Token uit de Tricount deellink: tricount.com/r/tABC123xyz"
+msgstr "Deel de tricount in de Tricount app (⋯ → Delen) en kopieer de token uit de link: tricount.com/tstNvUXxxxxx"
 
 msgid "No tricounts yet"
 msgstr "Nog geen tricounts. Voeg er een toe via de sharing token."
@@ -109,7 +109,7 @@ msgid "Must pay"
 msgstr "moet"
 
 msgid "Paid"
-msgstr "✅ Betaald"
+msgstr "Vereffenen"
 
 msgid "Confirm payment"
 msgstr "Betaling registreren"
@@ -332,3 +332,114 @@ msgstr "Wachtwoord gewijzigd!"
 
 msgid "App description"
 msgstr "Web interface voor je Tricount uitgaven"
+
+msgid "Delete account"
+msgstr "Account verwijderen"
+
+msgid "Delete account hint"
+msgstr "Dit verwijdert je account en alle bijhorende gegevens permanent."
+
+msgid "Confirm delete account"
+msgstr "Zeker? Dit kan niet ongedaan gemaakt worden."
+
+msgid "Account deleted"
+msgstr "Je account is verwijderd."
+
+msgid "Invite links"
+msgstr "Uitnodigingslinks"
+
+msgid "Create invite"
+msgstr "Uitnodigingslink aanmaken"
+
+msgid "Invite used"
+msgstr "Gebruikt"
+
+msgid "Invite invalid"
+msgstr "Deze uitnodigingslink is ongeldig of al gebruikt."
+
+msgid "Invite label placeholder"
+msgstr "Label (bv. naam van de persoon)"
+
+msgid "No label"
+msgstr "Geen label"
+
+msgid "New tricount"
+msgstr "Nieuwe tricount"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Currency"
+msgstr "Valuta"
+
+msgid "Create"
+msgstr "Aanmaken"
+
+msgid "Members placeholder"
+msgstr "Deelnemers (bv. Alice, Bob, Charlie)"
+
+msgid "Members hint"
+msgstr "Scheid namen met een komma."
+
+msgid "Emoji optional"
+msgstr "Emoji (optioneel, bv. 🍻)"
+
+msgid "Copied"
+msgstr "Gekopieerd!"
+
+msgid "Search"
+msgstr "Zoeken"
+
+msgid "No results"
+msgstr "Geen resultaten."
+
+msgid "Edit tricount"
+msgstr "Tricount bewerken"
+
+msgid "Type to confirm remove"
+msgstr "Typ \"Verwijder\" om te bevestigen."
+
+msgid "Delete verb"
+msgstr "Verwijder"
+
+msgid "Who are you?"
+msgstr "Wie ben jij?"
+
+msgid "Select member hint"
+msgstr "Selecteer welk lid jij bent in deze tricount."
+
+msgid "Nobody (spectator)"
+msgstr "Niemand (toeschouwer)"
+
+msgid "Change member"
+msgstr "Wijzig wie ik ben"
+
+msgid "Share"
+msgstr "Deellink"
+
+msgid "You owe"
+msgstr "Jij moet betalen aan"
+
+msgid "You are owed"
+msgstr "Jij krijgt van"
+
+msgid "Tricount connection"
+msgstr "Tricount-verbinding"
+
+msgid "Tricount connection info"
+msgstr "Deze app maakt verbinding met Tricount als een anoniem apparaat — zonder e-mailadres of wachtwoord. Bij registratie wordt er automatisch een unieke apparaat-ID en sleutelpaar aangemaakt. Tricount herkent jou via die identiteit."
+
+msgid "Register local account note"
+msgstr "Je gebruikersnaam en wachtwoord zijn alleen voor deze web-UI — ze zijn niet gekoppeld aan tricount.com. Bij registratie wordt er automatisch een anonieme apparaat-ID aangemaakt waarmee de app verbinding maakt met Tricount."
+
+msgid "Device credentials"
+msgstr "Apparaat-credentials"
+
+msgid "Device credentials info"
+msgstr "Dit bestand bevat de anonieme apparaat-ID waarmee deze app verbinding maakt met Tricount. Het is compatibel met het Python tricount-api pakket (tricount_credentials.json). Als je het kwijtraakt, genereer dan nieuwe credentials en voeg je tricounts opnieuw toe via hun deeltoken. Let op: een deeltoken geeft volledige lees- en schrijftoegang — behandel het als een wachtwoord."
+
+msgid "Password storage info"
+msgstr "Je wachtwoord wordt nooit in leesbare tekst opgeslagen. Het wordt gehasht met bcrypt (met een uniek salt per wachtwoord) voordat het in de database wordt opgeslagen."
+
+msgid "Tricount API credit"
+msgstr "De Tricount-connectiviteit werkt via <a href=\"https://github.com/elrandar/tricount-api\" target=\"_blank\" class=\"underline hover:text-gray-600\">elrandar/tricount-api</a>."

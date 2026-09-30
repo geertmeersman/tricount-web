@@ -1,13 +1,16 @@
 {% extends "base.html" %}
-{% block title %}📋 Log — {{ row.description }}{% endblock %}
+{% block title %}{{ _("Log") }} — {{ row.description }}{% endblock %}
 {% block content %}
 <div class="flex items-center justify-between mb-4">
   <h1 class="text-xl font-bold truncate">📋 {{ row.description }}</h1>
-  <a href="{{ url_for('recurring_list', token=token) }}" class="text-sm text-blue-600 hover:underline ml-2 shrink-0">← Terug</a>
+  <a href="{{ url_for('recurring_list', token=token) }}"
+    class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition ml-2 shrink-0">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </a>
 </div>
 
 <div class="text-sm text-gray-500 mb-4">
-  {{ frequency_labels[row.frequency] }} · {{ "%.2f"|format(row.amount) }} · volgende run: {{ row.next_run }}
+  {{ _(row.frequency) }} · {{ "%.2f"|format(row.amount) }} · {{ _("Next run") }}: {{ row.next_run }}
 </div>
 
 {% if logs %}
@@ -27,6 +30,6 @@
   {% endfor %}
 </div>
 {% else %}
-<p class="text-gray-400 text-sm text-center mt-10">Nog geen uitvoeringen gelogd.</p>
+<p class="text-gray-400 text-sm text-center mt-10">{{ _("No recurring") }}</p>
 {% endif %}
 {% endblock %}

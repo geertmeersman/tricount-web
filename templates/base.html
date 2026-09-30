@@ -87,12 +87,28 @@
   {{ _("Copyright", year=now.year) }}
 </footer>
 
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none">
+  {{ _("Copied") }}
+</div>
+
 <script>
 document.addEventListener('click', (e) => {
   if (!document.getElementById('langMenu')?.contains(e.target)) {
     document.getElementById('langDropdown')?.classList.add('hidden');
   }
 });
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('toast');
+    toast.classList.remove('opacity-0');
+    toast.classList.add('opacity-100');
+    setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0');
+    }, 2000);
+  });
+}
 </script>
 
 </body>

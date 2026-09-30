@@ -1,14 +1,19 @@
 {% extends "base.html" %}
-{% block title %}🔁 Herhalende expenses — {{ t.title }}{% endblock %}
-{% block description %}Beheer herhalende uitgaven voor {{ t.title }}.{% endblock %}
+{% block title %}{{ _("Recurring expenses") }}{% endblock %}
 {% block content %}
 <div class="flex items-center justify-between mb-4">
-  <h1 class="text-xl font-bold">🔁 Herhalend</h1>
+  <h1 class="text-xl font-bold">{{ _("Recurring expenses") }}</h1>
   <div class="flex gap-2">
     <a href="{{ url_for('recurring_add', token=token) }}"
-      class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg">+ Nieuw</a>
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-green-600 hover:bg-green-700 text-white shadow transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    </a>
     <a href="{{ url_for('tricount_detail', token=token) }}"
-      class="text-sm text-blue-600 hover:underline self-center">← Terug</a>
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
   </div>
 </div>
 
@@ -22,24 +27,26 @@
       <div class="min-w-0">
         <div class="font-medium truncate">{{ row.description }}</div>
         <div class="text-xs text-gray-400 mt-0.5">
-          {{ "%.2f"|format(row.amount) }} · {{ frequency_labels[row.frequency] }} · vanaf {{ row.start_date }}
+          {{ "%.2f"|format(row.amount) }} · {{ _(row.frequency) }} · {{ _("Start date") }}: {{ row.start_date }}
         </div>
         <div class="text-xs mt-0.5 {{ 'text-green-600' if row.active else 'text-gray-400' }}">
-          Volgende run: {{ row.next_run }}
-          {% if not row.active %}<span class="ml-1">(gepauzeerd)</span>{% endif %}
+          {{ _("Next run") }}: {{ row.next_run }}
+          {% if not row.active %}<span class="ml-1">{{ _("Paused") }}</span>{% endif %}
         </div>
       </div>
       <div class="flex gap-2 shrink-0 mt-0.5">
         <a href="{{ url_for('recurring_log_view', token=token, rec_id=row.id) }}"
-          class="text-xs border border-gray-300 hover:bg-gray-100 px-2 py-1 rounded-lg">Log</a>
+          class="text-xs border border-gray-300 hover:bg-gray-100 px-2 py-1 rounded-lg">{{ _("Log") }}</a>
+        <a href="{{ url_for('recurring_edit', token=token, rec_id=row.id) }}"
+          class="text-xs border border-blue-300 text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-lg">✏️</a>
         <form method="POST" action="{{ url_for('recurring_toggle', token=token, rec_id=row.id) }}">
           <button class="text-xs border border-gray-300 hover:bg-gray-100 px-2 py-1 rounded-lg">
-            {{ 'Pauzeer' if row.active else 'Hervat' }}
+            {{ _("Pause") if row.active else _("Resume") }}
           </button>
         </form>
         <form method="POST" action="{{ url_for('recurring_delete', token=token, rec_id=row.id) }}">
-          <button onclick="return confirm('Verwijderen?')"
-            class="text-xs border border-red-300 text-red-500 hover:bg-red-50 px-2 py-1 rounded-lg">✕</button>
+          <button onclick="return confirm('{{ _('Recurring deleted') }}?')"
+            class="text-xs border border-red-300 text-red-500 hover:bg-red-50 px-2 py-1 rounded-lg">{{ _("Delete") }}</button>
         </form>
       </div>
     </div>
@@ -47,6 +54,6 @@
   {% endfor %}
 </div>
 {% else %}
-<p class="text-gray-400 text-sm text-center mt-10">Nog geen herhalende expenses.</p>
+<p class="text-gray-400 text-sm text-center mt-10">{{ _("No recurring") }}</p>
 {% endif %}
 {% endblock %}

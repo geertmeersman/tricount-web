@@ -64,13 +64,13 @@ msgid "Add tricount"
 msgstr "Add"
 
 msgid "Token placeholder"
-msgstr "Token (e.g. tABC123xyz)"
+msgstr "Token (e.g. stNvUXxxxxx)"
 
 msgid "Label optional"
 msgstr "Label (optional)"
 
 msgid "Token hint"
-msgstr "Token from the Tricount share link: tricount.com/r/tABC123xyz"
+msgstr "Share the tricount in the Tricount app (⋯ → Share), copy the token from the link: tricount.com/tstNvUXxxxxx"
 
 msgid "No tricounts yet"
 msgstr "No tricounts yet. Add one using a sharing token."
@@ -109,7 +109,7 @@ msgid "Must pay"
 msgstr "owes"
 
 msgid "Paid"
-msgstr "✅ Paid"
+msgstr "Settle"
 
 msgid "Confirm payment"
 msgstr "Register payment"
@@ -332,3 +332,114 @@ msgstr "Password changed!"
 
 msgid "App description"
 msgstr "Web interface for your Tricount expenses"
+
+msgid "Delete account"
+msgstr "Delete account"
+
+msgid "Delete account hint"
+msgstr "This will permanently delete your account and all associated data."
+
+msgid "Confirm delete account"
+msgstr "Are you sure? This cannot be undone."
+
+msgid "Account deleted"
+msgstr "Your account has been deleted."
+
+msgid "Invite links"
+msgstr "Invite links"
+
+msgid "Create invite"
+msgstr "Create invite link"
+
+msgid "Invite used"
+msgstr "Used"
+
+msgid "Invite invalid"
+msgstr "This invite link is invalid or has already been used."
+
+msgid "Invite label placeholder"
+msgstr "Label (e.g. name of the person)"
+
+msgid "No label"
+msgstr "No label"
+
+msgid "New tricount"
+msgstr "New tricount"
+
+msgid "Title"
+msgstr "Title"
+
+msgid "Currency"
+msgstr "Currency"
+
+msgid "Create"
+msgstr "Create"
+
+msgid "Members placeholder"
+msgstr "Members (e.g. Alice, Bob, Charlie)"
+
+msgid "Members hint"
+msgstr "Separate names with a comma."
+
+msgid "Emoji optional"
+msgstr "Emoji (optional, e.g. 🍻)"
+
+msgid "Copied"
+msgstr "Copied!"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "No results"
+msgstr "No results."
+
+msgid "Edit tricount"
+msgstr "Edit tricount"
+
+msgid "Type to confirm remove"
+msgstr "Type \"Delete\" to confirm."
+
+msgid "Delete verb"
+msgstr "Delete"
+
+msgid "Who are you?"
+msgstr "Who are you?"
+
+msgid "Select member hint"
+msgstr "Select which member you are in this tricount."
+
+msgid "Nobody (spectator)"
+msgstr "Nobody (spectator)"
+
+msgid "Change member"
+msgstr "Change who I am"
+
+msgid "Share"
+msgstr "Share link"
+
+msgid "You owe"
+msgstr "You owe"
+
+msgid "You are owed"
+msgstr "You are owed by"
+
+msgid "Tricount connection"
+msgstr "Tricount connection"
+
+msgid "Tricount connection info"
+msgstr "This app connects to Tricount as an anonymous device — no email or password involved. When you register, a unique device identity (UUID + key pair) is created automatically. Tricount recognises you through that identity."
+
+msgid "Register local account note"
+msgstr "Your username and password are only for this web UI — they are not linked to tricount.com. On registration, an anonymous device identity is created automatically that the app uses to connect to Tricount."
+
+msgid "Device credentials"
+msgstr "Device credentials"
+
+msgid "Device credentials info"
+msgstr "This file contains the anonymous device identity this app uses to connect to Tricount. It is compatible with the Python tricount-api package (tricount_credentials.json). If you lose it, generate new credentials and re-join your tricounts using their sharing tokens. Note: a sharing token grants full read and write access — treat it like a password."
+
+msgid "Password storage info"
+msgstr "Your password is never stored in plain text. It is hashed with bcrypt (with a unique salt per password) before being saved to the database."
+
+msgid "Tricount API credit"
+msgstr "Tricount connectivity is powered by <a href=\"https://github.com/elrandar/tricount-api\" target=\"_blank\" class=\"underline hover:text-gray-600\">elrandar/tricount-api</a>."

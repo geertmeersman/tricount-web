@@ -64,13 +64,13 @@ msgid "Add tricount"
 msgstr "Ajouter"
 
 msgid "Token placeholder"
-msgstr "Token (ex. tABC123xyz)"
+msgstr "Token (ex. stNvUXxxxxx)"
 
 msgid "Label optional"
 msgstr "Étiquette (optionnel)"
 
 msgid "Token hint"
-msgstr "Token du lien de partage Tricount : tricount.com/r/tABC123xyz"
+msgstr "Partagez le tricount dans l'app Tricount (⋯ → Partager) et copiez le token du lien : tricount.com/tstNvUXxxxxx"
 
 msgid "No tricounts yet"
 msgstr "Pas encore de tricounts. Ajoutez-en un via le token de partage."
@@ -109,7 +109,7 @@ msgid "Must pay"
 msgstr "doit payer"
 
 msgid "Paid"
-msgstr "✅ Payé"
+msgstr "Régler"
 
 msgid "Confirm payment"
 msgstr "Enregistrer le paiement"
@@ -332,3 +332,114 @@ msgstr "Mot de passe modifié !"
 
 msgid "App description"
 msgstr "Interface web pour vos dépenses Tricount"
+
+msgid "Delete account"
+msgstr "Supprimer le compte"
+
+msgid "Delete account hint"
+msgstr "Ceci supprimera définitivement votre compte et toutes les données associées."
+
+msgid "Confirm delete account"
+msgstr "Êtes-vous sûr ? Cette action est irréversible."
+
+msgid "Account deleted"
+msgstr "Votre compte a été supprimé."
+
+msgid "Invite links"
+msgstr "Liens d'invitation"
+
+msgid "Create invite"
+msgstr "Créer un lien d'invitation"
+
+msgid "Invite used"
+msgstr "Utilisé"
+
+msgid "Invite invalid"
+msgstr "Ce lien d'invitation est invalide ou déjà utilisé."
+
+msgid "Invite label placeholder"
+msgstr "Label (ex. nom de la personne)"
+
+msgid "No label"
+msgstr "Sans label"
+
+msgid "New tricount"
+msgstr "Nouveau tricount"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Currency"
+msgstr "Devise"
+
+msgid "Create"
+msgstr "Créer"
+
+msgid "Members placeholder"
+msgstr "Participants (ex. Alice, Bob, Charlie)"
+
+msgid "Members hint"
+msgstr "Séparez les noms par une virgule."
+
+msgid "Emoji optional"
+msgstr "Emoji (optionnel, ex. 🍻)"
+
+msgid "Copied"
+msgstr "Copié !"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "No results"
+msgstr "Aucun résultat."
+
+msgid "Edit tricount"
+msgstr "Modifier le tricount"
+
+msgid "Type to confirm remove"
+msgstr "Tapez \"Supprimer\" pour confirmer."
+
+msgid "Delete verb"
+msgstr "Supprimer"
+
+msgid "Who are you?"
+msgstr "Qui êtes-vous ?"
+
+msgid "Select member hint"
+msgstr "Sélectionnez quel membre vous êtes dans ce tricount."
+
+msgid "Nobody (spectator)"
+msgstr "Personne (spectateur)"
+
+msgid "Change member"
+msgstr "Modifier qui je suis"
+
+msgid "Share"
+msgstr "Lien de partage"
+
+msgid "You owe"
+msgstr "Vous devez payer à"
+
+msgid "You are owed"
+msgstr "Vous recevez de"
+
+msgid "Tricount connection"
+msgstr "Connexion Tricount"
+
+msgid "Tricount connection info"
+msgstr "Cette application se connecte à Tricount en tant qu'appareil anonyme — sans adresse e-mail ni mot de passe. Lors de l'inscription, une identité d'appareil unique (UUID + paire de clés) est créée automatiquement. Tricount vous reconnaît via cette identité."
+
+msgid "Register local account note"
+msgstr "Votre nom d'utilisateur et mot de passe sont uniquement pour cette interface web — ils ne sont pas liés à tricount.com. Lors de l'inscription, une identité d'appareil anonyme est créée automatiquement pour se connecter à Tricount."
+
+msgid "Device credentials"
+msgstr "Identifiants d'appareil"
+
+msgid "Device credentials info"
+msgstr "Ce fichier contient l'identité d'appareil anonyme utilisée pour se connecter à Tricount. Il est compatible avec le package Python tricount-api (tricount_credentials.json). En cas de perte, générez de nouveaux identifiants et rejoignez à nouveau vos tricounts via leurs tokens de partage. Attention : un token de partage donne un accès complet en lecture et écriture — traitez-le comme un mot de passe."
+
+msgid "Password storage info"
+msgstr "Votre mot de passe n'est jamais stocké en clair. Il est haché avec bcrypt (avec un sel unique par mot de passe) avant d'être enregistré dans la base de données."
+
+msgid "Tricount API credit"
+msgstr "La connectivité Tricount est assurée par <a href=\"https://github.com/elrandar/tricount-api\" target=\"_blank\" class=\"underline hover:text-gray-600\">elrandar/tricount-api</a>."
