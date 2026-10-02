@@ -35,8 +35,6 @@ limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="m
 
 DATA_DIR = Path("data")
 DB_PATH = DATA_DIR / "tricount.db"
-CREDENTIALS_PATH = DATA_DIR / "credentials.json"
-
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "warning"
@@ -311,6 +309,16 @@ def next_run_after(from_date: date, frequency: str) -> date:
     return from_date + timedelta(days=1)
 
 
+def get_client_for_user(db, user_id: int) -> tc.TricountAPI:
+    row = db.execute("SELECT credentials_json FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not row or not row["credentials_json"]:
+        raise RuntimeError(f"Geen credentials voor user {user_id}")
+    creds = tc.Credentials(**json.loads(row["credentials_json"]))
+    client = tc.TricountAPI(creds)
+    client.authenticate()
+    return client
+
+
 def process_recurring():
     today = date.today().isoformat()
     db = sqlite3.connect(DB_PATH)
@@ -321,10 +329,18 @@ def process_recurring():
         db.close()
         return
 
-    client = tc.load_client(CREDENTIALS_PATH)
+    clients: dict[int, tc.TricountAPI] = {}
 
     for row in due:
         # Process all missed runs one by one
+        user_id = row["user_id"]
+        if user_id not in clients:
+            try:
+                clients[user_id] = get_client_for_user(db, user_id)
+            except Exception as e:
+                logging.error("Kan client niet laden voor user %s: %s", user_id, e)
+                continue
+        client = clients[user_id]
         next_run = date.fromisoformat(row["next_run"])
         while next_run <= date.today():
             try:
