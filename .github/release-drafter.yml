@@ -23,4 +23,7 @@ categories:
     labels: [docs, documentation]
 exclude-labels: [skip-changelog]
 template: |
+  ## Thanks to our contributors
+  $CONTRIBUTORS
+
   $CHANGES
