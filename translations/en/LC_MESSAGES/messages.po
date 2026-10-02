@@ -467,3 +467,9 @@ msgstr "No transactions selected"
 
 msgid "Transactions deleted"
 msgstr "{count} transaction(s) deleted"
+
+msgid "Backfill warning"
+msgstr "⚠️ This will create {n} past transaction(s) ({freq})."
+
+msgid "Save recurring"
+msgstr "Save recurring expense"

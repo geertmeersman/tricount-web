@@ -961,12 +961,12 @@ def bulk_delete_transactions(token):
             try:
                 tx = next((x for x in t.transactions if x.id == int(tx_id)), None)
                 if tx:
-                    client.delete_transaction(t, tx)
+                    client.delete_transaction(t, tx.id)
                     deleted += 1
             except Exception as e:
                 app.logger.error("Error deleting transaction %s: %s", tx_id, e)
         cache_invalidate(token)
-        flash(_("Transactions deleted", count=deleted), "success")
+        flash(_("Transactions deleted").replace("{count}", str(deleted)), "success")
     except Exception as e:
         app.logger.error("bulk_delete error: %s", e)
         flash(_("Connection error"), "danger")

@@ -467,3 +467,9 @@ msgstr "Geen transacties geselecteerd"
 
 msgid "Transactions deleted"
 msgstr "{count} transactie(s) verwijderd"
+
+msgid "Backfill warning"
+msgstr "⚠️ Er worden {n} transactie(s) aangemaakt in het verleden ({freq})."
+
+msgid "Save recurring"
+msgstr "Herhaling opslaan"
