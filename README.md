@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="static/images/tricount-web-100x100.png" width="100">
+  <img src="./static/images/tricount-web-100x100.png" width="100">
 </p>
 
 <h1 align="center">Tricount Web</h1>
