@@ -1,7 +1,7 @@
 {
-  "name": "Tricount",
-  "short_name": "Tricount",
-  "description": "Beheer je gedeelde uitgaven",
+  "name": "Tricount Web",
+  "short_name": "Tricount Web",
+  "description": "Manage your shared Tricounts with this web application.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f3f4f6",
