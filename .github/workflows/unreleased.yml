@@ -3,8 +3,8 @@ name: Unreleased changes 🔍
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: '0 8,20 * * *'  # twice daily at 08:00 and 20:00
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
