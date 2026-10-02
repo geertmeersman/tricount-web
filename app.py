@@ -11,6 +11,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from functools import wraps
 from pathlib import Path
+from urllib.parse import urlparse
 
 import bcrypt
 import tricount as tc
@@ -105,7 +106,17 @@ def set_lang(lang):
     return response
 
 
+def is_safe_redirect(url: str) -> bool:
+    """Return True only for relative paths with no host component."""
+    if not url:
+        return False
+    parsed = urlparse(url)
+    return not parsed.netloc and not parsed.scheme and parsed.path.startswith("/")
+
+
 FREQUENCIES = ["daily", "weekly", "monthly", "yearly"]
+
+
 FREQUENCY_LABELS = {"daily": "Dagelijks", "weekly": "Wekelijks", "monthly": "Maandelijks", "yearly": "Jaarlijks"}
 
 
@@ -651,7 +662,7 @@ def login():
         if row and bcrypt.checkpw(password, row["password_hash"].encode()):
             login_user(User(row["id"], row["username"], row["is_admin"], row["display_name"]))
             next_url = request.args.get("next") or request.form.get("next", "")
-            if next_url and next_url.startswith("/") and not next_url.startswith("//"):
+            if is_safe_redirect(next_url):
                 return redirect(next_url)
             return redirect(url_for("index"))
         flash(_("Invalid credentials"), "danger")
