@@ -1,4 +1,15 @@
-# Tricount Web
+<p align="center">
+  <img src="static/images/tricount-web-100x100.png" width="100">
+</p>
+
+<h1 align="center">Tricount Web</h1>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg"></a>
+  <a href="https://discord.gg/VT3JXzZdvx"><img src="https://img.shields.io/discord/1234567890?logo=discord&label=discord"></a>
+  <img src="https://img.shields.io/docker/pulls/geertmeersman/tricount-web">
+  <img src="https://img.shields.io/docker/v/geertmeersman/tricount-web?label=docker%20image%20version">
+</p>
 
 A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built on top of the unofficial [tricount-api](https://github.com/elrandar/tricount-api) Python client.
 
@@ -26,7 +37,7 @@ echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" >
 services:
   tricount:
     image: geertmeersman/tricount-web:latest
-    container_name: tricount
+    container_name: tricount-web
     env_file: .env
     volumes:
       - ./data:/app/data
@@ -47,7 +58,7 @@ Open [http://localhost:5000](http://localhost:5000) and register the first accou
 services:
   tricount:
     image: geertmeersman/tricount-web:latest
-    container_name: tricount
+    container_name: tricount-web
     env_file: .env
     volumes:
       - ./data:/app/data
