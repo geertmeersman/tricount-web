@@ -60,11 +60,33 @@
     <div class="flex items-center gap-2 px-4 py-3">
       <h2 class="text-sm font-semibold text-gray-500 uppercase flex-1">{{ _("Transactions") }}</h2>
       <span class="text-xs text-gray-400" id="txTotalAll"></span>
+      <button id="bulkModeBtn"
+        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition"
+        title="{{ _('Select transactions') }}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="4" height="4" rx="1"/><rect x="3" y="11" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/>
+          <line x1="11" y1="7" x2="21" y2="7"/><line x1="11" y1="13" x2="21" y2="13"/><line x1="11" y1="19" x2="21" y2="19"/>
+        </svg>
+      </button>
       <input id="txSearch" type="search" placeholder="{{ _('Search') }}"
         class="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-36">
     </div>
+    <div id="txSelectAllRow" class="hidden px-4 py-2 bg-gray-50 flex items-center gap-2 border-b">
+      <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+        <input type="checkbox" id="selectAllCheckbox" class="w-4 h-4 accent-blue-600">
+        {{ _("Select all visible") }}
+      </label>
+    </div>
     <div id="transactions"></div>
-    <div class="flex justify-between items-center px-4 py-3 bg-blue-50 rounded-b-xl">
+    <div id="bulkBar" class="hidden px-4 py-3 bg-red-50 rounded-b-xl flex items-center justify-between gap-2">
+      <span class="text-sm text-red-700"><span id="bulkCount">0</span> {{ _("selected") }}</span>
+      <form id="bulkDeleteForm" method="POST" action="{{ url_for('bulk_delete_transactions', token=token) }}" class="flex items-center gap-2">
+        <div id="bulkHiddenInputs"></div>
+        <button type="button" id="bulkDeleteBtn"
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium">🗑 {{ _("Delete selected") }}</button>
+      </form>
+    </div>
+    <div class="flex justify-between items-center px-4 py-3 bg-blue-50 rounded-b-xl" id="txTotalBar">
       <span class="text-sm font-semibold text-blue-600">{{ _("Total") }}</span>
       <span class="text-sm font-bold text-blue-600"><span id="txTotal">0.00</span> <span id="txCurrency"></span></span>
     </div>
@@ -134,6 +156,11 @@ const _t = {
   deleteVerb:     {{ _("Delete verb") | tojson }},
   youOwe:         {{ _("You owe") | tojson }},
   youAreOwed:     {{ _("You are owed") | tojson }},
+  selectTransactions: {{ _("Select transactions") | tojson }},
+  selectAllVisible:   {{ _("Select all visible") | tojson }},
+  selected:           {{ _("selected") | tojson }},
+  deleteSelected:     {{ _("Delete selected") | tojson }},
+  confirmDelete:      {{ _("Confirm delete selected") | tojson }},
 };
 loadTricountDetail({{ token | tojson }});
 document.getElementById('openEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.remove('hidden'));
@@ -142,5 +169,11 @@ document.getElementById('editModalBackdrop').addEventListener('click', (e) => { 
 document.getElementById('shareBtn').addEventListener('click', () => shareTricount());
 document.getElementById('txSearch').addEventListener('input', function() { filterTransactions(this.value); });
 document.getElementById('removeConfirmInput').addEventListener('input', function() { document.getElementById('removeBtn').disabled = this.value !== _t.deleteVerb; });
+document.getElementById('bulkModeBtn').addEventListener('click', () => toggleBulkMode());
+document.getElementById('selectAllCheckbox').addEventListener('change', function() {
+  document.querySelectorAll('.tx-row:not(.hidden) .tx-checkbox').forEach(cb => cb.checked = this.checked);
+  updateBulkBar();
+});
+document.getElementById('bulkDeleteBtn').addEventListener('click', () => confirmBulkDelete({{ token | tojson }}));
 </script>
 {% endblock %}
