@@ -130,15 +130,38 @@ function showPayModal(dname, cname, pay, currency, payerUuid, receiverUuid, toke
 function confirmBulkDelete(token) {
   const checked = document.querySelectorAll('.tx-checkbox:checked');
   if (!checked.length) return;
-  if (!confirm(_t.confirmDelete.replace('{n}', checked.length))) return;
-  const container = document.getElementById('bulkHiddenInputs');
-  container.innerHTML = '';
-  checked.forEach(cb => {
-    const inp = document.createElement('input');
-    inp.type = 'hidden'; inp.name = 'tx_ids'; inp.value = cb.dataset.id;
-    container.appendChild(inp);
+
+  const existing = document.getElementById('bulkConfirmModal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'bulkConfirmModal';
+  modal.className = 'fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4';
+
+  const inner = document.createElement('div');
+  inner.className = 'bg-white rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4';
+  inner.innerHTML = `
+    <h3 class="font-semibold text-lg text-red-600">🗑 ${h(_t.deleteSelected)}</h3>
+    <p class="text-sm text-gray-600">${_t.confirmDelete.replace('{n}', checked.length)}</p>
+    <div class="flex gap-3 pt-2">
+      <button id="bulkConfirmCancel" class="flex-1 border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">${h(_t.cancel)}</button>
+      <button id="bulkConfirmOk" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium">🗑 ${h(_t.deleteSelected)}</button>
+    </div>`;
+
+  modal.appendChild(inner);
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  inner.querySelector('#bulkConfirmCancel').addEventListener('click', () => modal.remove());
+  inner.querySelector('#bulkConfirmOk').addEventListener('click', () => {
+    const container = document.getElementById('bulkHiddenInputs');
+    container.innerHTML = '';
+    document.querySelectorAll('.tx-checkbox:checked').forEach(cb => {
+      const inp = document.createElement('input');
+      inp.type = 'hidden'; inp.name = 'tx_ids'; inp.value = cb.dataset.id;
+      container.appendChild(inp);
+    });
+    document.getElementById('bulkDeleteForm').submit();
   });
-  document.getElementById('bulkDeleteForm').submit();
+  document.body.appendChild(modal);
 }
 
 function shareTricount() {
