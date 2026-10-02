@@ -15,9 +15,9 @@ jobs:
       - uses: actions/checkout@v4.2.2
 
       - name: Update Docker Hub description
-        uses: peter-evans/dockerhub-description@v4.0.0
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: ${{ github.repository }}
           readme-filepath: ./DOCKER_HUB.md
+          enable-url-completion: true
