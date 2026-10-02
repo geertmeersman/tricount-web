@@ -46,9 +46,9 @@ Register the first account — it automatically becomes **admin**. Subsequent re
 Paste a Tricount sharing link or token on the home page. The sharing token is the last part of a share URL:
 
 ```
-https://tricount.com/r/tABC123xyz
-                        ^^^^^^^^^^
-                        this is the token
+https://tricount.com/tABC123xyz
+                     ^^^^^^^^^^
+                     this is the token
 ```
 
 > ⚠️ A sharing token grants **full read and write access** to the tricount. Treat it like a password.
