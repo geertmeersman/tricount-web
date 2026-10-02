@@ -737,7 +737,7 @@ def profile():
     email_logs = (
         get_db()
         .execute(
-            "SELECT sent_at, status, message FROM email_log WHERE user_id = ? ORDER BY sent_at DESC LIMIT 5",
+            "SELECT sent_at, status, message FROM email_log WHERE user_id = ? ORDER BY sent_at DESC LIMIT 3",
             (current_user.id,),
         )
         .fetchall()
@@ -751,6 +751,22 @@ def profile():
         email_logs=email_logs,
         test_job_pending=test_job_pending,
     )
+
+
+@app.route("/profile/email/log")
+@login_required
+def profile_email_log():
+    from flask import jsonify
+
+    logs = (
+        get_db()
+        .execute(
+            "SELECT sent_at, status, message FROM email_log WHERE user_id = ? ORDER BY sent_at DESC",
+            (current_user.id,),
+        )
+        .fetchall()
+    )
+    return jsonify([dict(r) for r in logs])
 
 
 @app.route("/profile/email", methods=["POST"])
