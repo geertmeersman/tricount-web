@@ -1,5 +1,7 @@
 # Tricount Web
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+
 A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built on top of the unofficial [`tricount-api`](https://github.com/elrandar/tricount-api) Python client.
 
 ## Features
