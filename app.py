@@ -31,7 +31,7 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 logging.basicConfig(level=logging.DEBUG)
 app.logger.setLevel(logging.DEBUG)
 
-limiter = Limiter(get_remote_address, app=app, default_limits=[])
+limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="memory://")
 
 DATA_DIR = Path("data")
 DB_PATH = DATA_DIR / "tricount.db"
