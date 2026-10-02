@@ -123,6 +123,7 @@ const _i18n = {
   members:  {{ _("Members") | tojson }},
   loaded:   {{ _("Ready") | tojson }},
   noTricounts: {{ _("No tricounts yet") | tojson }},
+  noLabel:  {{ _("No label") | tojson }},
 };
 loadTricounts({{ tokens | tojson }}, {{ label_colors | tojson }});
 document.getElementById('refreshBtn').addEventListener('click', () => loadTricounts({{ tokens | tojson }}, {{ label_colors | tojson }}, true));

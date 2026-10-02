@@ -49,10 +49,13 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - ✅ Register payments between members
 - 🧾 Personal summary — see what you owe or are owed at a glance
 - 🔁 Recurring expenses with daily/weekly/monthly/yearly scheduling
+- 📧 Weekly email digest with tricount balances (opt-in per user)
 - 🌍 Multilingual: NL / EN / FR (auto-detected from browser)
 - 📱 Responsive — works on mobile
 - ⚡ Async loading with progress bar (SSE)
-- 🏷️ Custom labels per tricount
+- 🏷️ Custom labels per tricount with color coding, grouped view and filtering
+- 🗑️ Bulk delete transactions
+- 👤 Display name and language preference per user profile
 - 🔒 Security headers (CSP, X-Frame-Options, X-Content-Type-Options)
 - 🐳 Docker + docker-compose ready
 
@@ -115,15 +118,65 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
 
 `SECRET_KEY` is used by Flask to sign session cookies. It must be a long random string and kept private. If it changes, all active sessions are invalidated and users will need to log in again.
+
+### Optional: SMTP for weekly email digest
+
+Set these in `.env` to enable the weekly balance email (sent every Monday at 08:00):
+
+```env
+APP_BASE_URL=https://your-domain.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@email.com
+SMTP_PASSWORD=your-app-password
+SMTP_FROM=your@email.com
+```
+
+Users can opt in from their **Profile** page. If `SMTP_HOST` is not configured, the weekly job is skipped silently.
 There is no `credentials.json` file. Device credentials are generated per user at registration and stored in the database. You can download your own credentials as `tricount_credentials.json` from your **Profile** page — this file is compatible with the [`tricount-api`](https://github.com/elrandar/tricount-api) Python package. If lost, generate new credentials from your profile and re-join your tricounts using their sharing tokens.
 
-## Invite-only registration
+## Profile
+
+Each user can configure from their **Profile** page:
+
+- **Display name** — shown in the navbar and used as greeting in emails (falls back to username)
+- **Language** — persisted per user in the database; used for the UI and email language
+- **Email + weekly digest** — opt-in weekly balance email every Monday at 08:00
+- **Password** — change current password
+- **Device credentials** — download the Tricount device identity as `tricount_credentials.json`
+
+## Labels
+
+Labels can be created with a custom color from the label management page (🏷 icon on the home screen). Tricounts are grouped by label in the overview. A label cannot be deleted while it is still assigned to a tricount.
+
+## Transactions
+
+Transactions can be selected individually or in bulk (select mode toggle in the transaction list header). Selected transactions can be deleted in one action after confirmation.
 
 After the first user (admin) is created, registration is closed by default. Admins can create single-use invite links from the **Admin** panel. Each invite can have a label and is invalidated after use.
 
 ## Recurring expenses
 
-Recurring expenses are processed daily at **06:00 (Europe/Brussels)**. Missed runs are caught up automatically on the next execution. Each run is logged and visible per recurring expense.
+Recurring expenses are processed daily at **06:00**. Missed runs are caught up automatically on the next execution. Each run is logged and visible per recurring expense.
+
+## Weekly email digest
+
+Users can opt in to a weekly email summary from their **Profile** page. The email is sent every **Monday at 08:00** and shows each tricount with the user's personal balance, grouped by label.
+
+The email is sent in the user's preferred language (set via the language switcher or profile). A test send button is available on the profile page — it queues the email in the background immediately.
+
+Configure SMTP in `.env`:
+
+```env
+APP_BASE_URL=https://tricount.mgweb.be
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@email.com
+SMTP_PASSWORD=your-app-password
+SMTP_FROM=your@email.com
+```
+
+If `SMTP_HOST` is not set, the weekly job is skipped silently.
 
 ## Stack
 

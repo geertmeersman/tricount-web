@@ -1,45 +1,4 @@
-function filterLabel(label) {
-  document.querySelectorAll('.tricount-item').forEach(el => {
-    el.classList.toggle('hidden', label !== null && el.dataset.label !== label);
-  });
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.remove('ring-2');
-    btn.style.opacity = '0.5';
-  });
-  const active = label
-    ? document.getElementById('filter-' + label.replace(/ /g, '-'))
-    : document.getElementById('filter-all');
-  if (active) { active.style.opacity = '1'; active.classList.add('ring-2'); }
-}
-
-function updateFilters(labelColors) {
-  const labels = [...new Set(
-    [...document.querySelectorAll('.tricount-item')].map(el => el.dataset.label).filter(Boolean)
-  )];
-  const wrap = document.getElementById('filterWrap');
-  if (!wrap) return;
-  if (labels.length === 0) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = `
-    <button data-filter="" id="filter-all" class="filter-btn text-xs px-3 py-1 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-100" style="opacity:1">Alle</button>
-    ${labels.map(l => {
-      const color = (labelColors && labelColors[l]) || '#3b82f6';
-      return `<button data-filter="${l}" id="filter-${l.replace(/ /g, '-')}" class="filter-btn text-xs px-3 py-1 rounded-full font-medium" style="background:${color}22;color:${color};opacity:0.6">${l}</button>`;
-    }).join('')}
-  `;
-  wrap.addEventListener('click', (e) => {
-    const btn = e.target.closest('.filter-btn');
-    if (btn) filterLabel(btn.dataset.filter || null);
-  });
-  // activeer 'Alle' standaard
-  document.getElementById('filter-all').style.opacity = '1';
-  document.getElementById('filter-all').classList.add('ring-2', 'ring-gray-400');
-}
-
 function renderTricount(item, labelColors) {
-  const color = (labelColors && item.label && labelColors[item.label]) || '#3b82f6';
-  const labelBadge = item.label
-    ? `<span class="ml-1 text-xs font-medium px-2 py-0.5 rounded-full" style="background:${color}22;color:${color}">${item.label}</span>`
-    : '';
   const archived = item.archived ? `<span class="ml-1 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">${_i18n.archived}</span>` : '';
   const div = document.createElement('div');
   div.id = `tc-${item.token}`;
@@ -47,10 +6,66 @@ function renderTricount(item, labelColors) {
   div.dataset.label = item.label || '';
   div.innerHTML = `
     <a href="/tricount/${item.token}" class="flex-1 min-w-0 block">
-      <div class="font-medium truncate">${item.emoji} ${item.title} ${labelBadge} ${archived}</div>
+      <div class="font-medium truncate">${item.emoji} ${item.title} ${archived}</div>
       <div class="text-xs text-gray-400 mt-0.5">${item.currency} · ${item.members} ${_i18n.members}</div>
     </a>`;
   return div;
+}
+
+function renderGrouped(items, labelColors) {
+  const list = document.getElementById('tricountList');
+  list.innerHTML = '';
+
+  // Groepeer per label, ongelabelde tricounts apart
+  const groups = {};
+  const unlabeled = [];
+  items.forEach(item => {
+    if (item.label) {
+      if (!groups[item.label]) groups[item.label] = [];
+      groups[item.label].push(item);
+    } else {
+      unlabeled.push(item);
+    }
+  });
+
+  // Sorteer labels alfabetisch
+  const sortedLabels = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+
+  function appendGroup(label, groupItems, color) {
+    if (label) {
+      const header = document.createElement('div');
+      header.className = 'flex items-center gap-2 mt-6 mb-2 px-1';
+      header.innerHTML = `
+        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${color}"></span>
+        <span class="text-xs font-semibold uppercase tracking-wide" style="color:${color}">${label}</span>
+        <span class="text-xs text-gray-400">(${groupItems.length})</span>`;
+      list.appendChild(header);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'space-y-2';
+    groupItems.sort((a, b) => a.title.localeCompare(b.title));
+    groupItems.forEach(item => wrap.appendChild(renderTricount(item, labelColors)));
+    list.appendChild(wrap);
+  }
+
+  sortedLabels.forEach(label => {
+    const color = (labelColors && labelColors[label]) || '#3b82f6';
+    appendGroup(label, groups[label], color);
+  });
+
+  if (unlabeled.length > 0) {
+    if (sortedLabels.length > 0) {
+      const header = document.createElement('div');
+      header.className = 'flex items-center gap-2 mt-6 mb-2 px-1';
+      header.innerHTML = `<span class="text-xs font-semibold uppercase tracking-wide text-gray-400">${_i18n.noLabel}</span>`;
+      list.appendChild(header);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'space-y-2';
+    unlabeled.sort((a, b) => a.title.localeCompare(b.title));
+    unlabeled.forEach(item => wrap.appendChild(renderTricount(item, labelColors)));
+    list.appendChild(wrap);
+  }
 }
 
 function loadTricounts(tokens, labelColors, force = false) {
@@ -69,9 +84,7 @@ function loadTricounts(tokens, labelColors, force = false) {
     return;
   }
 
-  if (force) {
-    fetch('/refresh');
-  }
+  if (force) fetch('/refresh');
 
   progressWrap.classList.remove('hidden');
   progressBar.style.width = '0%';
@@ -85,19 +98,8 @@ function loadTricounts(tokens, labelColors, force = false) {
     if (data.type === 'done') {
       es.close();
       progressWrap.classList.add('hidden');
-      items.sort((a, b) => (a.label || a.title).localeCompare(b.label || b.title));
-      list.innerHTML = '';
-      items.forEach(item => list.appendChild(renderTricount(item, labelColors)));
-      if (items.length === 0) emptyMsg.classList.remove('hidden');
-
-      let filterWrap = document.getElementById('filterWrap');
-      if (!filterWrap) {
-        filterWrap = document.createElement('div');
-        filterWrap.id = 'filterWrap';
-        filterWrap.className = 'flex flex-wrap gap-2 mb-4';
-        list.parentNode.insertBefore(filterWrap, list);
-      }
-      updateFilters(labelColors);
+      if (items.length === 0) { emptyMsg.classList.remove('hidden'); return; }
+      renderGrouped(items, labelColors);
       return;
     }
 

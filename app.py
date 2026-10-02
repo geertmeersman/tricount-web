@@ -3,11 +3,15 @@ import json
 import logging
 import os
 import secrets
+import smtplib
 import sqlite3
 import time
 from datetime import date, datetime, timedelta
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from functools import wraps
 from pathlib import Path
+from urllib.parse import urlparse
 
 import bcrypt
 import tricount as tc
@@ -44,6 +48,10 @@ babel = Babel()
 
 
 def get_locale():
+    if current_user.is_authenticated:
+        row = get_db().execute("SELECT language FROM users WHERE id = ?", (current_user.id,)).fetchone()
+        if row and row["language"] in SUPPORTED_LANGS:
+            return row["language"]
     lang = request.cookies.get("lang")
     if lang in SUPPORTED_LANGS:
         return lang
@@ -88,6 +96,9 @@ def set_security_headers(response):
 def set_lang(lang):
     if lang not in SUPPORTED_LANGS:
         lang = "nl"
+    if current_user.is_authenticated:
+        get_db().execute("UPDATE users SET language = ? WHERE id = ?", (lang, current_user.id))
+        get_db().commit()
     referrer = request.referrer
     target = referrer if referrer and referrer.startswith(request.host_url) else url_for("index")
     response = redirect(target)
@@ -95,7 +106,17 @@ def set_lang(lang):
     return response
 
 
+def is_safe_redirect(url: str) -> bool:
+    """Return True only for relative paths with no host component."""
+    if not url:
+        return False
+    parsed = urlparse(url)
+    return not parsed.netloc and not parsed.scheme and parsed.path.startswith("/")
+
+
 FREQUENCIES = ["daily", "weekly", "monthly", "yearly"]
+
+
 FREQUENCY_LABELS = {"daily": "Dagelijks", "weekly": "Wekelijks", "monthly": "Maandelijks", "yearly": "Jaarlijks"}
 
 
@@ -202,6 +223,25 @@ def init_db():
             UNIQUE(user_id, name)
         )
     """)
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS email_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            sent_at TEXT NOT NULL,
+            status TEXT NOT NULL,
+            message TEXT
+        )
+    """)
+    db.commit()
+    # email kolommen
+    for col, definition in [
+        ("email", "TEXT"),
+        ("weekly_email", "INTEGER NOT NULL DEFAULT 0"),
+        ("display_name", "TEXT"),
+        ("language", "TEXT"),
+    ]:
+        with contextlib.suppress(sqlite3.OperationalError):
+            db.execute(f"ALTER TABLE users ADD COLUMN {col} {definition}")
     db.commit()
     # migreer bestaande labels uit user_tokens
     existing = db.execute(
@@ -221,16 +261,17 @@ def init_db():
 
 
 class User(UserMixin):
-    def __init__(self, id, username, is_admin):
+    def __init__(self, id, username, is_admin, display_name=None):
         self.id = id
         self.username = username
         self.is_admin = bool(is_admin)
+        self.display_name = display_name or username
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    row = get_db().execute("SELECT id, username, is_admin FROM users WHERE id = ?", (user_id,)).fetchone()
-    return User(row["id"], row["username"], row["is_admin"]) if row else None
+    row = get_db().execute("SELECT id, username, is_admin, display_name FROM users WHERE id = ?", (user_id,)).fetchone()
+    return User(row["id"], row["username"], row["is_admin"], row["display_name"]) if row else None
 
 
 def admin_required(f):
@@ -392,8 +433,197 @@ def process_recurring():
     db.close()
 
 
+def send_weekly_emails(user_id: int | None = None):
+    smtp_host = os.environ.get("SMTP_HOST")
+    smtp_port = int(os.environ.get("SMTP_PORT", 587))
+    smtp_user = os.environ.get("SMTP_USER")
+    smtp_password = os.environ.get("SMTP_PASSWORD")
+    smtp_from = os.environ.get("SMTP_FROM", smtp_user)
+
+    _email_i18n = {
+        "nl": {
+            "subject": "📊 Tricount overzicht — {date}",
+            "title": "📊 Tricount overzicht",
+            "greeting": "Goedemorgen {name}, hier is je wekelijks saldo-overzicht.",
+            "col_tricount": "Tricount",
+            "col_balance": "Mijn saldo",
+            "unsubscribe": "Je ontvangt deze email omdat je wekelijkse updates hebt ingeschakeld.",
+            "unsubscribe_link": "Uitschakelen",
+            "other": "Overige",
+        },
+        "en": {
+            "subject": "📊 Tricount summary — {date}",
+            "title": "📊 Tricount summary",
+            "greeting": "Good morning {name}, here is your weekly balance overview.",
+            "col_tricount": "Tricount",
+            "col_balance": "My balance",
+            "unsubscribe": "You receive this email because you enabled weekly updates.",
+            "unsubscribe_link": "Unsubscribe",
+            "other": "Other",
+        },
+        "fr": {
+            "subject": "📊 Récapitulatif Tricount — {date}",
+            "title": "📊 Récapitulatif Tricount",
+            "greeting": "Bonjour {name}, voici votre récapitulatif hebdomadaire.",
+            "col_tricount": "Tricount",
+            "col_balance": "Mon solde",
+            "unsubscribe": "Vous recevez cet e-mail car vous avez activé les mises à jour hebdomadaires.",
+            "unsubscribe_link": "Se désabonner",
+            "other": "Autres",
+        },
+    }
+    smtp_from = os.environ.get("SMTP_FROM", smtp_user)
+
+    if not all([smtp_host, smtp_user, smtp_password]):
+        logging.warning("Wekelijkse email: SMTP niet geconfigureerd, overgeslagen.")
+        return
+
+    db = sqlite3.connect(DB_PATH)
+    db.row_factory = sqlite3.Row
+    if user_id:
+        users = db.execute(
+            "SELECT id, username, email, display_name, language FROM users WHERE id = ? AND email IS NOT NULL AND email != ''",
+            (user_id,),
+        ).fetchall()
+    else:
+        users = db.execute(
+            "SELECT id, username, email, display_name, language FROM users WHERE weekly_email = 1 AND email IS NOT NULL AND email != ''"
+        ).fetchall()
+
+    for user in users:
+        tokens = db.execute(
+            "SELECT token, label, member_uuid FROM user_tokens WHERE user_id = ?", (user["id"],)
+        ).fetchall()
+        if not tokens:
+            continue
+        try:
+            creds_row = db.execute("SELECT credentials_json FROM users WHERE id = ?", (user["id"],)).fetchone()
+            if not creds_row or not creds_row["credentials_json"]:
+                continue
+            creds = tc.Credentials(**json.loads(creds_row["credentials_json"]))
+            client = tc.TricountAPI(creds)
+            client.authenticate()
+        except Exception as e:
+            logging.error("Wekelijkse email: client fout voor user %s: %s", user["id"], e)
+            continue
+
+        label_colors = {
+            r["name"]: r["color"]
+            for r in db.execute("SELECT name, color FROM labels WHERE user_id = ?", (user["id"],)).fetchall()
+        }
+
+        # Groepeer per label
+        groups = {}
+        unlabeled = []
+        for tok in tokens:
+            try:
+                t = client.join_tricount(tok["token"])
+                balances = client.get_balances(t)
+                my_balance = None
+                if tok["member_uuid"]:
+                    member = t.get_member_by_uuid(tok["member_uuid"])
+                    if member:
+                        my_balance = balances.get(member.display_name)
+                if my_balance is not None:
+                    color = "#16a34a" if my_balance >= 0 else "#dc2626"
+                    sign = "+" if my_balance > 0 else ""
+                    bal_str = f'<span style="color:{color};font-weight:600">{sign}{my_balance:.2f} {t.currency}</span>'
+                else:
+                    bal_str = '<span style="color:#6b7280">—</span>'
+                row_html = f"""
+                <tr>
+                  <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6">
+                    <a href="{os.environ.get("APP_BASE_URL", "http://localhost")}/tricount/{tok["token"]}"
+                       style="color:#2563eb;text-decoration:none;font-weight:500">{t.emoji or ""} {t.title}</a>
+                  </td>
+                  <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;text-align:right">{bal_str}</td>
+                </tr>"""
+                lbl = tok["label"]
+                if lbl:
+                    if lbl not in groups:
+                        groups[lbl] = []
+                    groups[lbl].append(row_html)
+                else:
+                    unlabeled.append(row_html)
+            except Exception as e:
+                logging.error("Wekelijkse email: fout bij tricount %s: %s", tok["token"], e)
+
+        if not groups and not unlabeled:
+            continue
+
+        t18n = _email_i18n.get(user["language"] or "nl", _email_i18n["nl"])
+        name = user["display_name"] or user["username"]
+        base_url = os.environ.get("APP_BASE_URL", "http://localhost")
+
+        def section(label, rows, color="#3b82f6"):
+            header = f"""
+                <tr>
+                  <td colspan="2" style="padding:10px 12px 4px;background:#f9fafb">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{color};margin-right:6px"></span>
+                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:{color}">{label}</span>
+                  </td>
+                </tr>"""
+            return header + "".join(rows)
+
+        body_html = ""
+        for lbl in sorted(groups.keys()):
+            color = label_colors.get(lbl, "#3b82f6")
+            body_html += section(lbl, groups[lbl], color)
+        if unlabeled:
+            if groups:
+                body_html += section(t18n["other"], unlabeled, "#9ca3af")
+            else:
+                body_html += "".join(unlabeled)
+
+        html = f"""
+        <html><body style="font-family:sans-serif;max-width:480px;margin:0 auto;color:#111">
+          <h2 style="color:#2563eb">{t18n["title"]}</h2>
+          <p style="color:#6b7280">{t18n["greeting"].format(name=name)}</p>
+          <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)">
+            <thead>
+              <tr style="background:#f9fafb">
+                <th style="padding:8px 12px;text-align:left;font-size:12px;color:#6b7280;text-transform:uppercase">{t18n["col_tricount"]}</th>
+                <th style="padding:8px 12px;text-align:right;font-size:12px;color:#6b7280;text-transform:uppercase">{t18n["col_balance"]}</th>
+              </tr>
+            </thead>
+            <tbody>{body_html}</tbody>
+          </table>
+          <p style="margin-top:16px;font-size:12px;color:#9ca3af">
+            {t18n["unsubscribe"]}
+            <a href="{base_url}/profile" style="color:#2563eb">{t18n["unsubscribe_link"]}</a>
+          </p>
+        </body></html>"""
+
+        try:
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = t18n["subject"].format(date=date.today().strftime("%d/%m/%Y"))
+            msg["From"] = smtp_from
+            msg["To"] = user["email"]
+            msg.attach(MIMEText(html, "html"))
+            with smtplib.SMTP(smtp_host, smtp_port) as server:
+                server.starttls()
+                server.login(smtp_user, smtp_password)
+                server.sendmail(smtp_from, user["email"], msg.as_string())
+            logging.info("Wekelijkse email verstuurd naar %s", user["email"])
+            db.execute(
+                "INSERT INTO email_log (user_id, sent_at, status, message) VALUES (?, ?, ?, ?)",
+                (user["id"], datetime.now().isoformat(timespec="seconds"), "ok", "Verstuurd naar " + user["email"]),
+            )
+            db.commit()
+        except Exception as e:
+            logging.error("Wekelijkse email: versturen mislukt voor %s: %s", user["email"], e)
+            db.execute(
+                "INSERT INTO email_log (user_id, sent_at, status, message) VALUES (?, ?, ?, ?)",
+                (user["id"], datetime.now().isoformat(timespec="seconds"), "error", str(e)),
+            )
+            db.commit()
+
+    db.close()
+
+
 scheduler = BackgroundScheduler()
 scheduler.add_job(process_recurring, "cron", hour=6, minute=0)
+scheduler.add_job(send_weekly_emails, "cron", day_of_week="mon", hour=8, minute=0)
 scheduler.start()
 
 
@@ -430,10 +660,13 @@ def login():
         password = request.form["password"].encode()
         row = get_db().execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
         if row and bcrypt.checkpw(password, row["password_hash"].encode()):
-            login_user(User(row["id"], row["username"], row["is_admin"]))
+            login_user(User(row["id"], row["username"], row["is_admin"], row["display_name"]))
+            next_url = request.args.get("next") or request.form.get("next", "")
+            if is_safe_redirect(next_url):
+                return redirect(next_url)
             return redirect(url_for("index"))
         flash(_("Invalid credentials"), "danger")
-    return render_template("login.html")
+    return render_template("login.html", next=request.args.get("next", ""))
 
 
 @app.route("/logout")
@@ -496,7 +729,69 @@ def _do_register(db, user_count, invite_token):
 @app.route("/profile")
 @login_required
 def profile():
-    return render_template("profile.html")
+    row = (
+        get_db()
+        .execute("SELECT email, weekly_email, display_name FROM users WHERE id = ?", (current_user.id,))
+        .fetchone()
+    )
+    email_logs = (
+        get_db()
+        .execute(
+            "SELECT sent_at, status, message FROM email_log WHERE user_id = ? ORDER BY sent_at DESC LIMIT 5",
+            (current_user.id,),
+        )
+        .fetchall()
+    )
+    test_job_pending = scheduler.get_job(f"test_email_{current_user.id}") is not None
+    return render_template(
+        "profile.html",
+        email=row["email"] or "",
+        weekly_email=bool(row["weekly_email"]),
+        display_name=row["display_name"] or "",
+        email_logs=email_logs,
+        test_job_pending=test_job_pending,
+    )
+
+
+@app.route("/profile/email", methods=["POST"])
+@login_required
+def profile_email():
+    email = request.form.get("email", "").strip()
+    weekly_email = 1 if request.form.get("weekly_email") else 0
+    get_db().execute(
+        "UPDATE users SET email = ?, weekly_email = ? WHERE id = ?",
+        (email or None, weekly_email, current_user.id),
+    )
+    get_db().commit()
+    flash(_("Email settings saved"), "success")
+    return redirect(url_for("profile"))
+
+
+@app.route("/profile/display_name", methods=["POST"])
+@login_required
+def profile_display_name():
+    display_name = request.form.get("display_name", "").strip() or None
+    get_db().execute("UPDATE users SET display_name = ? WHERE id = ?", (display_name, current_user.id))
+    get_db().commit()
+    flash(_("Profile saved"), "success")
+    return redirect(url_for("profile"))
+
+
+@app.route("/profile/email/test", methods=["POST"])
+@login_required
+@limiter.limit("3 per minute")
+def profile_email_test():
+    row = get_db().execute("SELECT email FROM users WHERE id = ?", (current_user.id,)).fetchone()
+    if not row or not row["email"]:
+        flash(_("No email address set"), "warning")
+        return redirect(url_for("profile"))
+    uid = current_user.id
+    if scheduler.get_job(f"test_email_{uid}") is not None:
+        flash(_("Test email queued"), "info")
+        return redirect(url_for("profile"))
+    scheduler.add_job(send_weekly_emails, kwargs={"user_id": uid}, id=f"test_email_{uid}", replace_existing=False)
+    flash(_("Test email queued"), "success")
+    return redirect(url_for("profile"))
 
 
 @app.route("/profile/delete", methods=["POST"])
