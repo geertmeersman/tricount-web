@@ -1,7 +1,7 @@
 services:
   tricount:
     image: geertmeersman/tricount-web:latest
-    container_name: tricount
+    container_name: tricount-web
     environment:
       - SECRET_KEY=${SECRET_KEY}
     labels:
@@ -9,11 +9,11 @@ services:
       landing.name: "tricount"
       landing.description: "Tricount expense tracker"
     volumes:
-      - /docker/volumes/tricount/data:/app/data
+      - ./data:/app/data
     restart: unless-stopped
     networks:
-      - websites
+      - proxy
 
 networks:
-  websites:
+  proxy:
     external: true
