@@ -5,10 +5,30 @@
 <h1 align="center">Tricount Web</h1>
 
 <p align="center">
+  <a href="https://github.com/geertmeersman"><img src="https://img.shields.io/badge/maintainer-Geert%20Meersman-green?style=for-the-badge&logo=github"></a>
+  <a href="https://www.buymeacoffee.com/geertmeersman"><img src="https://img.shields.io/badge/Buy%20me%20an%20Omer-donate-yellow?style=for-the-badge&logo=buymeacoffee"></a>
+</p>
+
+<p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg"></a>
-  <a href="https://discord.gg/VT3JXzZdvx"><img src="https://img.shields.io/discord/1234567890?logo=discord&label=discord"></a>
+  <a href="https://discord.gg/VT3JXzZdvx"><img src="https://img.shields.io/discord/1555506302854234182?logo=discord&label=discord"></a>
   <img src="https://img.shields.io/docker/pulls/geertmeersman/tricount-web">
   <img src="https://img.shields.io/docker/v/geertmeersman/tricount-web?label=docker%20image%20version">
+</p>
+
+<p align="center">
+  <a href="https://github.com/geertmeersman/tricount-web/issues"><img src="https://img.shields.io/github/issues/geertmeersman/tricount-web"></a>
+  <a href="http://isitmaintained.com/project/geertmeersman/tricount-web"><img src="http://isitmaintained.com/badge/resolution/geertmeersman/tricount-web.svg"></a>
+  <a href="http://isitmaintained.com/project/geertmeersman/tricount-web"><img src="http://isitmaintained.com/badge/open/geertmeersman/tricount-web.svg"></a>
+  <a href="https://github.com/geertmeersman/tricount-web/pulls"><img src="https://img.shields.io/badge/PRs-Welcome-brightgreen.svg"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/geertmeersman/tricount-web/releases"><img src="https://img.shields.io/github/v/release/geertmeersman/tricount-web?logo=github"></a>
+  <a href="https://github.com/geertmeersman/tricount-web/releases"><img src="https://img.shields.io/github/release-date/geertmeersman/tricount-web"></a>
+  <a href="https://github.com/geertmeersman/tricount-web/commits"><img src="https://img.shields.io/github/last-commit/geertmeersman/tricount-web"></a>
+  <a href="https://github.com/geertmeersman/tricount-web/graphs/contributors"><img src="https://img.shields.io/github/contributors/geertmeersman/tricount-web"></a>
+  <a href="https://github.com/geertmeersman/tricount-web/commits/main"><img src="https://img.shields.io/github/commit-activity/y/geertmeersman/tricount-web?logo=github"></a>
 </p>
 
 A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built on top of the unofficial [`tricount-api`](https://github.com/elrandar/tricount-api) Python client.
