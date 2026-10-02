@@ -79,16 +79,6 @@ After the first user (admin) is created, registration is closed by default. Admi
 
 Recurring expenses are processed daily at **06:00 (Europe/Brussels)**. Missed runs are caught up automatically on the next execution. Each run is logged and visible per recurring expense.
 
-## Translations
-
-Translations live in `translations/<lang>/LC_MESSAGES/messages.po`. After editing, recompile:
-
-```bash
-pybabel compile -d translations
-```
-
-The Dockerfile compiles translations automatically on build.
-
 ## Stack
 
 - [Flask](https://flask.palletsprojects.com/) + [Flask-Login](https://flask-login.readthedocs.io/) + [Flask-Babel](https://python-babel.github.io/flask-babel/) + [Flask-Limiter](https://flask-limiter.readthedocs.io/)
