@@ -76,8 +76,7 @@
 <div id="modals"></div>
 
 <!-- Edit modal -->
-<div id="editModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-     id="editModalBackdrop">
+<div id="editModalBackdrop" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
   <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
     <h3 class="font-semibold text-lg">⚙️ {{ _("Edit tricount") }}</h3>
 
@@ -137,8 +136,8 @@ const _t = {
   youAreOwed:     {{ _("You are owed") | tojson }},
 };
 loadTricountDetail({{ token | tojson }});
-document.getElementById('openEditModalBtn').addEventListener('click', () => document.getElementById('editModal').classList.remove('hidden'));
-document.getElementById('closeEditModalBtn').addEventListener('click', () => document.getElementById('editModal').classList.add('hidden'));
+document.getElementById('openEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.remove('hidden'));
+document.getElementById('closeEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.add('hidden'));
 document.getElementById('editModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 document.getElementById('shareBtn').addEventListener('click', () => shareTricount());
 document.getElementById('txSearch').addEventListener('input', function() { filterTransactions(this.value); });
