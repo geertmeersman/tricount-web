@@ -2,17 +2,31 @@
 
 ## Dev setup
 
-```bash
-git clone <repo>
-cd tricount
+1. Fork the repository and clone your fork:
 
+```bash
+git clone <your-fork>
+cd tricount
+```
+
+2. Create a branch for your change:
+
+```bash
+git checkout -b feat/my-feature
+# or
+git checkout -b fix/my-bugfix
+```
+
+3. Install dependencies and pre-commit hooks:
+
+```bash
 pip install -r requirements.txt
 pip install pre-commit
 pre-commit install
 pre-commit install --hook-type commit-msg
 ```
 
-Create a `data/` directory — the app will initialise the SQLite database there on first run:
+4. Create a `data/` directory and start the dev server:
 
 ```bash
 mkdir data
@@ -20,6 +34,8 @@ flask --app app.py run --debug
 ```
 
 Open [http://localhost:5000](http://localhost:5000) and register the first account (becomes admin automatically).
+
+5. Make your changes, then open a pull request against `main`. The PR title must follow [Conventional Commits](#commit-messages).
 
 ## Running tests
 
