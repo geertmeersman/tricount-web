@@ -1,5 +1,5 @@
 services:
-  tricount:
+  tricount-web:
     image: geertmeersman/tricount-web:latest
     container_name: tricount-web
     environment:
@@ -8,12 +8,8 @@ services:
       landing.icon: "money"
       landing.name: "tricount"
       landing.description: "Tricount expense tracker"
+    restart: unless-stopped
     volumes:
       - ./data:/app/data
-    restart: unless-stopped
-    networks:
-      - proxy
-
-networks:
-  proxy:
-    external: true
+    ports:
+      - "5000:5000"
