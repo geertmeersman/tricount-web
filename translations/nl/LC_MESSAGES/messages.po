@@ -446,3 +446,24 @@ msgstr "De Tricount-connectiviteit werkt via <a href=\"https://github.com/elrand
 
 msgid "Admin cannot delete own account"
 msgstr "Als admin kan je je eigen account niet verwijderen. Een andere admin kan dit voor jou doen."
+
+msgid "Select transactions"
+msgstr "Transacties selecteren"
+
+msgid "Select all visible"
+msgstr "Alle zichtbare selecteren"
+
+msgid "selected"
+msgstr "geselecteerd"
+
+msgid "Delete selected"
+msgstr "Geselecteerde verwijderen"
+
+msgid "Confirm delete selected"
+msgstr "{n} transactie(s) definitief verwijderen?"
+
+msgid "No transactions selected"
+msgstr "Geen transacties geselecteerd"
+
+msgid "Transactions deleted"
+msgstr "{count} transactie(s) verwijderd"

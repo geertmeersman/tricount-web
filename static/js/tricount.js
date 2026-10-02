@@ -5,32 +5,35 @@ function h(str) {
 let _allTransactions = [];
 let _tricountData = null;
 let _token = null;
+let _bulkMode = false;
 
-function renderTxRow(tx, token, data) {
+function renderTxRow(tx) {
   return `
-    <div class="tx-row px-4 py-3 flex justify-between items-start cursor-pointer hover:bg-gray-50"
-         data-desc="${h(tx.description.toLowerCase())}" data-payer="${h(tx.payer.toLowerCase())}" data-amount="${tx.amount}"
-         onclick="document.getElementById('modal-${tx.id}').classList.remove('hidden')">
-      <div class="min-w-0">
-        <div class="text-sm font-medium truncate">${h(tx.description)}</div>
-        <div class="text-xs text-gray-400">${h(tx.payer)}${tx.payer_is_me ? ` <span class="text-blue-500">(${h(_t.you)})</span>` : ''} · ${h(tx.date)}</div>
+    <div class="tx-row px-4 py-3 flex items-start gap-3 hover:bg-gray-50"
+         data-id="${tx.id}" data-desc="${h(tx.description.toLowerCase())}" data-payer="${h(tx.payer.toLowerCase())}" data-amount="${tx.amount}">
+      <label class="bulk-check flex items-center shrink-0 hidden mt-0.5 cursor-pointer">
+        <input type="checkbox" class="tx-checkbox w-4 h-4 accent-blue-600" data-id="${tx.id}">
+      </label>
+      <div class="tx-row-inner flex flex-1 justify-between items-start cursor-pointer min-w-0">
+        <div class="min-w-0">
+          <div class="text-sm font-medium truncate">${h(tx.description)}</div>
+          <div class="text-xs text-gray-400">${h(tx.payer)}${tx.payer_is_me ? ` <span class="text-blue-500">(${h(_t.you)})</span>` : ''} · ${h(tx.date)}</div>
+        </div>
+        <div class="text-sm font-semibold ml-4 shrink-0">${tx.amount.toFixed(2)} ${h(tx.currency)}</div>
       </div>
-      <div class="text-sm font-semibold ml-4 shrink-0">${tx.amount.toFixed(2)} ${h(tx.currency)}</div>
     </div>`;
 }
 
 function renderTxModal(tx, token, data) {
   return `
-    <div id="modal-${tx.id}" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-         onclick="this.classList.add('hidden')">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5" onclick="event.stopPropagation()">
+    <div id="modal-${tx.id}" class="tx-modal hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4" data-modal-id="${tx.id}">
+      <div class="tx-modal-inner bg-white rounded-xl shadow-xl w-full max-w-sm p-5">
         <div class="flex justify-between items-start mb-3">
           <div>
             <div class="font-semibold">${h(tx.description)}</div>
             <div class="text-xs text-gray-400">${h(tx.date)} · ${h(_t.paidBy)} ${h(tx.payer)}</div>
           </div>
-          <button onclick="document.getElementById('modal-${tx.id}').classList.add('hidden')"
-            class="text-gray-400 hover:text-gray-600 text-xl leading-none ml-3">✕</button>
+          <button class="tx-modal-close text-gray-400 hover:text-gray-600 text-xl leading-none ml-3" data-modal-id="${tx.id}">✕</button>
         </div>
         <div class="text-lg font-bold mb-3">${tx.amount.toFixed(2)} ${h(tx.currency)}</div>
         <div class="space-y-1">
@@ -47,6 +50,32 @@ function renderTxModal(tx, token, data) {
     </div>`;
 }
 
+function updateBulkBar() {
+  const checked = document.querySelectorAll('.tx-checkbox:checked');
+  const bar = document.getElementById('bulkBar');
+  const countEl = document.getElementById('bulkCount');
+  if (countEl) countEl.textContent = checked.length;
+  if (bar) bar.classList.toggle('hidden', checked.length === 0);
+  const selectAll = document.getElementById('selectAllCheckbox');
+  if (selectAll) {
+    const visible = document.querySelectorAll('.tx-row:not(.hidden) .tx-checkbox');
+    selectAll.indeterminate = checked.length > 0 && checked.length < visible.length;
+    selectAll.checked = visible.length > 0 && checked.length === visible.length;
+  }
+}
+
+function toggleBulkMode() {
+  _bulkMode = !_bulkMode;
+  document.querySelectorAll('.bulk-check').forEach(el => el.classList.toggle('hidden', !_bulkMode));
+  document.getElementById('bulkModeBtn').classList.toggle('text-blue-600', _bulkMode);
+  document.getElementById('bulkModeBtn').classList.toggle('bg-blue-50', _bulkMode);
+  document.getElementById('txSelectAllRow').classList.toggle('hidden', !_bulkMode);
+  if (!_bulkMode) {
+    document.querySelectorAll('.tx-checkbox').forEach(cb => cb.checked = false);
+    updateBulkBar();
+  }
+}
+
 function filterTransactions(query) {
   const q = query.toLowerCase().trim();
   const rows = document.querySelectorAll('.tx-row');
@@ -61,6 +90,7 @@ function filterTransactions(query) {
   if (noResults) noResults.classList.toggle('hidden', visible > 0 || rows.length === 0);
   const totalEl = document.getElementById('txTotal');
   if (totalEl) totalEl.textContent = total.toFixed(2);
+  updateBulkBar();
 }
 
 function showPayModal(dname, cname, pay, currency, payerUuid, receiverUuid, token) {
@@ -70,28 +100,45 @@ function showPayModal(dname, cname, pay, currency, payerUuid, receiverUuid, toke
   const modal = document.createElement('div');
   modal.id = 'payModal';
   modal.className = 'fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4';
-  modal.innerHTML = `
-    <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6" onclick="event.stopPropagation()">
-      <h3 class="font-semibold text-lg mb-1">${h(_t.confirmPayment)}</h3>
-      <p class="text-sm text-gray-500 mb-4">
-        <span class="font-medium text-red-500">${h(dname)}</span>
-        ${h(_t.pays)}
-        <span class="font-medium text-green-600">${h(cname)}</span>
-      </p>
-      <div class="text-3xl font-bold text-center mb-6">${pay} ${h(currency)}</div>
-      <div class="flex gap-3">
-        <button onclick="document.getElementById('payModal').remove()"
-          class="flex-1 border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">${h(_t.cancel)}</button>
-        <form method="POST" action="/tricount/${h(token)}/reimburse" class="flex-1">
-          <input type="hidden" name="payer_uuid" value="${h(payerUuid)}">
-          <input type="hidden" name="receiver_uuid" value="${h(receiverUuid)}">
-          <input type="hidden" name="amount" value="${pay}">
-          <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">${h(_t.confirm)}</button>
-        </form>
-      </div>
+
+  const inner = document.createElement('div');
+  inner.className = 'bg-white rounded-xl shadow-xl w-full max-w-sm p-6';
+  inner.innerHTML = `
+    <h3 class="font-semibold text-lg mb-1">${h(_t.confirmPayment)}</h3>
+    <p class="text-sm text-gray-500 mb-4">
+      <span class="font-medium text-red-500">${h(dname)}</span>
+      ${h(_t.pays)}
+      <span class="font-medium text-green-600">${h(cname)}</span>
+    </p>
+    <div class="text-3xl font-bold text-center mb-6">${pay} ${h(currency)}</div>
+    <div class="flex gap-3">
+      <button id="payModalCancel" class="flex-1 border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">${h(_t.cancel)}</button>
+      <form method="POST" action="/tricount/${h(token)}/reimburse" class="flex-1">
+        <input type="hidden" name="payer_uuid" value="${h(payerUuid)}">
+        <input type="hidden" name="receiver_uuid" value="${h(receiverUuid)}">
+        <input type="hidden" name="amount" value="${pay}">
+        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">${h(_t.confirm)}</button>
+      </form>
     </div>`;
-  modal.addEventListener('click', () => modal.remove());
+
+  modal.appendChild(inner);
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  inner.querySelector('#payModalCancel').addEventListener('click', () => modal.remove());
   document.body.appendChild(modal);
+}
+
+function confirmBulkDelete(token) {
+  const checked = document.querySelectorAll('.tx-checkbox:checked');
+  if (!checked.length) return;
+  if (!confirm(_t.confirmDelete.replace('{n}', checked.length))) return;
+  const container = document.getElementById('bulkHiddenInputs');
+  container.innerHTML = '';
+  checked.forEach(cb => {
+    const inp = document.createElement('input');
+    inp.type = 'hidden'; inp.name = 'tx_ids'; inp.value = cb.dataset.id;
+    container.appendChild(inp);
+  });
+  document.getElementById('bulkDeleteForm').submit();
 }
 
 function shareTricount() {
@@ -102,15 +149,58 @@ function shareTricount() {
 document.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
     const search = document.getElementById('txSearch');
-    if (search) {
-      e.preventDefault();
-      search.focus();
-      search.select();
+    if (search) { e.preventDefault(); search.focus(); search.select(); }
+  }
+});
+
+// Event delegation for tx rows, modals, pay buttons and checkboxes
+document.addEventListener('click', (e) => {
+  // tx row inner click → open modal or toggle checkbox
+  const rowInner = e.target.closest('.tx-row-inner');
+  if (rowInner) {
+    const row = rowInner.closest('.tx-row');
+    if (_bulkMode) {
+      const cb = row.querySelector('.tx-checkbox');
+      cb.checked = !cb.checked;
+      updateBulkBar();
+    } else {
+      const id = row.dataset.id;
+      document.getElementById('modal-' + id)?.classList.remove('hidden');
     }
+    return;
+  }
+
+  // tx-checkbox change via click
+  if (e.target.classList.contains('tx-checkbox')) {
+    updateBulkBar();
+    return;
+  }
+
+  // close modal via backdrop
+  if (e.target.classList.contains('tx-modal')) {
+    e.target.classList.add('hidden');
+    return;
+  }
+
+  // close modal via ✕ button
+  const closeBtn = e.target.closest('.tx-modal-close');
+  if (closeBtn) {
+    document.getElementById('modal-' + closeBtn.dataset.modalId)?.classList.add('hidden');
+    return;
+  }
+
+  // pay button (data-pay-* attributes set during render)
+  const payBtn = e.target.closest('.pay-btn');
+  if (payBtn) {
+    const d = payBtn.dataset;
+    showPayModal(d.dname, d.cname, d.pay, d.currency, d.payerUuid, d.receiverUuid, d.token);
+    return;
   }
 });
 
 function renderTricount(data, token) {
+  _token = token;
+  _tricountData = data;
   document.getElementById('pageTitle').textContent = (data.emoji ? data.emoji + ' ' : '') + data.title;
 
   // Leden
@@ -120,7 +210,7 @@ function renderTricount(data, token) {
       return `<span class="text-xs px-2 py-1 rounded-full ${isMe ? 'bg-blue-600 text-white font-medium' : 'bg-gray-200 text-gray-700'}">${h(m.name)}${isMe ? ` <span class="opacity-75">(${h(_t.you)})</span>` : ''}</span>`;
     }).join('');
 
-  // Bereken settlements eenmalig
+  // Bereken settlements
   const debtors = Object.entries(data.balances).filter(([, b]) => b < -0.01).map(([n, b]) => [n, Math.abs(b)]).sort((a, b) => b[1] - a[1]);
   const creditors = Object.entries(data.balances).filter(([, b]) => b > 0.01).map(([n, b]) => [n, b]).sort((a, b) => b[1] - a[1]);
   const settlements = [];
@@ -131,11 +221,18 @@ function renderTricount(data, token) {
     while (i < d.length && j < c.length) {
       const pay = Math.min(d[i][1], c[j][1]);
       if (pay > 0.01) settlements.push([d[i][0], c[j][0], pay]);
-      d[i][1] -= pay;
-      c[j][1] -= pay;
+      d[i][1] -= pay; c[j][1] -= pay;
       if (d[i][1] < 0.01) i++;
       if (c[j][1] < 0.01) j++;
     }
+  }
+
+  function payBtnHtml(dname, cname, pay, debtor, creditor) {
+    if (!debtor || !creditor) return '';
+    return `<button class="pay-btn text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg shrink-0"
+      data-dname="${h(dname)}" data-cname="${h(cname)}" data-pay="${pay.toFixed(2)}"
+      data-currency="${h(data.currency)}" data-payer-uuid="${h(debtor.uuid)}"
+      data-receiver-uuid="${h(creditor.uuid)}" data-token="${h(token)}">${h(_t.paid)}</button>`;
   }
 
   // Persoonlijke samenvatting
@@ -157,9 +254,7 @@ function renderTricount(data, token) {
             <span class="text-sm font-medium ${iDebtor ? 'text-red-700' : 'text-green-700'}">
               ${iDebtor ? _t.youOwe : _t.youAreOwed} <span class="font-bold">${h(other)}</span>: ${pay.toFixed(2)} ${h(data.currency)}
             </span>
-            ${!data.archived && iDebtor && debtor && creditor ? `
-            <button onclick="showPayModal('${h(dname)}','${h(cname)}','${pay.toFixed(2)}','${h(data.currency)}','${h(debtor.uuid)}','${h(creditor.uuid)}','${h(token)}')"
-              class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg shrink-0">${h(_t.paid)}</button>` : ''}
+            ${!data.archived && iDebtor ? payBtnHtml(dname, cname, pay, debtor, creditor) : ''}
           </div>`;
         }).join('');
     }
@@ -181,9 +276,7 @@ function renderTricount(data, token) {
             <span class="font-medium text-green-600">${h(cname)}</span>
             <span class="font-semibold"> ${pay.toFixed(2)} ${h(data.currency)}</span>
           </span>
-          ${!data.archived && debtor && creditor ? `
-          <button onclick="showPayModal('${h(dname)}','${h(cname)}','${pay.toFixed(2)}','${h(data.currency)}','${h(debtor.uuid)}','${h(creditor.uuid)}','${h(token)}')"
-            class="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg shrink-0">${h(_t.paid)}</button>` : ''}
+          ${!data.archived ? payBtnHtml(dname, cname, pay, debtor, creditor) : ''}
         </div>`;
     });
   }
@@ -207,7 +300,7 @@ function renderTricount(data, token) {
     txHtml = `<p class="px-4 py-3 text-sm text-gray-400">${h(_t.noTransactions)}</p>`;
   } else {
     data.transactions.forEach(tx => {
-      txHtml += renderTxRow(tx, token, data);
+      txHtml += renderTxRow(tx);
       modalsHtml += renderTxModal(tx, token, data);
     });
   }
@@ -215,7 +308,6 @@ function renderTricount(data, token) {
     `<p id="txNoResults" class="hidden px-4 py-3 text-sm text-gray-400">${h(_t.noResults)}</p>`;
   document.getElementById('modals').innerHTML = modalsHtml;
 
-  // Totaal
   const total = data.transactions.reduce((sum, tx) => sum + tx.amount, 0);
   document.getElementById('txTotal').textContent = total.toFixed(2);
   document.getElementById('txCurrency').textContent = data.currency;

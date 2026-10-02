@@ -446,3 +446,24 @@ msgstr "Tricount connectivity is powered by <a href=\"https://github.com/elranda
 
 msgid "Admin cannot delete own account"
 msgstr "As an admin, you cannot delete your own account. Another admin can do this for you."
+
+msgid "Select transactions"
+msgstr "Select transactions"
+
+msgid "Select all visible"
+msgstr "Select all visible"
+
+msgid "selected"
+msgstr "selected"
+
+msgid "Delete selected"
+msgstr "Delete selected"
+
+msgid "Confirm delete selected"
+msgstr "Permanently delete {n} transaction(s)?"
+
+msgid "No transactions selected"
+msgstr "No transactions selected"
+
+msgid "Transactions deleted"
+msgstr "{count} transaction(s) deleted"

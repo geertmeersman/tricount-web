@@ -946,6 +946,33 @@ def edit_transaction(token, tx_id):
     return render_template("edit_transaction.html", t=t, token=token, tx=tx, current_split_uuids=current_split_uuids)
 
 
+@app.route("/tricount/<token>/bulk_delete", methods=["POST"])
+@login_required
+def bulk_delete_transactions(token):
+    ids = request.form.getlist("tx_ids")
+    if not ids:
+        flash(_("No transactions selected"), "warning")
+        return redirect(url_for("tricount_detail", token=token))
+    try:
+        client = get_client()
+        t = get_tricount_cached(client, token, current_user.id)
+        deleted = 0
+        for tx_id in ids:
+            try:
+                tx = next((x for x in t.transactions if x.id == int(tx_id)), None)
+                if tx:
+                    client.delete_transaction(t, tx)
+                    deleted += 1
+            except Exception as e:
+                app.logger.error("Error deleting transaction %s: %s", tx_id, e)
+        cache_invalidate(token)
+        flash(_("Transactions deleted", count=deleted), "success")
+    except Exception as e:
+        app.logger.error("bulk_delete error: %s", e)
+        flash(_("Connection error"), "danger")
+    return redirect(url_for("tricount_detail", token=token))
+
+
 @app.route("/tricount/<token>/settle", methods=["POST"])
 @login_required
 def settle(token):

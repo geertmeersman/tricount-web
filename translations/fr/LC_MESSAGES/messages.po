@@ -446,3 +446,24 @@ msgstr "La connectivité Tricount est assurée par <a href=\"https://github.com/
 
 msgid "Admin cannot delete own account"
 msgstr "En tant qu'administrateur, vous ne pouvez pas supprimer votre propre compte. Un autre administrateur peut le faire pour vous."
+
+msgid "Select transactions"
+msgstr "Sélectionner des transactions"
+
+msgid "Select all visible"
+msgstr "Sélectionner tout ce qui est visible"
+
+msgid "selected"
+msgstr "sélectionné(s)"
+
+msgid "Delete selected"
+msgstr "Supprimer la sélection"
+
+msgid "Confirm delete selected"
+msgstr "Supprimer définitivement {n} transaction(s) ?"
+
+msgid "No transactions selected"
+msgstr "Aucune transaction sélectionnée"
+
+msgid "Transactions deleted"
+msgstr "{count} transaction(s) supprimée(s)"
