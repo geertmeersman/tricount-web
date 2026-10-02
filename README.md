@@ -17,6 +17,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/geertmeersman/tricount-web/actions/workflows/ci.yml"><img src="https://github.com/geertmeersman/tricount-web/actions/workflows/ci.yml/badge.svg" alt="CI 🔬"></a>
+  <a href="https://github.com/geertmeersman/tricount-web/actions/workflows/release.yml"><img src="https://github.com/geertmeersman/tricount-web/actions/workflows/release.yml/badge.svg" alt="Release 🚀"></a>
+  <a href="https://github.com/geertmeersman/tricount-web/actions/workflows/unreleased.yml"><img src="https://github.com/geertmeersman/tricount-web/actions/workflows/unreleased.yml/badge.svg" alt="Unreleased changes 🔍"></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/geertmeersman/tricount-web/issues"><img src="https://img.shields.io/github/issues/geertmeersman/tricount-web"></a>
   <a href="http://isitmaintained.com/project/geertmeersman/tricount-web"><img src="http://isitmaintained.com/badge/resolution/geertmeersman/tricount-web.svg"></a>
   <a href="http://isitmaintained.com/project/geertmeersman/tricount-web"><img src="http://isitmaintained.com/badge/open/geertmeersman/tricount-web.svg"></a>
