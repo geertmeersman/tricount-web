@@ -107,6 +107,8 @@ cp .env.example .env
 # edit .env and set SECRET_KEY to a random value, e.g.:
 python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
+
+`SECRET_KEY` is used by Flask to sign session cookies. It must be a long random string and kept private. If it changes, all active sessions are invalidated and users will need to log in again.
 There is no `credentials.json` file. Device credentials are generated per user at registration and stored in the database. You can download your own credentials as `tricount_credentials.json` from your **Profile** page — this file is compatible with the [`tricount-api`](https://github.com/elrandar/tricount-api) Python package. If lost, generate new credentials from your profile and re-join your tricounts using their sharing tokens.
 
 ## Invite-only registration

@@ -35,6 +35,8 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 mkdir data
 ```
 
+`SECRET_KEY` is used by Flask to sign session cookies. Change it will log out all active users.
+
 5. Start the dev server:
 
 ```bash
