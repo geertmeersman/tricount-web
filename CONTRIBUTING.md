@@ -72,6 +72,7 @@ refactor: code change that is neither a fix nor a feature
 test:     adding or updating tests
 chore:    build process, dependencies
 ci:       CI/CD changes
+build:    dependency updates (used by Dependabot)
 ```
 
 Examples:
