@@ -33,6 +33,8 @@ Create a `.env` file with a secret key:
 echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" > .env
 ```
 
+`SECRET_KEY` is used by Flask to sign session cookies — keep it private and don't reuse it across deployments.
+
 ```yaml
 services:
   tricount-web:
