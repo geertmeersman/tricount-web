@@ -494,3 +494,48 @@ msgstr "Label already exists"
 
 msgid "Label in use"
 msgstr "Label is still in use"
+
+msgid "Email settings"
+msgstr "Email settings"
+
+msgid "Your email address"
+msgstr "Your email address"
+
+msgid "Weekly email"
+msgstr "Weekly email digest"
+
+msgid "Weekly email hint"
+msgstr "Receive a summary of your tricounts and balances every Monday morning."
+
+msgid "Email settings saved"
+msgstr "Email settings saved"
+
+msgid "Send test email"
+msgstr "Send test email"
+
+msgid "Test email sent"
+msgstr "Test email sent"
+
+msgid "No email address set"
+msgstr "No email address set"
+
+msgid "Email send error"
+msgstr "Failed to send email"
+
+msgid "No label"
+msgstr "No label"
+
+msgid "Email log"
+msgstr "Email history"
+
+msgid "Display name"
+msgstr "Display name"
+
+msgid "Display name hint"
+msgstr "Shown in the navigation bar and as a greeting in emails."
+
+msgid "Profile saved"
+msgstr "Profile saved"
+
+msgid "Test email queued"
+msgstr "Test email queued"

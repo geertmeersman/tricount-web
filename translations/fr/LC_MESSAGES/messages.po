@@ -494,3 +494,48 @@ msgstr "Cette étiquette existe déjà"
 
 msgid "Label in use"
 msgstr "L'étiquette est encore utilisée"
+
+msgid "Email settings"
+msgstr "Paramètres e-mail"
+
+msgid "Your email address"
+msgstr "Votre adresse e-mail"
+
+msgid "Weekly email"
+msgstr "Récapitulatif hebdomadaire"
+
+msgid "Weekly email hint"
+msgstr "Recevez un récapitulatif de vos tricounts et soldes chaque lundi matin."
+
+msgid "Email settings saved"
+msgstr "Paramètres e-mail enregistrés"
+
+msgid "Send test email"
+msgstr "Envoyer un e-mail de test"
+
+msgid "Test email sent"
+msgstr "E-mail de test envoyé"
+
+msgid "No email address set"
+msgstr "Aucune adresse e-mail configurée"
+
+msgid "Email send error"
+msgstr "Échec de l'envoi"
+
+msgid "No label"
+msgstr "Sans étiquette"
+
+msgid "Email log"
+msgstr "Historique des e-mails"
+
+msgid "Display name"
+msgstr "Nom d'affichage"
+
+msgid "Display name hint"
+msgstr "Affiché dans la barre de navigation et comme salutation dans les e-mails."
+
+msgid "Profile saved"
+msgstr "Profil enregistré"
+
+msgid "Test email queued"
+msgstr "E-mail de test mis en file d'attente"

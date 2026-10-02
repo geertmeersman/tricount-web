@@ -16,7 +16,11 @@ SCHEMA = """
         username TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
         is_admin INTEGER NOT NULL DEFAULT 0,
-        credentials_json TEXT
+        credentials_json TEXT,
+        email TEXT,
+        weekly_email INTEGER NOT NULL DEFAULT 0,
+        display_name TEXT,
+        language TEXT
     );
     CREATE TABLE IF NOT EXISTS user_tokens (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,6 +58,20 @@ SCHEMA = """
         created_at TEXT NOT NULL,
         used INTEGER NOT NULL DEFAULT 0,
         label TEXT
+    );
+    CREATE TABLE IF NOT EXISTS labels (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        color TEXT NOT NULL DEFAULT '#3b82f6',
+        UNIQUE(user_id, name)
+    );
+    CREATE TABLE IF NOT EXISTS email_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        sent_at TEXT NOT NULL,
+        status TEXT NOT NULL,
+        message TEXT
     );
 """
 
@@ -323,3 +341,79 @@ def test_robots_txt(client):
     resp = client.get("/robots.txt")
     assert resp.status_code == 200
     assert b"Sitemap" in resp.data
+
+
+# --- Labels ---
+
+
+def test_labels_page_requires_login(client):
+    resp = client.get("/labels", follow_redirects=False)
+    assert resp.status_code == 302
+
+
+def test_labels_page_loads(client, db):
+    register_and_login(client)
+    resp = client.get("/labels")
+    assert resp.status_code == 200
+
+
+def test_label_add(client, db):
+    register_and_login(client)
+    client.post("/labels/add", data={"name": "Vakantie", "color": "#ef4444"}, follow_redirects=True)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    row = db.execute("SELECT * FROM labels WHERE user_id = ? AND name = 'Vakantie'", (user["id"],)).fetchone()
+    assert row is not None
+    assert row["color"] == "#ef4444"
+
+
+def test_label_add_duplicate(client, db):
+    register_and_login(client)
+    client.post("/labels/add", data={"name": "Vakantie", "color": "#ef4444"}, follow_redirects=True)
+    resp = client.post("/labels/add", data={"name": "Vakantie", "color": "#3b82f6"}, follow_redirects=True)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    rows = db.execute("SELECT * FROM labels WHERE user_id = ? AND name = 'Vakantie'", (user["id"],)).fetchall()
+    assert len(rows) == 1
+    assert resp.status_code == 200
+
+
+def test_label_edit(client, db):
+    register_and_login(client)
+    client.post("/labels/add", data={"name": "Oud", "color": "#3b82f6"}, follow_redirects=True)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    lbl = db.execute("SELECT id FROM labels WHERE user_id = ? AND name = 'Oud'", (user["id"],)).fetchone()
+    client.post(f"/labels/{lbl['id']}/edit", data={"name": "Nieuw", "color": "#22c55e"}, follow_redirects=True)
+    row = db.execute("SELECT * FROM labels WHERE id = ?", (lbl["id"],)).fetchone()
+    assert row["name"] == "Nieuw"
+    assert row["color"] == "#22c55e"
+
+
+def test_label_edit_renames_user_tokens(client, db):
+    register_and_login(client)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute("INSERT INTO user_tokens (user_id, token, label) VALUES (?, 'tABC', 'Oud')", (user["id"],))
+    db.commit()
+    client.post("/labels/add", data={"name": "Oud", "color": "#3b82f6"}, follow_redirects=True)
+    lbl = db.execute("SELECT id FROM labels WHERE user_id = ? AND name = 'Oud'", (user["id"],)).fetchone()
+    client.post(f"/labels/{lbl['id']}/edit", data={"name": "Nieuw", "color": "#3b82f6"}, follow_redirects=True)
+    tok = db.execute("SELECT label FROM user_tokens WHERE user_id = ? AND token = 'tABC'", (user["id"],)).fetchone()
+    assert tok["label"] == "Nieuw"
+
+
+def test_label_delete(client, db):
+    register_and_login(client)
+    client.post("/labels/add", data={"name": "Tijdelijk", "color": "#3b82f6"}, follow_redirects=True)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    lbl = db.execute("SELECT id FROM labels WHERE user_id = ? AND name = 'Tijdelijk'", (user["id"],)).fetchone()
+    client.post(f"/labels/{lbl['id']}/delete", follow_redirects=True)
+    assert db.execute("SELECT id FROM labels WHERE id = ?", (lbl["id"],)).fetchone() is None
+
+
+def test_label_delete_blocked_when_in_use(client, db):
+    register_and_login(client)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute("INSERT INTO user_tokens (user_id, token, label) VALUES (?, 'tXYZ', 'InGebruik')", (user["id"],))
+    db.commit()
+    client.post("/labels/add", data={"name": "InGebruik", "color": "#3b82f6"}, follow_redirects=True)
+    lbl = db.execute("SELECT id FROM labels WHERE user_id = ? AND name = 'InGebruik'", (user["id"],)).fetchone()
+    client.post(f"/labels/{lbl['id']}/delete", follow_redirects=True)
+    assert db.execute("SELECT id FROM labels WHERE id = ?", (lbl["id"],)).fetchone() is not None

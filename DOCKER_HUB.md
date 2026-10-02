@@ -21,6 +21,10 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - ➕ Add and edit transactions with equal, ratio or custom amount splits
 - ✅ Register payments between members
 - 🔁 Recurring expenses (daily / weekly / monthly / yearly)
+- 📧 Weekly email digest with personal balances (opt-in, per-user language)
+- 🏷️ Color-coded labels with grouped overview
+- 🗑️ Bulk delete transactions
+- 👤 Display name and language preference per user
 - 🌍 Multilingual: NL / EN / FR
 - 📱 Mobile-friendly
 - 🔒 CSP, X-Frame-Options, bcrypt passwords
@@ -82,9 +86,24 @@ All data is stored in the mounted `./data/` directory:
 
 | File | Description |
 |------|-------------|
-| `tricount.db` | SQLite database — users, tokens, recurring expenses, invites |
+| `tricount.db` | SQLite database — users, tokens, recurring expenses, invites, labels |
 
 Back this directory up regularly. It contains your device credentials and all tricount tokens.
+
+## Optional: weekly email digest
+
+Add these to your `.env` to enable a weekly balance email every Monday at 08:00. The email is sent in each user's preferred language and groups tricounts by label. A test send button is available on the profile page.
+
+```env
+APP_BASE_URL=https://your-domain.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@email.com
+SMTP_PASSWORD=your-app-password
+SMTP_FROM=your@email.com
+```
+
+Users opt in individually from their **Profile** page. If `SMTP_HOST` is not set, the job is skipped silently.
 
 ## How it connects to Tricount
 

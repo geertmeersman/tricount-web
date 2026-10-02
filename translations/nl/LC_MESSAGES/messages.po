@@ -494,3 +494,48 @@ msgstr "Label bestaat al"
 
 msgid "Label in use"
 msgstr "Label is nog in gebruik"
+
+msgid "Email settings"
+msgstr "E-mailinstellingen"
+
+msgid "Your email address"
+msgstr "Jouw e-mailadres"
+
+msgid "Weekly email"
+msgstr "Wekelijks e-mailoverzicht"
+
+msgid "Weekly email hint"
+msgstr "Ontvang elke maandagochtend een overzicht van je tricounts en saldo's."
+
+msgid "Email settings saved"
+msgstr "E-mailinstellingen opgeslagen"
+
+msgid "Send test email"
+msgstr "Test e-mail versturen"
+
+msgid "Test email sent"
+msgstr "Test e-mail verstuurd"
+
+msgid "No email address set"
+msgstr "Geen e-mailadres ingesteld"
+
+msgid "Email send error"
+msgstr "Versturen mislukt"
+
+msgid "No label"
+msgstr "Zonder label"
+
+msgid "Email log"
+msgstr "E-mailgeschiedenis"
+
+msgid "Display name"
+msgstr "Weergavenaam"
+
+msgid "Display name hint"
+msgstr "Wordt getoond in de navigatiebalk en als aanspreking in e-mails."
+
+msgid "Profile saved"
+msgstr "Profiel opgeslagen"
+
+msgid "Test email queued"
+msgstr "Test e-mail in wachtrij geplaatst"

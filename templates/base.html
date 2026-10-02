@@ -48,7 +48,7 @@
       </svg>
     </a>
     {% endif %}
-    <a href="{{ url_for('profile') }}" class="text-sm bg-white/20 hover:bg-white/30 px-3 py-1 rounded hidden sm:inline">{{ current_user.username }}</a>
+    <a href="{{ url_for('profile') }}" class="text-sm bg-white/20 hover:bg-white/30 px-3 py-1 rounded hidden sm:inline">{{ current_user.display_name }}</a>
     {% set current_lang = request.cookies.get('lang', request.accept_languages.best_match(['nl','en','fr'], default='nl')) %}
     <div class="relative" id="langMenu">
       <button id="langToggleBtn"

@@ -8,7 +8,15 @@
   <!-- Gebruikersinfo -->
   <div class="bg-white rounded-xl shadow p-4">
     <p class="text-sm font-medium text-gray-700 mb-1">{{ _("Username") }}</p>
-    <p class="text-sm text-gray-500">{{ current_user.username }}</p>
+    <p class="text-sm text-gray-500 mb-3">{{ current_user.username }}</p>
+    <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ _("Display name") }}</h2>
+    <form method="POST" action="{{ url_for('profile_display_name') }}" class="flex gap-2">
+      <input type="text" name="display_name" value="{{ display_name }}" placeholder="{{ current_user.username }}"
+        autocomplete="nickname"
+        class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0">{{ _("Save") }}</button>
+    </form>
+    <p class="text-xs text-gray-400 mt-1">{{ _("Display name hint") }}</p>
   </div>
 
   <!-- Tricount verbinding info -->
@@ -42,10 +50,50 @@
     </div>
   </div>
 
+  <!-- Email instellingen -->
+  <div class="bg-white rounded-xl shadow p-4">
+    <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ _("Email settings") }}</h2>
+    <form method="POST" action="{{ url_for('profile_email') }}" class="space-y-3">
+      <input type="email" name="email" value="{{ email }}" placeholder="{{ _('Your email address') }}"
+        autocomplete="email"
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input type="checkbox" name="weekly_email" {% if weekly_email %}checked{% endif %}
+          class="w-4 h-4 accent-blue-600">
+        {{ _("Weekly email") }}
+      </label>
+      <p class="text-xs text-gray-400">{{ _("Weekly email hint") }}</p>
+      <div class="flex gap-2">
+        <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Save") }}</button>
+      </div>
+    </form>
+    {% if email %}
+    <form method="POST" action="{{ url_for('profile_email_test') }}"  class="mt-2">
+      <button {% if test_job_pending %}disabled{% endif %}
+        class="w-full border border-blue-300 text-blue-600 hover:bg-blue-50 py-2 rounded-lg text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+        📧 {% if test_job_pending %}{{ _("Test email queued") }}{% else %}{{ _("Send test email") }}{% endif %}
+      </button>
+    </form>
+    {% endif %}
+    {% if email_logs %}
+    <div class="mt-3 space-y-1">
+      <p class="text-xs font-medium text-gray-500 mb-1">{{ _("Email log") }}</p>
+      {% for log in email_logs %}
+      <div class="flex items-center gap-2 text-xs {% if log.status == 'ok' %}text-green-700{% else %}text-red-600{% endif %}">
+        <span>{% if log.status == 'ok' %}✅{% else %}❌{% endif %}</span>
+        <span class="font-mono text-gray-400">{{ log.sent_at }}</span>
+        <span>{{ log.message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
   <!-- Wachtwoord wijzigen -->
   <div class="bg-white rounded-xl shadow p-4">
     <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ _("Change password") }}</h2>
     <form method="POST" action="{{ url_for('profile_password') }}" class="space-y-3">
+      <input type="hidden" name="username" autocomplete="username" value="{{ current_user.username }}">
       <input type="password" name="current_password" placeholder="{{ _('Current password') }}" required autocomplete="current-password"
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
       <input type="password" name="new_password" placeholder="{{ _('New password') }}" required autocomplete="new-password"

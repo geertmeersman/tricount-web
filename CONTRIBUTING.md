@@ -39,6 +39,10 @@ mkdir data
 
 Set `FLASK_DEBUG=1` in your `.env` to enable debug mode locally (auto-reload, debugger). Never set this in production — it allows arbitrary code execution via the debugger.
 
+SMTP variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, `APP_BASE_URL`) are optional — if `SMTP_HOST` is not set, the weekly email job is skipped silently.
+
+The user's language preference is stored in the database and takes priority over the cookie for authenticated users.
+
 5. Start the dev server:
 
 ```bash
