@@ -9,6 +9,7 @@ cd tricount
 pip install -r requirements.txt
 pip install pre-commit
 pre-commit install
+pre-commit install --hook-type commit-msg
 ```
 
 Create a `data/` directory — the app will initialise the SQLite database there on first run:
@@ -39,6 +40,32 @@ ruff check --fix .    # lint + auto-fix
 ```
 
 The pre-commit hook will auto-fix and auto-format on each commit. If it modifies files, stage the changes and commit again.
+
+## Commit messages
+
+Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>: <short description>
+
+feat:     new feature
+fix:      bug fix
+docs:     documentation only
+style:    formatting, no logic change
+refactor: code change that is neither a fix nor a feature
+test:     adding or updating tests
+chore:    build process, dependencies
+ci:       CI/CD changes
+```
+
+Examples:
+```
+feat: add dark mode toggle
+fix: correct balance calculation for equal splits
+docs: update contributing guide
+```
+
+This is enforced locally via pre-commit and on GitHub via the PR title check.
 
 ## Translations
 
