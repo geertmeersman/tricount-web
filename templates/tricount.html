@@ -3,7 +3,10 @@
 {% block content %}
 
 <div class="flex items-center justify-between mb-4">
-  <h1 id="pageTitle" class="text-xl font-bold truncate">{{ _("Loading") }}</h1>
+  <div class="flex items-center gap-2 min-w-0">
+    <h1 id="pageTitle" class="text-xl font-bold truncate">{{ _("Loading") }}</h1>
+    <span id="pageTitleLabel" class="hidden text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 shrink-0"></span>
+  </div>
   <div class="flex items-center gap-2 ml-2 shrink-0">
     <button id="openEditModalBtn"
       class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
@@ -162,7 +165,7 @@ const _t = {
   deleteSelected:     {{ _("Delete selected") | tojson }},
   confirmDelete:      {{ _("Confirm delete selected") | tojson }},
 };
-loadTricountDetail({{ token | tojson }});
+loadTricountDetail({{ token | tojson }}, {{ label | tojson }});
 document.getElementById('openEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.remove('hidden'));
 document.getElementById('closeEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.add('hidden'));
 document.getElementById('editModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });

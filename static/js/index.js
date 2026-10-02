@@ -23,9 +23,13 @@ function updateFilters() {
   if (!wrap) return;
   if (labels.length === 0) { wrap.innerHTML = ''; return; }
   wrap.innerHTML = `
-    <button onclick="filterLabel(null)" id="filter-all" class="filter-btn text-xs px-3 py-1 rounded-full bg-blue-600 text-white">Alle</button>
-    ${labels.map(l => `<button onclick="filterLabel('${l}')" id="filter-${l.replace(/ /g, '-')}" class="filter-btn text-xs px-3 py-1 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-100">${l}</button>`).join('')}
+    <button data-filter="" id="filter-all" class="filter-btn text-xs px-3 py-1 rounded-full bg-blue-600 text-white">Alle</button>
+    ${labels.map(l => `<button data-filter="${l}" id="filter-${l.replace(/ /g, '-')}" class="filter-btn text-xs px-3 py-1 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-100">${l}</button>`).join('')}
   `;
+  wrap.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-btn');
+    if (btn) filterLabel(btn.dataset.filter || null);
+  });
 }
 
 function renderTricount(item) {

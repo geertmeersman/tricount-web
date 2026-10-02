@@ -221,10 +221,16 @@ document.addEventListener('click', (e) => {
   }
 });
 
-function renderTricount(data, token) {
+function renderTricount(data, token, label) {
   _token = token;
   _tricountData = data;
-  document.getElementById('pageTitle').textContent = (data.emoji ? data.emoji + ' ' : '') + data.title;
+  const displayTitle = (data.emoji ? data.emoji + ' ' : '') + data.title;
+  document.getElementById('pageTitle').textContent = displayTitle;
+  const labelEl = document.getElementById('pageTitleLabel');
+  if (labelEl) {
+    if (label) { labelEl.textContent = label; labelEl.classList.remove('hidden'); }
+    else labelEl.classList.add('hidden');
+  }
 
   // Leden
   document.getElementById('membersList').innerHTML =
@@ -343,7 +349,7 @@ function renderTricount(data, token) {
   document.getElementById('content').classList.remove('hidden');
 }
 
-function loadTricountDetail(token) {
+function loadTricountDetail(token, label) {
   const es = new EventSource(`/api/tricount/${token}`);
   es.onmessage = (e) => {
     const data = JSON.parse(e.data);
@@ -355,7 +361,7 @@ function loadTricountDetail(token) {
       document.getElementById('progressLabel').textContent = _t.ready;
       setTimeout(() => {
         document.getElementById('progressWrap').classList.add('hidden');
-        renderTricount(data, token);
+        renderTricount(data, token, label);
       }, 300);
       es.close();
     } else if (data.type === 'error') {
