@@ -1,0 +1,26 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+version-resolver:
+  major:
+    labels: [breaking]
+  minor:
+    labels: [enhancement, feat]
+  patch:
+    labels: [bug, fix, dependencies, chore, ci, docs]
+  default: patch
+categories:
+  - title: '🚀 Features'
+    labels: [enhancement, feat]
+  - title: '🐛 Bug fixes'
+    labels: [bug, fix]
+  - title: '🔒 Security'
+    labels: [security]
+  - title: '📦 Dependencies'
+    labels: [dependencies]
+  - title: '🔧 Maintenance'
+    labels: [chore, ci, refactor]
+  - title: '📖 Documentation'
+    labels: [docs, documentation]
+exclude-labels: [skip-changelog]
+template: |
+  $CHANGES
