@@ -443,3 +443,6 @@ msgstr "Je wachtwoord wordt nooit in leesbare tekst opgeslagen. Het wordt gehash
 
 msgid "Tricount API credit"
 msgstr "De Tricount-connectiviteit werkt via <a href=\"https://github.com/elrandar/tricount-api\" target=\"_blank\" class=\"underline hover:text-gray-600\">elrandar/tricount-api</a>."
+
+msgid "Admin cannot delete own account"
+msgstr "Als admin kan je je eigen account niet verwijderen. Een andere admin kan dit voor jou doen."

@@ -464,6 +464,9 @@ def profile():
 @app.route("/profile/delete", methods=["POST"])
 @login_required
 def profile_delete():
+    if current_user.is_admin:
+        flash(_("Admin cannot delete own account"), "danger")
+        return redirect(url_for("profile"))
     password = request.form.get("password", "").encode()
     row = get_db().execute("SELECT password_hash FROM users WHERE id = ?", (current_user.id,)).fetchone()
     if not bcrypt.checkpw(password, row["password_hash"].encode()):

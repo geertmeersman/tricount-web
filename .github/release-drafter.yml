@@ -27,3 +27,7 @@ template: |
   $CONTRIBUTORS
 
   $CHANGES
+exclude-contributors:
+  - geertmeersman[bot]
+  - dependabot[bot]
+  - github-actions[bot]
