@@ -35,7 +35,7 @@ echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" >
 
 ```yaml
 services:
-  tricount:
+  tricount-web:
     image: geertmeersman/tricount-web:latest
     container_name: tricount-web
     env_file: .env
@@ -56,7 +56,7 @@ Open [http://localhost:5000](http://localhost:5000) and register the first accou
 
 ```yaml
 services:
-  tricount:
+  tricount-web:
     image: geertmeersman/tricount-web:latest
     container_name: tricount-web
     env_file: .env
