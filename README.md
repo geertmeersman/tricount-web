@@ -1,9 +1,15 @@
-# Tricount Web
+<p align="center">
+  <img src="static/images/tricount-web-100x100.png" width="100">
+</p>
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![Discord](https://img.shields.io/discord/1234567890?logo=discord&label=discord)](https://discord.gg/VT3JXzZdvx)
-![Docker Pulls](https://img.shields.io/docker/pulls/geertmeersman/tricount-web)
-![Docker Image Version](https://img.shields.io/docker/v/geertmeersman/tricount-web?label=docker%20image%20version)
+<h1 align="center">Tricount Web</h1>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg"></a>
+  <a href="https://discord.gg/VT3JXzZdvx"><img src="https://img.shields.io/discord/1234567890?logo=discord&label=discord"></a>
+  <img src="https://img.shields.io/docker/pulls/geertmeersman/tricount-web">
+  <img src="https://img.shields.io/docker/v/geertmeersman/tricount-web?label=docker%20image%20version">
+</p>
 
 A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built on top of the unofficial [`tricount-api`](https://github.com/elrandar/tricount-api) Python client.
 
