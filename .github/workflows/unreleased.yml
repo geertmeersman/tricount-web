@@ -23,15 +23,23 @@ jobs:
         run: |
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -z "$LAST_TAG" ]; then
-            echo "No tags found — all commits are unreleased."
             COMMIT_COUNT=$(git rev-list --count HEAD)
+            LAST_TAG="(no tags yet)"
           else
             COMMIT_COUNT=$(git rev-list --count "${LAST_TAG}..HEAD")
-            echo "Last tag: $LAST_TAG"
           fi
+          echo "Last tag: $LAST_TAG"
           echo "Unreleased commits: $COMMIT_COUNT"
           if [ "$COMMIT_COUNT" -gt 0 ]; then
             echo "::notice::There are $COMMIT_COUNT unreleased commit(s) on main since $LAST_TAG. Consider creating a release."
+            echo "## 🔍 Unreleased changes" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**$COMMIT_COUNT unreleased commit(s)** since \`$LAST_TAG\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            git log ${LAST_TAG}..HEAD --oneline --no-decorate | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
           else
             echo "::notice::No unreleased commits since $LAST_TAG."
+            echo "## ✅ No unreleased changes" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Everything is released. Last tag: \`$LAST_TAG\`" >> $GITHUB_STEP_SUMMARY
           fi
