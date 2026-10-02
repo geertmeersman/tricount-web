@@ -1,0 +1,37 @@
+name: Unreleased changes 🔍
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check for unreleased commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Check commits since last tag
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            echo "No tags found — all commits are unreleased."
+            COMMIT_COUNT=$(git rev-list --count HEAD)
+          else
+            COMMIT_COUNT=$(git rev-list --count "${LAST_TAG}..HEAD")
+            echo "Last tag: $LAST_TAG"
+          fi
+          echo "Unreleased commits: $COMMIT_COUNT"
+          if [ "$COMMIT_COUNT" -gt 0 ]; then
+            echo "::notice::There are $COMMIT_COUNT unreleased commit(s) on main since $LAST_TAG. Consider creating a release."
+          else
+            echo "::notice::No unreleased commits since $LAST_TAG."
+          fi
