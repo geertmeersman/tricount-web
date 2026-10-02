@@ -539,3 +539,6 @@ msgstr "Profil enregistré"
 
 msgid "Test email queued"
 msgstr "E-mail de test mis en file d'attente"
+
+msgid "Show all"
+msgstr "Tout afficher"

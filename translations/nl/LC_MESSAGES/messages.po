@@ -539,3 +539,6 @@ msgstr "Profiel opgeslagen"
 
 msgid "Test email queued"
 msgstr "Test e-mail in wachtrij geplaatst"
+
+msgid "Show all"
+msgstr "Alles tonen"

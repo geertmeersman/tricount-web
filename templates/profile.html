@@ -77,7 +77,10 @@
     {% endif %}
     {% if email_logs %}
     <div class="mt-3 space-y-1">
-      <p class="text-xs font-medium text-gray-500 mb-1">{{ _("Email log") }}</p>
+      <div class="flex items-center justify-between mb-1">
+        <p class="text-xs font-medium text-gray-500">{{ _("Email log") }}</p>
+        <button id="emailLogAllBtn" class="text-xs text-blue-600 hover:underline">{{ _("Show all") }}</button>
+      </div>
       {% for log in email_logs %}
       <div class="flex items-center gap-2 text-xs {% if log.status == 'ok' %}text-green-700{% else %}text-red-600{% endif %}">
         <span>{% if log.status == 'ok' %}✅{% else %}❌{% endif %}</span>
@@ -87,6 +90,19 @@
       {% endfor %}
     </div>
     {% endif %}
+
+<!-- Email log modal -->
+<div id="emailLogModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-lg flex flex-col" style="max-height:80vh">
+    <div class="flex items-center justify-between px-5 py-4 border-b shrink-0">
+      <h3 class="font-semibold">{{ _("Email log") }}</h3>
+      <button id="emailLogModalClose" class="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+    </div>
+    <div class="overflow-y-auto flex-1 px-2 py-2">
+      <div id="emailLogTable" class="text-xs space-y-1 px-2"></div>
+    </div>
+  </div>
+</div>
   </div>
 
   <!-- Wachtwoord wijzigen -->
@@ -125,5 +141,24 @@
 document.getElementById('toggleConnectionInfo').addEventListener('click', function() { this.nextElementSibling.classList.toggle('hidden'); });
 document.getElementById('toggleCredentialsInfo').addEventListener('click', function() { this.nextElementSibling.classList.toggle('hidden'); });
 document.getElementById('deleteAccountForm')?.addEventListener('submit', (e) => { if (!confirm({{ _("Confirm delete account") | tojson }})) e.preventDefault(); });
+document.getElementById('emailLogAllBtn')?.addEventListener('click', () => {
+  const modal = document.getElementById('emailLogModal');
+  const table = document.getElementById('emailLogTable');
+  table.innerHTML = '<p class="text-gray-400 px-2">{{ _("Loading") }}...</p>';
+  modal.classList.remove('hidden');
+  fetch('/profile/email/log')
+    .then(r => r.json())
+    .then(logs => {
+      if (!logs.length) { table.innerHTML = '<p class="text-gray-400 px-2">{{ _("No results") }}</p>'; return; }
+      table.innerHTML = logs.map(l => `
+        <div class="flex items-start gap-2 py-1.5 border-b last:border-0 ${l.status === 'ok' ? 'text-green-700' : 'text-red-600'}">
+          <span class="shrink-0">${l.status === 'ok' ? '✅' : '❌'}</span>
+          <span class="font-mono text-gray-400 shrink-0">${l.sent_at}</span>
+          <span>${l.message}</span>
+        </div>`).join('');
+    });
+});
+document.getElementById('emailLogModalClose')?.addEventListener('click', () => document.getElementById('emailLogModal').classList.add('hidden'));
+document.getElementById('emailLogModal')?.addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 </script>
 {% endblock %}
