@@ -44,20 +44,18 @@ The pre-commit hook will auto-fix and auto-format on each commit. If it modifies
 
 Translation strings live in `translations/<lang>/LC_MESSAGES/messages.po` for `nl`, `en`, and `fr`.
 
-After adding or changing strings, recompile:
+To add or update strings, edit the `.po` files directly. The `msgid` is the key used in templates (`_("My string")`), the `msgstr` is the translation.
+
+To extract new `msgid`s from templates and recompile in one go:
 
 ```bash
+pybabel extract -F babel.cfg -k _ -o messages.pot .
+pybabel update -i messages.pot -d translations
+# edit the new msgid entries in each .po file
 pybabel compile -d translations
 ```
 
-To extract new strings from templates and source:
-
-```bash
-pybabel extract -F babel.cfg -o messages.pot .
-pybabel update -i messages.pot -d translations
-```
-
-The Dockerfile compiles translations automatically at build time.
+The Dockerfile runs `pybabel compile` automatically at build time, so compiled `.mo` files are not committed.
 
 ## Tailwind CSS
 
