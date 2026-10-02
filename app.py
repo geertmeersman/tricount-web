@@ -90,7 +90,9 @@ def set_security_headers(response):
 def set_lang(lang):
     if lang not in SUPPORTED_LANGS:
         lang = "nl"
-    response = redirect(request.referrer or url_for("index"))
+    referrer = request.referrer
+    target = referrer if referrer and referrer.startswith(request.host_url) else url_for("index")
+    response = redirect(target)
     response.set_cookie("lang", lang, max_age=60 * 60 * 24 * 365)
     return response
 
@@ -533,10 +535,10 @@ def api_tricounts():
     try:
         client = get_client()
     except Exception as e:
-        err_msg = str(e)
+        app.logger.error("Failed to get client: %s", e)
 
         def err_gen():
-            yield f"data: {json.dumps({'type': 'error', 'message': err_msg, 'done': 0, 'total': 0})}\n\n"
+            yield f"data: {json.dumps({'type': 'error', 'message': 'Connection error', 'done': 0, 'total': 0})}\n\n"
             yield 'data: {"type": "done"}\n\n'
 
         return Response(
@@ -563,8 +565,9 @@ def api_tricounts():
                     if row:
                         results.append((row["token"], row["label"], t, None))
             except Exception as e:
+                app.logger.error("Error syncing tricounts: %s", e)
                 for pt, row in token_map.items():
-                    results.append((row["token"], row["label"], None, str(e)))
+                    results.append((row["token"], row["label"], None, "Failed to load"))
 
         # Fallback voor tricounts zonder public_token
         for row in missing:
@@ -572,7 +575,8 @@ def api_tricounts():
                 t = get_tricount_cached(client, row["token"], uid)
                 results.append((row["token"], row["label"], t, None))
             except Exception as e:
-                results.append((row["token"], row["label"], None, str(e)))
+                app.logger.error("Error loading tricount %s: %s", row["token"], e)
+                results.append((row["token"], row["label"], None, "Failed to load"))
 
         for token, label, t, err in results:
             done += 1
@@ -690,7 +694,8 @@ def tricount_select_member(token):
     try:
         t = client.join_tricount(token, fetch_full=False)
     except Exception as e:
-        flash(str(e), "danger")
+        app.logger.error("Error: %s", e)
+        flash(_("Connection error"), "danger")
         return redirect(url_for("index"))
     if request.method == "POST":
         member_uuid = request.form.get("member_uuid") or None
@@ -743,10 +748,10 @@ def api_tricount(token):
     try:
         client = get_client()
     except Exception as e:
-        err_msg = str(e)
+        app.logger.error("Failed to get client: %s", e)
 
         def err_gen():
-            yield f"data: {json.dumps({'type': 'error', 'message': err_msg})}\n\n"
+            yield f"data: {json.dumps({'type': 'error', 'message': 'Connection error'})}\n\n"
             yield 'data: {"type": "done"}\n\n'
 
         return Response(
@@ -809,7 +814,8 @@ def api_tricount(token):
             }
             yield f"data: {json.dumps(payload)}\n\n"
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+            app.logger.error("Error loading tricount %s: %s", token, e)
+            yield f"data: {json.dumps({'type': 'error', 'message': 'Failed to load tricount'})}\n\n"
         yield 'data: {"type": "done"}\n\n'
 
     return Response(
@@ -838,7 +844,8 @@ def add_transaction(token):
     try:
         t = client.join_tricount(token)
     except Exception as e:
-        flash(str(e), "danger")
+        app.logger.error("Error: %s", e)
+        flash(_("Connection error"), "danger")
         return redirect(url_for("index"))
 
     if request.method == "POST":
@@ -886,7 +893,8 @@ def edit_transaction(token, tx_id):
     try:
         t = get_tricount_cached(client, token, current_user.id)
     except Exception as e:
-        flash(str(e), "danger")
+        app.logger.error("Error: %s", e)
+        flash(_("Connection error"), "danger")
         return redirect(url_for("index"))
 
     tx = next((x for x in t.transactions if x.id == tx_id), None)
@@ -966,7 +974,8 @@ def recurring_list(token):
     try:
         t = get_client().join_tricount(token, fetch_full=False)
     except Exception as e:
-        flash(str(e), "danger")
+        app.logger.error("Error: %s", e)
+        flash(_("Connection error"), "danger")
         return redirect(url_for("index"))
     rows = (
         get_db()
@@ -986,7 +995,8 @@ def recurring_add(token):
     try:
         t = client.join_tricount(token, fetch_full=False)
     except Exception as e:
-        flash(str(e), "danger")
+        app.logger.error("Error: %s", e)
+        flash(_("Connection error"), "danger")
         return redirect(url_for("index"))
 
     if request.method == "POST":
@@ -1051,7 +1061,8 @@ def recurring_edit(token, rec_id):
     try:
         t = get_client().join_tricount(token, fetch_full=False)
     except Exception as e:
-        flash(str(e), "danger")
+        app.logger.error("Error: %s", e)
+        flash(_("Connection error"), "danger")
         return redirect(url_for("recurring_list", token=token))
     if request.method == "POST":
         description = request.form["description"]
@@ -1175,4 +1186,4 @@ def admin_toggle_admin(user_id):
 init_db()
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=os.environ.get("FLASK_DEBUG", "0") == "1", port=5000)

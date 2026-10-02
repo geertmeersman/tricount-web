@@ -35,13 +35,14 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 mkdir data
 ```
 
-`SECRET_KEY` is used by Flask to sign session cookies. Change it will log out all active users.
+`SECRET_KEY` is used by Flask to sign session cookies. Changing it will log out all active users.
+
+Set `FLASK_DEBUG=1` in your `.env` to enable debug mode locally (auto-reload, debugger). Never set this in production — it allows arbitrary code execution via the debugger.
 
 5. Start the dev server:
 
 ```bash
-mkdir data
-flask --app app.py run --debug
+flask --app app.py run
 ```
 
 Open [http://localhost:5000](http://localhost:5000) and register the first account (becomes admin automatically).
