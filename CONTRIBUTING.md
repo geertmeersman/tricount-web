@@ -26,7 +26,16 @@ pre-commit install
 pre-commit install --hook-type commit-msg
 ```
 
-4. Create a `data/` directory and start the dev server:
+4. Create a `.env` file and a `data/` directory:
+
+```bash
+cp .env.example .env
+# set SECRET_KEY to a random value
+python3 -c "import secrets; print(secrets.token_hex(32))"
+mkdir data
+```
+
+5. Start the dev server:
 
 ```bash
 mkdir data

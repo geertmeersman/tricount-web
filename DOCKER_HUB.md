@@ -16,11 +16,18 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 
 ## Quick start
 
+Create a `.env` file with a secret key:
+
+```bash
+echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" > .env
+```
+
 ```yaml
 services:
   tricount:
     image: geertmeersman/tricount-web:latest
     container_name: tricount
+    env_file: .env
     volumes:
       - ./data:/app/data
     ports:
@@ -41,6 +48,7 @@ services:
   tricount:
     image: geertmeersman/tricount-web:latest
     container_name: tricount
+    env_file: .env
     volumes:
       - ./data:/app/data
     restart: unless-stopped

@@ -1,7 +1,9 @@
 services:
   tricount:
-    build: .
+    image: geertmeersman/tricount-web:latest
     container_name: tricount
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
     labels:
       landing.icon: "money"
       landing.name: "tricount"

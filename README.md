@@ -69,6 +69,13 @@ All data is stored in `./data/` (mounted as a Docker volume):
 |------|-------------|
 | `tricount.db` | SQLite database — users, tokens, recurring expenses, invites |
 
+Copy `.env.example` to `.env` and set a strong secret key:
+
+```bash
+cp .env.example .env
+# edit .env and set SECRET_KEY to a random value, e.g.:
+python3 -c "import secrets; print(secrets.token_hex(32))"
+```
 There is no `credentials.json` file. Device credentials are generated per user at registration and stored in the database. You can download your own credentials as `tricount_credentials.json` from your **Profile** page — this file is compatible with the [`tricount-api`](https://github.com/elrandar/tricount-api) Python package. If lost, generate new credentials from your profile and re-join your tricounts using their sharing tokens.
 
 ## Invite-only registration
