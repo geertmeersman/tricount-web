@@ -46,11 +46,11 @@
   <div class="bg-white rounded-xl shadow p-4">
     <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ _("Change password") }}</h2>
     <form method="POST" action="{{ url_for('profile_password') }}" class="space-y-3">
-      <input type="password" name="current_password" placeholder="{{ _('Current password') }}" required
+      <input type="password" name="current_password" placeholder="{{ _('Current password') }}" required autocomplete="current-password"
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <input type="password" name="new_password" placeholder="{{ _('New password') }}" required
+      <input type="password" name="new_password" placeholder="{{ _('New password') }}" required autocomplete="new-password"
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <input type="password" name="confirm_password" placeholder="{{ _('Confirm new password') }}" required
+      <input type="password" name="confirm_password" placeholder="{{ _('Confirm new password') }}" required autocomplete="new-password"
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
       <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Change password") }}</button>
     </form>
@@ -64,7 +64,7 @@
     <p class="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">{{ _("Admin cannot delete own account") }}</p>
     {% else %}
     <form method="POST" action="{{ url_for('profile_delete') }}" class="space-y-3" id="deleteAccountForm">
-      <input type="password" name="password" placeholder="{{ _('Current password') }}" required
+      <input type="password" name="password" placeholder="{{ _('Current password') }}" required autocomplete="current-password"
         class="w-full border border-red-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
       <button class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Delete account") }}</button>
     </form>

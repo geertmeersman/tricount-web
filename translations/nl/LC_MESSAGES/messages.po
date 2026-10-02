@@ -473,3 +473,21 @@ msgstr "⚠️ Er worden {n} transactie(s) aangemaakt in het verleden ({freq})."
 
 msgid "Save recurring"
 msgstr "Herhaling opslaan"
+
+msgid "Labels"
+msgstr "Labels"
+
+msgid "Add label"
+msgstr "Label toevoegen"
+
+msgid "Label name"
+msgstr "Labelnaam"
+
+msgid "Edit label"
+msgstr "Label bewerken"
+
+msgid "No labels yet"
+msgstr "Nog geen labels"
+
+msgid "Label already exists"
+msgstr "Label bestaat al"

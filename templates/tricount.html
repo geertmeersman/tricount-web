@@ -165,7 +165,7 @@ const _t = {
   deleteSelected:     {{ _("Delete selected") | tojson }},
   confirmDelete:      {{ _("Confirm delete selected") | tojson }},
 };
-loadTricountDetail({{ token | tojson }}, {{ label | tojson }});
+loadTricountDetail({{ token | tojson }}, {{ label | tojson }}, {{ label_colors | tojson }});
 document.getElementById('openEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.remove('hidden'));
 document.getElementById('closeEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.add('hidden'));
 document.getElementById('editModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });

@@ -13,6 +13,13 @@
         <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
       </svg>
     </button>
+    <a href="{{ url_for('labels_list') }}"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+        <line x1="7" y1="7" x2="7.01" y2="7"/>
+      </svg>
+    </a>
     <button id="toggleAddFormBtn"
       class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -56,8 +63,7 @@
 <p id="emptyMsg" class="hidden text-gray-400 text-sm text-center mt-10">{{ _("No tricounts yet") }}</p>
 
 <!-- Nieuwe tricount modal -->
-<div id="newTricountModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-     id="newTricountModalBackdrop">
+<div id="newTricountModalBackdrop" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
   <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
     <h3 class="font-semibold text-lg">{{ _("New tricount") }}</h3>
     <form method="POST" action="{{ url_for('create_tricount') }}" class="space-y-3">
@@ -118,11 +124,11 @@ const _i18n = {
   loaded:   {{ _("Ready") | tojson }},
   noTricounts: {{ _("No tricounts yet") | tojson }},
 };
-loadTricounts({{ tokens | tojson }});
-document.getElementById('refreshBtn').onclick = () => loadTricounts({{ tokens | tojson }}, true);
+loadTricounts({{ tokens | tojson }}, {{ label_colors | tojson }});
+document.getElementById('refreshBtn').addEventListener('click', () => loadTricounts({{ tokens | tojson }}, {{ label_colors | tojson }}, true));
 document.getElementById('toggleAddFormBtn').addEventListener('click', () => document.getElementById('addForm').classList.toggle('hidden'));
-document.getElementById('openNewTricountBtn').addEventListener('click', () => document.getElementById('newTricountModal').classList.remove('hidden'));
-document.getElementById('closeNewTricountBtn').addEventListener('click', () => document.getElementById('newTricountModal').classList.add('hidden'));
+document.getElementById('openNewTricountBtn').addEventListener('click', () => document.getElementById('newTricountModalBackdrop').classList.remove('hidden'));
+document.getElementById('closeNewTricountBtn').addEventListener('click', () => document.getElementById('newTricountModalBackdrop').classList.add('hidden'));
 document.getElementById('newTricountModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 document.getElementById('tokenInput').addEventListener('input', function() { const m = this.value.match(/tricount\.com\/t(\S+)/); if (m) this.value = 't' + m[1]; });
 </script>

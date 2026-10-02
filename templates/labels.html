@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Labels") }}{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-bold">{{ _("Labels") }}</h1>
+  <a href="{{ url_for('index') }}"
+    class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </a>
+</div>
+
+<div class="space-y-4">
+
+  <!-- Nieuw label -->
+  <div class="bg-white rounded-xl shadow p-4">
+    <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ _("Add label") }}</h2>
+    <form method="POST" action="{{ url_for('label_add') }}" class="flex gap-2 items-center">
+      <input type="color" name="color" value="#3b82f6" class="w-10 h-9 rounded border cursor-pointer shrink-0">
+      <input type="text" name="name" placeholder="{{ _('Label name') }}" required
+        class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0">{{ _("Add") }}</button>
+    </form>
+  </div>
+
+  <!-- Bestaande labels -->
+  {% if labels %}
+  <div class="bg-white rounded-xl shadow divide-y">
+    {% for lbl in labels %}
+    <div class="px-4 py-3 flex items-center gap-3">
+      <span class="w-4 h-4 rounded-full shrink-0" style="background:{{ lbl.color }}"></span>
+      <span class="flex-1 text-sm font-medium">{{ lbl.name }}</span>
+      <button class="text-xs text-gray-400 hover:text-blue-600 edit-label-btn"
+        data-id="{{ lbl.id }}" data-name="{{ lbl.name }}" data-color="{{ lbl.color }}">{{ _("Edit") }}</button>
+      <form method="POST" action="{{ url_for('label_delete', label_id=lbl.id) }}">
+        <button class="text-xs text-red-400 hover:text-red-600">{{ _("Delete verb") }}</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-sm text-gray-400 text-center mt-6">{{ _("No labels yet") }}</p>
+  {% endif %}
+
+</div>
+
+<!-- Edit modal -->
+<div id="editLabelModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
+    <h3 class="font-semibold text-lg">{{ _("Edit label") }}</h3>
+    <form id="editLabelForm" method="POST" class="space-y-3">
+      <div class="flex gap-2 items-center">
+        <input type="color" name="color" id="editLabelColor" class="w-10 h-9 rounded border cursor-pointer shrink-0">
+        <input type="text" name="name" id="editLabelName" required
+          class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Save") }}</button>
+    </form>
+    <button id="closeEditLabelBtn" class="w-full border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">{{ _("Cancel") }}</button>
+  </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+const modal = document.getElementById('editLabelModal');
+document.querySelectorAll('.edit-label-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('editLabelName').value = btn.dataset.name;
+    document.getElementById('editLabelColor').value = btn.dataset.color;
+    document.getElementById('editLabelForm').action = `/labels/${btn.dataset.id}/edit`;
+    modal.classList.remove('hidden');
+  });
+});
+document.getElementById('closeEditLabelBtn').addEventListener('click', () => modal.classList.add('hidden'));
+modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+</script>
+{% endblock %}
