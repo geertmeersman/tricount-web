@@ -63,6 +63,8 @@ Passwords are hashed with **bcrypt** (unique salt per password) and never stored
 ### 1. Run with Docker
 
 ```bash
+echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" > .env
+mkdir data
 docker compose up -d
 ```
 
