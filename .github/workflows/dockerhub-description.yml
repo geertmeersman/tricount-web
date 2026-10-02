@@ -18,6 +18,6 @@ jobs:
         uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
           readme-filepath: ./DOCKER_HUB.md
           enable-url-completion: true

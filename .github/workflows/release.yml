@@ -63,7 +63,7 @@ jobs:
         uses: peter-evans/dockerhub-description@v4.0.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
           readme-filepath: ./DOCKER_HUB.md
 
       - name: Discord notification
