@@ -473,3 +473,24 @@ msgstr "⚠️ Cela créera {n} transaction(s) passée(s) ({freq})."
 
 msgid "Save recurring"
 msgstr "Enregistrer la dépense récurrente"
+
+msgid "Labels"
+msgstr "Étiquettes"
+
+msgid "Add label"
+msgstr "Ajouter une étiquette"
+
+msgid "Label name"
+msgstr "Nom de l'étiquette"
+
+msgid "Edit label"
+msgstr "Modifier l'étiquette"
+
+msgid "No labels yet"
+msgstr "Aucune étiquette"
+
+msgid "Label already exists"
+msgstr "Cette étiquette existe déjà"
+
+msgid "Label in use"
+msgstr "L'étiquette est encore utilisée"

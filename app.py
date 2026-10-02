@@ -192,6 +192,28 @@ def init_db():
         db.commit()
     except sqlite3.OperationalError:
         pass  # kolom bestaat al
+    # labels tabel
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS labels (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            name TEXT NOT NULL,
+            color TEXT NOT NULL DEFAULT '#3b82f6',
+            UNIQUE(user_id, name)
+        )
+    """)
+    db.commit()
+    # migreer bestaande labels uit user_tokens
+    existing = db.execute(
+        "SELECT DISTINCT user_id, label FROM user_tokens WHERE label IS NOT NULL AND label != ''"
+    ).fetchall()
+    for row in existing:
+        with contextlib.suppress(sqlite3.IntegrityError):
+            db.execute(
+                "INSERT INTO labels (user_id, name, color) VALUES (?, ?, '#3b82f6')",
+                (row[0], row[1]),
+            )
+    db.commit()
     db.close()
 
 
@@ -538,7 +560,9 @@ def profile_password():
 def index():
     rows = get_db().execute("SELECT token, label FROM user_tokens WHERE user_id = ?", (current_user.id,)).fetchall()
     tokens = [dict(row) for row in rows]
-    return render_template("index.html", tokens=tokens)
+    label_rows = get_db().execute("SELECT name, color FROM labels WHERE user_id = ?", (current_user.id,)).fetchall()
+    label_colors = {row["name"]: row["color"] for row in label_rows}
+    return render_template("index.html", tokens=tokens, label_colors=label_colors)
 
 
 @app.route("/api/tricounts")
@@ -747,6 +771,84 @@ def update_label(token):
     return redirect(url_for("tricount_detail", token=token))
 
 
+@app.route("/labels")
+@login_required
+def labels_list():
+    rows = get_db().execute("SELECT * FROM labels WHERE user_id = ? ORDER BY name", (current_user.id,)).fetchall()
+    in_use = {
+        r["label"]
+        for r in get_db()
+        .execute("SELECT DISTINCT label FROM user_tokens WHERE user_id = ? AND label IS NOT NULL", (current_user.id,))
+        .fetchall()
+    }
+    return render_template("labels.html", labels=rows, in_use=in_use)
+
+
+@app.route("/labels/add", methods=["POST"])
+@login_required
+def label_add():
+    name = request.form.get("name", "").strip()
+    color = request.form.get("color", "#3b82f6").strip()
+    if name:
+        try:
+            get_db().execute(
+                "INSERT INTO labels (user_id, name, color) VALUES (?, ?, ?)", (current_user.id, name, color)
+            )
+            get_db().commit()
+        except sqlite3.IntegrityError:
+            flash(_("Label already exists"), "danger")
+    return redirect(url_for("labels_list"))
+
+
+@app.route("/labels/<int:label_id>/edit", methods=["POST"])
+@login_required
+def label_edit(label_id):
+    name = request.form.get("name", "").strip()
+    color = request.form.get("color", "#3b82f6").strip()
+    if name:
+        old = (
+            get_db()
+            .execute("SELECT name FROM labels WHERE id = ? AND user_id = ?", (label_id, current_user.id))
+            .fetchone()
+        )
+        if old:
+            try:
+                get_db().execute(
+                    "UPDATE labels SET name = ?, color = ? WHERE id = ? AND user_id = ?",
+                    (name, color, label_id, current_user.id),
+                )
+                # update user_tokens die de oude naam gebruiken
+                if old["name"] != name:
+                    get_db().execute(
+                        "UPDATE user_tokens SET label = ? WHERE user_id = ? AND label = ?",
+                        (name, current_user.id, old["name"]),
+                    )
+                get_db().commit()
+            except sqlite3.IntegrityError:
+                flash(_("Label already exists"), "danger")
+    return redirect(url_for("labels_list"))
+
+
+@app.route("/labels/<int:label_id>/delete", methods=["POST"])
+@login_required
+def label_delete(label_id):
+    row = (
+        get_db().execute("SELECT name FROM labels WHERE id = ? AND user_id = ?", (label_id, current_user.id)).fetchone()
+    )
+    if row:
+        in_use = (
+            get_db()
+            .execute("SELECT COUNT(*) FROM user_tokens WHERE user_id = ? AND label = ?", (current_user.id, row["name"]))
+            .fetchone()[0]
+        )
+        if in_use:
+            flash(_("Label in use"), "danger")
+            return redirect(url_for("labels_list"))
+    get_db().execute("DELETE FROM labels WHERE id = ? AND user_id = ?", (label_id, current_user.id))
+    get_db().commit()
+    return redirect(url_for("labels_list"))
+
+
 @app.route("/tricount/<token>")
 @login_required
 def tricount_detail(token):
@@ -756,7 +858,9 @@ def tricount_detail(token):
         .fetchone()
     )
     label = row["label"] if row else None
-    return render_template("tricount.html", token=token, label=label)
+    label_rows = get_db().execute("SELECT name, color FROM labels WHERE user_id = ?", (current_user.id,)).fetchall()
+    label_colors = {row["name"]: row["color"] for row in label_rows}
+    return render_template("tricount.html", token=token, label=label, label_colors=label_colors)
 
 
 @app.route("/api/tricount/<token>")

@@ -221,15 +221,22 @@ document.addEventListener('click', (e) => {
   }
 });
 
-function renderTricount(data, token, label) {
+function renderTricount(data, token, label, labelColors) {
   _token = token;
   _tricountData = data;
   const displayTitle = (data.emoji ? data.emoji + ' ' : '') + data.title;
   document.getElementById('pageTitle').textContent = displayTitle;
   const labelEl = document.getElementById('pageTitleLabel');
   if (labelEl) {
-    if (label) { labelEl.textContent = label; labelEl.classList.remove('hidden'); }
-    else labelEl.classList.add('hidden');
+    if (label) {
+      labelEl.textContent = label;
+      const color = (labelColors && labelColors[label]) || '#3b82f6';
+      labelEl.style.backgroundColor = color + '22';
+      labelEl.style.color = color;
+      labelEl.classList.remove('hidden');
+    } else {
+      labelEl.classList.add('hidden');
+    }
   }
 
   // Leden
@@ -349,7 +356,7 @@ function renderTricount(data, token, label) {
   document.getElementById('content').classList.remove('hidden');
 }
 
-function loadTricountDetail(token, label) {
+function loadTricountDetail(token, label, labelColors) {
   const es = new EventSource(`/api/tricount/${token}`);
   es.onmessage = (e) => {
     const data = JSON.parse(e.data);
@@ -361,7 +368,7 @@ function loadTricountDetail(token, label) {
       document.getElementById('progressLabel').textContent = _t.ready;
       setTimeout(() => {
         document.getElementById('progressWrap').classList.add('hidden');
-        renderTricount(data, token, label);
+        renderTricount(data, token, label, labelColors);
       }, 300);
       es.close();
     } else if (data.type === 'error') {

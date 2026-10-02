@@ -3,19 +3,16 @@ function filterLabel(label) {
     el.classList.toggle('hidden', label !== null && el.dataset.label !== label);
   });
   document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.remove('bg-blue-600', 'text-white');
-    btn.classList.add('bg-gray-200', 'text-gray-700');
+    btn.classList.remove('ring-2');
+    btn.style.opacity = '0.5';
   });
   const active = label
     ? document.getElementById('filter-' + label.replace(/ /g, '-'))
     : document.getElementById('filter-all');
-  if (active) {
-    active.classList.add('bg-blue-600', 'text-white');
-    active.classList.remove('bg-gray-200', 'text-gray-700');
-  }
+  if (active) { active.style.opacity = '1'; active.classList.add('ring-2'); }
 }
 
-function updateFilters() {
+function updateFilters(labelColors) {
   const labels = [...new Set(
     [...document.querySelectorAll('.tricount-item')].map(el => el.dataset.label).filter(Boolean)
   )];
@@ -23,17 +20,26 @@ function updateFilters() {
   if (!wrap) return;
   if (labels.length === 0) { wrap.innerHTML = ''; return; }
   wrap.innerHTML = `
-    <button data-filter="" id="filter-all" class="filter-btn text-xs px-3 py-1 rounded-full bg-blue-600 text-white">Alle</button>
-    ${labels.map(l => `<button data-filter="${l}" id="filter-${l.replace(/ /g, '-')}" class="filter-btn text-xs px-3 py-1 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-100">${l}</button>`).join('')}
+    <button data-filter="" id="filter-all" class="filter-btn text-xs px-3 py-1 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-100" style="opacity:1">Alle</button>
+    ${labels.map(l => {
+      const color = (labelColors && labelColors[l]) || '#3b82f6';
+      return `<button data-filter="${l}" id="filter-${l.replace(/ /g, '-')}" class="filter-btn text-xs px-3 py-1 rounded-full font-medium" style="background:${color}22;color:${color};opacity:0.6">${l}</button>`;
+    }).join('')}
   `;
   wrap.addEventListener('click', (e) => {
     const btn = e.target.closest('.filter-btn');
     if (btn) filterLabel(btn.dataset.filter || null);
   });
+  // activeer 'Alle' standaard
+  document.getElementById('filter-all').style.opacity = '1';
+  document.getElementById('filter-all').classList.add('ring-2', 'ring-gray-400');
 }
 
-function renderTricount(item) {
-  const label = item.label ? `<span class="ml-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">${item.label}</span>` : '';
+function renderTricount(item, labelColors) {
+  const color = (labelColors && item.label && labelColors[item.label]) || '#3b82f6';
+  const labelBadge = item.label
+    ? `<span class="ml-1 text-xs font-medium px-2 py-0.5 rounded-full" style="background:${color}22;color:${color}">${item.label}</span>`
+    : '';
   const archived = item.archived ? `<span class="ml-1 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">${_i18n.archived}</span>` : '';
   const div = document.createElement('div');
   div.id = `tc-${item.token}`;
@@ -41,13 +47,13 @@ function renderTricount(item) {
   div.dataset.label = item.label || '';
   div.innerHTML = `
     <a href="/tricount/${item.token}" class="flex-1 min-w-0 block">
-      <div class="font-medium truncate">${item.emoji} ${item.title} ${label} ${archived}</div>
+      <div class="font-medium truncate">${item.emoji} ${item.title} ${labelBadge} ${archived}</div>
       <div class="text-xs text-gray-400 mt-0.5">${item.currency} · ${item.members} ${_i18n.members}</div>
     </a>`;
   return div;
 }
 
-function loadTricounts(tokens, force = false) {
+function loadTricounts(tokens, labelColors, force = false) {
   const list = document.getElementById('tricountList');
   const progressWrap = document.getElementById('progressWrap');
   const progressBar = document.getElementById('progressBar');
@@ -81,7 +87,7 @@ function loadTricounts(tokens, force = false) {
       progressWrap.classList.add('hidden');
       items.sort((a, b) => (a.label || a.title).localeCompare(b.label || b.title));
       list.innerHTML = '';
-      items.forEach(item => list.appendChild(renderTricount(item)));
+      items.forEach(item => list.appendChild(renderTricount(item, labelColors)));
       if (items.length === 0) emptyMsg.classList.remove('hidden');
 
       let filterWrap = document.getElementById('filterWrap');
@@ -91,7 +97,7 @@ function loadTricounts(tokens, force = false) {
         filterWrap.className = 'flex flex-wrap gap-2 mb-4';
         list.parentNode.insertBefore(filterWrap, list);
       }
-      updateFilters();
+      updateFilters(labelColors);
       return;
     }
 

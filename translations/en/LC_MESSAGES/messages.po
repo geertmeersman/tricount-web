@@ -473,3 +473,24 @@ msgstr "⚠️ This will create {n} past transaction(s) ({freq})."
 
 msgid "Save recurring"
 msgstr "Save recurring expense"
+
+msgid "Labels"
+msgstr "Labels"
+
+msgid "Add label"
+msgstr "Add label"
+
+msgid "Label name"
+msgstr "Label name"
+
+msgid "Edit label"
+msgstr "Edit label"
+
+msgid "No labels yet"
+msgstr "No labels yet"
+
+msgid "Label already exists"
+msgstr "Label already exists"
+
+msgid "Label in use"
+msgstr "Label is still in use"
