@@ -1,22 +1,24 @@
+import contextlib
 import json
+import logging
 import secrets
 import sqlite3
 import time
 from datetime import date, datetime, timedelta
-from dateutil.relativedelta import relativedelta
 from functools import wraps
 from pathlib import Path
 
 import bcrypt
 import tricount as tc
-from werkzeug.middleware.proxy_fix import ProxyFix
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask_babel import Babel, gettext as _, lazy_gettext as _l
+from dateutil.relativedelta import relativedelta
 from flask import Flask, Response, flash, g, redirect, render_template, request, url_for
-from flask_login import (LoginManager, UserMixin, current_user, login_required,
-                         login_user, logout_user)
+from flask_babel import Babel
+from flask_babel import gettext as _
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
@@ -24,7 +26,7 @@ app.secret_key = "tricount-web-app-secret"
 app.config["SESSION_COOKIE_SECURE"] = True
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-import logging
+
 logging.basicConfig(level=logging.DEBUG)
 app.logger.setLevel(logging.DEBUG)
 
@@ -38,14 +40,16 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "warning"
 
-SUPPORTED_LANGS = ['nl', 'en', 'fr']
+SUPPORTED_LANGS = ["nl", "en", "fr"]
 babel = Babel()
 
+
 def get_locale():
-    lang = request.cookies.get('lang')
+    lang = request.cookies.get("lang")
     if lang in SUPPORTED_LANGS:
         return lang
-    return request.accept_languages.best_match(SUPPORTED_LANGS, default='nl')
+    return request.accept_languages.best_match(SUPPORTED_LANGS, default="nl")
+
 
 babel.init_app(app, locale_selector=get_locale)
 
@@ -80,16 +84,18 @@ def set_security_headers(response):
 @app.route("/lang/<lang>")
 def set_lang(lang):
     if lang not in SUPPORTED_LANGS:
-        lang = 'nl'
-    response = redirect(request.referrer or url_for('index'))
-    response.set_cookie('lang', lang, max_age=60*60*24*365)
+        lang = "nl"
+    response = redirect(request.referrer or url_for("index"))
+    response.set_cookie("lang", lang, max_age=60 * 60 * 24 * 365)
     return response
+
 
 FREQUENCIES = ["daily", "weekly", "monthly", "yearly"]
 FREQUENCY_LABELS = {"daily": "Dagelijks", "weekly": "Wekelijks", "monthly": "Maandelijks", "yearly": "Jaarlijks"}
 
 
 # --- DB ---
+
 
 def get_db():
     if "db" not in g:
@@ -186,6 +192,7 @@ def init_db():
 
 # --- Auth ---
 
+
 class User(UserMixin):
     def __init__(self, id, username, is_admin):
         self.id = id
@@ -207,6 +214,7 @@ def admin_required(f):
             flash(_("No access"), "danger")
             return redirect(url_for("index"))
         return f(*args, **kwargs)
+
     return decorated
 
 
@@ -244,11 +252,10 @@ def get_tricount_cached(client, token: str, user_id: int):
                 break
             except Exception as e:
                 if "429" in str(e) and attempt < 2:
-                    time.sleep(2 ** attempt)
+                    time.sleep(2**attempt)
                 else:
                     raise
     return t
-
 
 
 # --- Tricount client ---
@@ -278,7 +285,7 @@ def generate_user_credentials(user_id):
     creds = tc.Credentials.generate()
     get_db().execute(
         "UPDATE users SET credentials_json = ? WHERE id = ?",
-        (json.dumps({'app_id': creds.app_id, 'public_key_pem': creds.public_key_pem}), user_id)
+        (json.dumps({"app_id": creds.app_id, "public_key_pem": creds.public_key_pem}), user_id),
     )
     get_db().commit()
     invalidate_client_cache(user_id)
@@ -301,9 +308,7 @@ def process_recurring():
     today = date.today().isoformat()
     db = sqlite3.connect(DB_PATH)
     db.row_factory = sqlite3.Row
-    due = db.execute(
-        "SELECT * FROM recurring_expenses WHERE active = 1 AND next_run <= ?", (today,)
-    ).fetchall()
+    due = db.execute("SELECT * FROM recurring_expenses WHERE active = 1 AND next_run <= ?", (today,)).fetchall()
 
     if not due:
         db.close()
@@ -321,16 +326,18 @@ def process_recurring():
                 split_uuids = json.loads(row["split_uuids"])
                 split_among = [t.get_member_by_uuid(u) for u in split_uuids if t.get_member_by_uuid(u)]
                 tx_date = datetime.combine(next_run, datetime.min.time())
-                client.create_transaction(t, f"🔁 {row['description']}", row["amount"], payer, split_among, date=tx_date)
-                cache_invalidate(row['token'])
+                client.create_transaction(
+                    t, f"🔁 {row['description']}", row["amount"], payer, split_among, date=tx_date
+                )
+                cache_invalidate(row["token"])
                 db.execute(
                     "INSERT INTO recurring_log (recurring_id, executed_at, status, message) VALUES (?, ?, ?, ?)",
-                    (row["id"], next_run.isoformat(), "ok", f"Transactie aangemaakt voor {next_run.isoformat()}")
+                    (row["id"], next_run.isoformat(), "ok", f"Transactie aangemaakt voor {next_run.isoformat()}"),
                 )
             except Exception as e:
                 db.execute(
                     "INSERT INTO recurring_log (recurring_id, executed_at, status, message) VALUES (?, ?, ?, ?)",
-                    (row["id"], next_run.isoformat(), "error", str(e))
+                    (row["id"], next_run.isoformat(), "error", str(e)),
                 )
             next_run = next_run_after(next_run, row["frequency"])
 
@@ -347,12 +354,13 @@ scheduler.start()
 
 # --- Routes: auth ---
 
+
 @app.route("/sitemap.xml")
 def sitemap():
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>{request.host_url.rstrip('/')}{ url_for('login') }</loc>
+    <loc>{request.host_url.rstrip("/")}{url_for("login")}</loc>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -363,8 +371,7 @@ def sitemap():
 @app.route("/robots.txt")
 def robots():
     return Response(
-        f"User-agent: *\nDisallow: /\nSitemap: {request.host_url.rstrip('/')}/sitemap.xml\n",
-        mimetype="text/plain"
+        f"User-agent: *\nDisallow: /\nSitemap: {request.host_url.rstrip('/')}/sitemap.xml\n", mimetype="text/plain"
     )
 
 
@@ -422,14 +429,16 @@ def _do_register(db, user_count, invite_token):
         pw_hash = bcrypt.hashpw(password, bcrypt.gensalt()).decode()
         is_admin = 1 if user_count == 0 else 0
         try:
-            db.execute("INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, ?)", (username, pw_hash, is_admin))
+            db.execute(
+                "INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, ?)", (username, pw_hash, is_admin)
+            )
             db.commit()
             new_user = db.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone()
             generate_user_credentials(new_user["id"])
             if invite_token:
                 db.execute("UPDATE invites SET used = 1 WHERE token = ?", (invite_token,))
                 db.commit()
-            flash(_('Account created admin') if is_admin else _('Account created'), 'success')
+            flash(_("Account created admin") if is_admin else _("Account created"), "success")
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
             flash(_("Username taken"), "danger")
@@ -437,6 +446,7 @@ def _do_register(db, user_count, invite_token):
 
 
 # --- Routes: tricounts ---
+
 
 @app.route("/profile")
 @login_required
@@ -472,7 +482,7 @@ def profile_credentials():
     return Response(
         payload,
         mimetype="application/json",
-        headers={"Content-Disposition": "attachment; filename=tricount_credentials.json"}
+        headers={"Content-Disposition": "attachment; filename=tricount_credentials.json"},
     )
 
 
@@ -496,12 +506,11 @@ def profile_password():
         flash(_("Password changed"), "success")
     return redirect(url_for("profile"))
 
+
 @app.route("/")
 @login_required
 def index():
-    rows = get_db().execute(
-        "SELECT token, label FROM user_tokens WHERE user_id = ?", (current_user.id,)
-    ).fetchall()
+    rows = get_db().execute("SELECT token, label FROM user_tokens WHERE user_id = ?", (current_user.id,)).fetchall()
     tokens = [dict(row) for row in rows]
     return render_template("index.html", tokens=tokens)
 
@@ -510,17 +519,24 @@ def index():
 @login_required
 def api_tricounts():
     from flask import Response
-    rows = get_db().execute(
-        "SELECT token, label, public_token FROM user_tokens WHERE user_id = ?", (current_user.id,)
-    ).fetchall()
+
+    rows = (
+        get_db()
+        .execute("SELECT token, label, public_token FROM user_tokens WHERE user_id = ?", (current_user.id,))
+        .fetchall()
+    )
     try:
         client = get_client()
     except Exception as e:
+        err_msg = str(e)
+
         def err_gen():
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e), 'done': 0, 'total': 0})}\n\n"
-            yield "data: {\"type\": \"done\"}\n\n"
-        return Response(err_gen(), mimetype="text/event-stream",
-                        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+            yield f"data: {json.dumps({'type': 'error', 'message': err_msg, 'done': 0, 'total': 0})}\n\n"
+            yield 'data: {"type": "done"}\n\n'
+
+        return Response(
+            err_gen(), mimetype="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+        )
 
     uid = current_user.id
     token_map = {row["public_token"]: row for row in rows if row["public_token"]}
@@ -571,22 +587,23 @@ def api_tricounts():
                     "archived": t.is_archived,
                 }
             yield f"data: {json.dumps(data)}\n\n"
-        yield "data: {\"type\": \"done\"}\n\n"
+        yield 'data: {"type": "done"}\n\n'
 
-    return Response(generate(), mimetype="text/event-stream",
-                    headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+    return Response(
+        generate(), mimetype="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+    )
 
 
 @app.route("/refresh")
 @login_required
 def refresh():
-    rows = get_db().execute(
-        "SELECT token FROM user_tokens WHERE user_id = ?", (current_user.id,)
-    ).fetchall()
+    rows = get_db().execute("SELECT token FROM user_tokens WHERE user_id = ?", (current_user.id,)).fetchall()
     for row in rows:
         cache_invalidate(row["token"])
     from flask import jsonify
+
     return jsonify({"ok": True})
+
 
 @app.route("/create_tricount", methods=["POST"])
 @login_required
@@ -605,27 +622,27 @@ def create_tricount():
         if not t:
             app.logger.error(f"Tricount {tricount_id} not found in {[x.id for x in tricounts]}")
             raise Exception(f"Tricount {tricount_id} not found in list")
-        token = t.public_identifier_token if hasattr(t, 'public_identifier_token') else f"t{tricount_id}"
+        token = t.public_identifier_token if hasattr(t, "public_identifier_token") else f"t{tricount_id}"
         app.logger.info(f"token: {token}")
         emoji = request.form.get("emoji", "").strip() or None
         if emoji:
             app.logger.info(f"updating emoji: {emoji}")
             client.update_tricount(t, emoji=emoji)
-            app.logger.info(f"emoji updated")
+            app.logger.info("emoji updated")
         if members:
             app.logger.info(f"adding members: {members}")
             client.add_members(t, members)
-            app.logger.info(f"members added")
+            app.logger.info("members added")
             # Verwijder de automatische 'tricount participant' placeholder
             t_updated = next((x for x in client.list_tricounts() if x.id == tricount_id), t)
             for m in t_updated.members:
-                if m.display_name.lower() == 'tricount participant':
+                if m.display_name.lower() == "tricount participant":
                     app.logger.info(f"removing placeholder member: {m.display_name}")
                     client.delete_member(t_updated, m)
                     break
         get_db().execute(
             "INSERT OR IGNORE INTO user_tokens (user_id, token, label, public_token) VALUES (?, ?, ?, ?)",
-            (current_user.id, token, None, token)
+            (current_user.id, token, None, token),
         )
         get_db().commit()
         flash(_("Tricount added"), "success")
@@ -644,14 +661,14 @@ def add_tricount():
     if token:
         try:
             t = get_client().join_tricount(token, fetch_full=False)
-            public_token = t.public_identifier_token if hasattr(t, 'public_identifier_token') else None
+            public_token = t.public_identifier_token if hasattr(t, "public_identifier_token") else None
             get_db().execute(
                 "INSERT OR IGNORE INTO user_tokens (user_id, token, label, public_token) VALUES (?, ?, ?, ?)",
-                (current_user.id, token, label, public_token)
+                (current_user.id, token, label, public_token),
             )
             get_db().execute(
                 "UPDATE user_tokens SET public_token = ? WHERE user_id = ? AND token = ? AND public_token IS NULL",
-                (public_token, current_user.id, token)
+                (public_token, current_user.id, token),
             )
             get_db().commit()
             flash(_("Tricount added"), "success")
@@ -674,7 +691,7 @@ def tricount_select_member(token):
         member_uuid = request.form.get("member_uuid") or None
         get_db().execute(
             "UPDATE user_tokens SET member_uuid = ? WHERE user_id = ? AND token = ?",
-            (member_uuid, current_user.id, token)
+            (member_uuid, current_user.id, token),
         )
         get_db().commit()
         return redirect(url_for("tricount_detail", token=token))
@@ -694,7 +711,9 @@ def remove_tricount(token):
 @login_required
 def update_label(token):
     label = request.form.get("label", "").strip() or None
-    get_db().execute("UPDATE user_tokens SET label = ? WHERE user_id = ? AND token = ?", (label, current_user.id, token))
+    get_db().execute(
+        "UPDATE user_tokens SET label = ? WHERE user_id = ? AND token = ?", (label, current_user.id, token)
+    )
     get_db().commit()
     return redirect(url_for("tricount_detail", token=token))
 
@@ -702,7 +721,11 @@ def update_label(token):
 @app.route("/tricount/<token>")
 @login_required
 def tricount_detail(token):
-    row = get_db().execute("SELECT label FROM user_tokens WHERE user_id = ? AND token = ?", (current_user.id, token)).fetchone()
+    row = (
+        get_db()
+        .execute("SELECT label FROM user_tokens WHERE user_id = ? AND token = ?", (current_user.id, token))
+        .fetchone()
+    )
     label = row["label"] if row else None
     return render_template("tricount.html", token=token, label=label)
 
@@ -711,80 +734,96 @@ def tricount_detail(token):
 @login_required
 def api_tricount(token):
     from flask import Response
+
     try:
         client = get_client()
     except Exception as e:
+        err_msg = str(e)
+
         def err_gen():
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
-            yield "data: {\"type\": \"done\"}\n\n"
-        return Response(err_gen(), mimetype="text/event-stream",
-                        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+            yield f"data: {json.dumps({'type': 'error', 'message': err_msg})}\n\n"
+            yield 'data: {"type": "done"}\n\n'
+
+        return Response(
+            err_gen(), mimetype="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+        )
     uid = current_user.id
-    row = get_db().execute("SELECT member_uuid FROM user_tokens WHERE user_id = ? AND token = ?", (uid, token)).fetchone()
+    row = (
+        get_db().execute("SELECT member_uuid FROM user_tokens WHERE user_id = ? AND token = ?", (uid, token)).fetchone()
+    )
     linked_uuid = row["member_uuid"] if row else None
+
     def generate():
         try:
             yield f"data: {json.dumps({'type': 'status', 'message': _('Loading')})}\n\n"
             t = get_tricount_cached(client, token, uid)
             balances = client.get_balances(t)
 
-            members = [{'uuid': m.uuid, 'name': m.display_name} for m in t.members]
+            members = [{"uuid": m.uuid, "name": m.display_name} for m in t.members]
             transactions = []
             for tx in sorted(
-                [tx for tx in t.transactions if tx.status.value == 'ACTIVE'],
-                key=lambda x: x.date, reverse=True
+                [tx for tx in t.transactions if tx.status.value == "ACTIVE"], key=lambda x: x.date, reverse=True
             ):
                 payer = t.get_member_by_uuid(tx.membership_uuid_owner)
                 allocations = [
-                    {'name': (t.get_member_by_uuid(a.membership_uuid).display_name if t.get_member_by_uuid(a.membership_uuid) else '?'),
-                     'amount': abs(float(a.amount.value))}
-                    for a in tx.allocations if abs(float(a.amount.value)) > 0
+                    {
+                        "name": (
+                            t.get_member_by_uuid(a.membership_uuid).display_name
+                            if t.get_member_by_uuid(a.membership_uuid)
+                            else "?"
+                        ),
+                        "amount": abs(float(a.amount.value)),
+                    }
+                    for a in tx.allocations
+                    if abs(float(a.amount.value)) > 0
                 ]
-                transactions.append({
-                    'id': tx.id,
-                    'description': tx.description,
-                    'amount': abs(float(tx.amount.value)),
-                    'currency': t.currency,
-                    'payer': payer.display_name if payer else '?',
-                    'payer_is_me': payer.uuid == linked_uuid if payer else False,
-                    'date': tx.date[:10],
-                    'allocations': allocations,
-                })
+                transactions.append(
+                    {
+                        "id": tx.id,
+                        "description": tx.description,
+                        "amount": abs(float(tx.amount.value)),
+                        "currency": t.currency,
+                        "payer": payer.display_name if payer else "?",
+                        "payer_is_me": payer.uuid == linked_uuid if payer else False,
+                        "date": tx.date[:10],
+                        "allocations": allocations,
+                    }
+                )
 
             payload = {
-                'type': 'data',
-                'title': t.title,
-                'emoji': t.emoji or '',
-                'currency': t.currency,
-                'archived': t.is_archived,
-                'members': members,
-                'linked_uuid': linked_uuid,
-                'balances': balances,
-                'transactions': transactions,
-                'public_token': t.public_identifier_token,
+                "type": "data",
+                "title": t.title,
+                "emoji": t.emoji or "",
+                "currency": t.currency,
+                "archived": t.is_archived,
+                "members": members,
+                "linked_uuid": linked_uuid,
+                "balances": balances,
+                "transactions": transactions,
+                "public_token": t.public_identifier_token,
             }
             yield f"data: {json.dumps(payload)}\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
-        yield "data: {\"type\": \"done\"}\n\n"
+        yield 'data: {"type": "done"}\n\n'
 
-    return Response(generate(), mimetype="text/event-stream",
-                    headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+    return Response(
+        generate(), mimetype="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+    )
 
 
 def link_member_if_set(client, t, token):
     """Link the current user to their member in the tricount if configured."""
-    row = get_db().execute(
-        "SELECT member_uuid FROM user_tokens WHERE user_id = ? AND token = ?",
-        (current_user.id, token)
-    ).fetchone()
+    row = (
+        get_db()
+        .execute("SELECT member_uuid FROM user_tokens WHERE user_id = ? AND token = ?", (current_user.id, token))
+        .fetchone()
+    )
     if row and row["member_uuid"]:
         member = t.get_member_by_uuid(row["member_uuid"])
         if member:
-            try:
+            with contextlib.suppress(Exception):
                 client.link_to_member(t, member)
-            except Exception:
-                pass
 
 
 @app.route("/tricount/<token>/add", methods=["GET", "POST"])
@@ -861,8 +900,9 @@ def edit_transaction(token, tx_id):
         split_among = [t.get_member_by_uuid(u) for u in split_uuids if t.get_member_by_uuid(u)]
         tx_date = datetime.strptime(date_str, "%Y-%m-%d") if date_str else None
         try:
-            client.edit_transaction(t, tx_id, description=description, amount=amount,
-                                    payer=payer, split_among=split_among, date=tx_date)
+            client.edit_transaction(
+                t, tx_id, description=description, amount=amount, payer=payer, split_among=split_among, date=tx_date
+            )
             cache_invalidate(token)
             flash(_("Transaction updated"), "success")
         except Exception as e:
@@ -871,9 +911,7 @@ def edit_transaction(token, tx_id):
 
     # Huidige waarden voorinvullen
     current_split_uuids = [a.membership_uuid for a in tx.allocations if float(a.amount.value) != 0]
-    return render_template("edit_transaction.html", t=t, token=token, tx=tx,
-                           current_split_uuids=current_split_uuids)
-
+    return render_template("edit_transaction.html", t=t, token=token, tx=tx, current_split_uuids=current_split_uuids)
 
 
 @app.route("/tricount/<token>/settle", methods=["POST"])
@@ -900,15 +938,22 @@ def reimburse(token):
         link_member_if_set(client, t, token)
         payer = t.get_member_by_uuid(payer_uuid)
         receiver = t.get_member_by_uuid(receiver_uuid)
-        client.create_reimbursement(t, payer=payer, receiver=receiver, amount=amount,
-                                       description=f"Betaling {payer.display_name} → {receiver.display_name}")
+        client.create_reimbursement(
+            t,
+            payer=payer,
+            receiver=receiver,
+            amount=amount,
+            description=f"Betaling {payer.display_name} → {receiver.display_name}",
+        )
         cache_invalidate(token)
         flash(f"{payer.display_name} heeft {receiver.display_name} betaald.", "success")
     except Exception as e:
         flash(f"Fout: {e}", "danger")
     return redirect(url_for("tricount_detail", token=token))
 
+
 # --- Routes: recurring ---
+
 
 @app.route("/tricount/<token>/recurring")
 @login_required
@@ -918,12 +963,15 @@ def recurring_list(token):
     except Exception as e:
         flash(str(e), "danger")
         return redirect(url_for("index"))
-    rows = get_db().execute(
-        "SELECT * FROM recurring_expenses WHERE user_id = ? AND token = ? ORDER BY next_run",
-        (current_user.id, token)
-    ).fetchall()
-    return render_template("recurring_list.html", t=t, token=token, rows=rows,
-                           frequency_labels=FREQUENCY_LABELS)
+    rows = (
+        get_db()
+        .execute(
+            "SELECT * FROM recurring_expenses WHERE user_id = ? AND token = ? ORDER BY next_run",
+            (current_user.id, token),
+        )
+        .fetchall()
+    )
+    return render_template("recurring_list.html", t=t, token=token, rows=rows, frequency_labels=FREQUENCY_LABELS)
 
 
 @app.route("/tricount/<token>/recurring/add", methods=["GET", "POST"])
@@ -947,7 +995,7 @@ def recurring_add(token):
             """INSERT INTO recurring_expenses
                (user_id, token, description, amount, payer_uuid, split_uuids, frequency, start_date, next_run)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (current_user.id, token, description, amount, payer_uuid, split_uuids, frequency, start_date, start_date)
+            (current_user.id, token, description, amount, payer_uuid, split_uuids, frequency, start_date, start_date),
         )
         get_db().commit()
         flash(_("Recurring added"), "success")
@@ -957,14 +1005,19 @@ def recurring_add(token):
         return redirect(url_for("recurring_list", token=token))
 
     today = date.today().strftime("%Y-%m-%d")
-    return render_template("recurring_add.html", t=t, token=token, today=today,
-                           frequencies=FREQUENCIES, frequency_labels=FREQUENCY_LABELS)
+    return render_template(
+        "recurring_add.html", t=t, token=token, today=today, frequencies=FREQUENCIES, frequency_labels=FREQUENCY_LABELS
+    )
 
 
 @app.route("/tricount/<token>/recurring/<int:rec_id>/toggle", methods=["POST"])
 @login_required
 def recurring_toggle(token, rec_id):
-    row = get_db().execute("SELECT active FROM recurring_expenses WHERE id = ? AND user_id = ?", (rec_id, current_user.id)).fetchone()
+    row = (
+        get_db()
+        .execute("SELECT active FROM recurring_expenses WHERE id = ? AND user_id = ?", (rec_id, current_user.id))
+        .fetchone()
+    )
     if row:
         get_db().execute("UPDATE recurring_expenses SET active = ? WHERE id = ?", (0 if row["active"] else 1, rec_id))
         get_db().commit()
@@ -983,7 +1036,11 @@ def recurring_delete(token, rec_id):
 @app.route("/tricount/<token>/recurring/<int:rec_id>/edit", methods=["GET", "POST"])
 @login_required
 def recurring_edit(token, rec_id):
-    row = get_db().execute("SELECT * FROM recurring_expenses WHERE id = ? AND user_id = ?", (rec_id, current_user.id)).fetchone()
+    row = (
+        get_db()
+        .execute("SELECT * FROM recurring_expenses WHERE id = ? AND user_id = ?", (rec_id, current_user.id))
+        .fetchone()
+    )
     if not row:
         return redirect(url_for("recurring_list", token=token))
     try:
@@ -1001,39 +1058,56 @@ def recurring_edit(token, rec_id):
         next_run = start_date if start_date > row["next_run"] else row["next_run"]
         get_db().execute(
             """UPDATE recurring_expenses SET description=?, amount=?, payer_uuid=?, split_uuids=?, frequency=?, start_date=?, next_run=? WHERE id=? AND user_id=?""",
-            (description, amount, payer_uuid, split_uuids, frequency, start_date, next_run, rec_id, current_user.id)
+            (description, amount, payer_uuid, split_uuids, frequency, start_date, next_run, rec_id, current_user.id),
         )
         get_db().commit()
         flash(_("Transaction updated"), "success")
         return redirect(url_for("recurring_list", token=token))
     split_uuids = json.loads(row["split_uuids"])
-    return render_template("recurring_edit.html", t=t, token=token, row=row,
-                           split_uuids=split_uuids, frequencies=FREQUENCIES, frequency_labels=FREQUENCY_LABELS)
+    return render_template(
+        "recurring_edit.html",
+        t=t,
+        token=token,
+        row=row,
+        split_uuids=split_uuids,
+        frequencies=FREQUENCIES,
+        frequency_labels=FREQUENCY_LABELS,
+    )
 
 
 @app.route("/tricount/<token>/recurring/<int:rec_id>/log")
 @login_required
 def recurring_log_view(token, rec_id):
-    row = get_db().execute("SELECT * FROM recurring_expenses WHERE id = ? AND user_id = ?", (rec_id, current_user.id)).fetchone()
+    row = (
+        get_db()
+        .execute("SELECT * FROM recurring_expenses WHERE id = ? AND user_id = ?", (rec_id, current_user.id))
+        .fetchone()
+    )
     if not row:
         return redirect(url_for("recurring_list", token=token))
-    logs = get_db().execute(
-        "SELECT * FROM recurring_log WHERE recurring_id = ? ORDER BY executed_at DESC LIMIT 50", (rec_id,)
-    ).fetchall()
-    return render_template("recurring_log.html", token=token, row=row, logs=logs,
-                           frequency_labels=FREQUENCY_LABELS)
+    logs = (
+        get_db()
+        .execute("SELECT * FROM recurring_log WHERE recurring_id = ? ORDER BY executed_at DESC LIMIT 50", (rec_id,))
+        .fetchall()
+    )
+    return render_template("recurring_log.html", token=token, row=row, logs=logs, frequency_labels=FREQUENCY_LABELS)
 
 
 # --- Routes: admin ---
+
 
 @app.route("/admin")
 @admin_required
 def admin():
     users = get_db().execute("SELECT id, username, is_admin FROM users ORDER BY username").fetchall()
-    invites = get_db().execute(
-        "SELECT invites.id, invites.token, invites.created_at, invites.used, invites.label, users.username AS created_by"
-        " FROM invites JOIN users ON users.id = invites.created_by ORDER BY invites.created_at DESC"
-    ).fetchall()
+    invites = (
+        get_db()
+        .execute(
+            "SELECT invites.id, invites.token, invites.created_at, invites.used, invites.label, users.username AS created_by"
+            " FROM invites JOIN users ON users.id = invites.created_by ORDER BY invites.created_at DESC"
+        )
+        .fetchall()
+    )
     return render_template("admin.html", users=users, invites=invites)
 
 
@@ -1044,7 +1118,7 @@ def admin_create_invite():
     label = request.form.get("label", "").strip() or None
     get_db().execute(
         "INSERT INTO invites (token, created_by, created_at, label) VALUES (?, ?, ?, ?)",
-        (token, current_user.id, datetime.now().isoformat(timespec='seconds'), label)
+        (token, current_user.id, datetime.now().isoformat(timespec="seconds"), label),
     )
     get_db().commit()
     flash(_("Invite created"), "success")
