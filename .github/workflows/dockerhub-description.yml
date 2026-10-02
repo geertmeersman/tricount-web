@@ -1,0 +1,23 @@
+name: Docker Hub description
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - DOCKER_HUB.md
+  workflow_dispatch:
+
+jobs:
+  update-description:
+    name: Sync Docker Hub description
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4.0.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: ${{ github.repository }}
+          readme-filepath: ./DOCKER_HUB.md
