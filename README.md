@@ -94,3 +94,7 @@ The Dockerfile compiles translations automatically on build.
 - [Tailwind CSS](https://tailwindcss.com/) (compiled via standalone CLI at build time)
 - [APScheduler](https://apscheduler.readthedocs.io/)
 - SQLite + bcrypt
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, testing, linting, and translation instructions.

@@ -1,10 +1,11 @@
-import pytest
-import sqlite3
-import tempfile
 import os
 import secrets
+import sqlite3
+import tempfile
 from datetime import date, datetime
 from unittest.mock import patch
+
+import pytest
 from flask import g
 
 import app as application
@@ -72,17 +73,18 @@ def client():
             g.db.row_factory = sqlite3.Row
         return g.db
 
-    application.app.config.update({
-        "TESTING": True,
-        "SESSION_COOKIE_SECURE": False,
-        "SESSION_COOKIE_HTTPONLY": False,
-    })
+    application.app.config.update(
+        {
+            "TESTING": True,
+            "SESSION_COOKIE_SECURE": False,
+            "SESSION_COOKIE_HTTPONLY": False,
+        }
+    )
     application.limiter.enabled = False
 
-    with patch.object(application, "get_db", get_test_db):
-        with application.app.test_client() as c:
-            c._db_path = db_path  # expose for db fixture
-            yield c
+    with patch.object(application, "get_db", get_test_db), application.app.test_client() as c:
+        c._db_path = db_path  # expose for db fixture
+        yield c
 
     os.close(db_fd)
     os.unlink(db_path)
@@ -117,13 +119,14 @@ def create_invite(db, created_by_id):
     token = secrets.token_urlsafe(16)
     db.execute(
         "INSERT INTO invites (token, created_by, created_at, used) VALUES (?, ?, ?, 0)",
-        (token, created_by_id, datetime.now().isoformat())
+        (token, created_by_id, datetime.now().isoformat()),
     )
     db.commit()
     return token
 
 
 # --- next_run_after ---
+
 
 def test_next_run_daily():
     assert application.next_run_after(date(2024, 1, 15), "daily") == date(2024, 1, 16)
@@ -146,6 +149,7 @@ def test_next_run_unknown_defaults_to_daily():
 
 
 # --- Registration ---
+
 
 def test_first_user_becomes_admin(client, db):
     with patch.object(application, "generate_user_credentials"):
@@ -188,7 +192,7 @@ def test_invite_cannot_be_reused(client, db):
     token = secrets.token_urlsafe(16)
     db.execute(
         "INSERT INTO invites (token, created_by, created_at, used) VALUES (?, ?, ?, 1)",
-        (token, admin["id"], datetime.now().isoformat())
+        (token, admin["id"], datetime.now().isoformat()),
     )
     db.commit()
     with patch.object(application, "generate_user_credentials"):
@@ -197,6 +201,7 @@ def test_invite_cannot_be_reused(client, db):
 
 
 # --- Login ---
+
 
 def test_login_success(client, db):
     with patch.object(application, "generate_user_credentials"):
@@ -220,6 +225,7 @@ def test_login_unknown_user(client):
 
 
 # --- Auth-protected routes ---
+
 
 def test_index_requires_login(client):
     resp = client.get("/", follow_redirects=False)
@@ -251,6 +257,7 @@ def test_admin_requires_admin_role(client, db):
 
 # --- Profile ---
 
+
 def test_profile_page_loads(client, db):
     register_and_login(client)
     resp = client.get("/profile")
@@ -260,11 +267,15 @@ def test_profile_page_loads(client, db):
 def test_change_password(client, db):
     with patch.object(application, "generate_user_credentials"):
         register_user(client, "admin", "adminpass1")
-    client.post("/profile/password", data={
-        "current_password": "adminpass1",
-        "new_password": "newpass99",
-        "confirm_password": "newpass99",
-    }, follow_redirects=True)
+    client.post(
+        "/profile/password",
+        data={
+            "current_password": "adminpass1",
+            "new_password": "newpass99",
+            "confirm_password": "newpass99",
+        },
+        follow_redirects=True,
+    )
     client.get("/logout")
     resp = login_user(client, "admin", "newpass99")
     assert resp.status_code == 200
@@ -272,25 +283,34 @@ def test_change_password(client, db):
 
 def test_change_password_wrong_current(client, db):
     register_and_login(client)
-    resp = client.post("/profile/password", data={
-        "current_password": "wrongpass",
-        "new_password": "newpass99",
-        "confirm_password": "newpass99",
-    }, follow_redirects=True)
+    resp = client.post(
+        "/profile/password",
+        data={
+            "current_password": "wrongpass",
+            "new_password": "newpass99",
+            "confirm_password": "newpass99",
+        },
+        follow_redirects=True,
+    )
     assert b"incorrect" in resp.data.lower() or b"onjuist" in resp.data.lower()
 
 
 def test_change_password_mismatch(client, db):
     register_and_login(client)
-    resp = client.post("/profile/password", data={
-        "current_password": "adminpass1",
-        "new_password": "newpass99",
-        "confirm_password": "different99",
-    }, follow_redirects=True)
+    resp = client.post(
+        "/profile/password",
+        data={
+            "current_password": "adminpass1",
+            "new_password": "newpass99",
+            "confirm_password": "different99",
+        },
+        follow_redirects=True,
+    )
     assert b"match" in resp.data.lower() or b"overeenkomen" in resp.data.lower()
 
 
 # --- Sitemap & robots ---
+
 
 def test_sitemap_returns_xml(client):
     resp = client.get("/sitemap.xml")

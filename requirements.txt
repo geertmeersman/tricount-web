@@ -7,3 +7,4 @@ python-dateutil==2.9.0
 Flask-Babel==4.0.0
 Flask-Limiter==3.5.0
 pytest
+ruff
