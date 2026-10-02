@@ -56,7 +56,11 @@ babel.init_app(app, locale_selector=get_locale)
 
 @app.context_processor
 def inject_now():
-    return {"now": datetime.now(), "csp_nonce": g.get("csp_nonce", "")}
+    try:
+        version = (Path("VERSION")).read_text().strip()
+    except OSError:
+        version = "dev"
+    return {"now": datetime.now(), "csp_nonce": g.get("csp_nonce", ""), "version": version}
 
 
 @app.before_request
