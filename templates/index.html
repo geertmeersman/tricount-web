@@ -13,14 +13,14 @@
         <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
       </svg>
     </button>
-    <button onclick="document.getElementById('addForm').classList.toggle('hidden')"
+    <button id="toggleAddFormBtn"
       class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <line x1="12" y1="5" x2="12" y2="19"/>
         <line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
     </button>
-    <button onclick="document.getElementById('newTricountModal').classList.remove('hidden')"
+    <button id="openNewTricountBtn"
       class="w-10 h-10 flex items-center justify-center rounded-xl bg-green-600 hover:bg-green-700 text-white shadow transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
@@ -32,7 +32,7 @@
 <div id="addForm" class="hidden bg-white rounded-xl shadow p-4 mb-4">
   <form method="POST" action="{{ url_for('add_tricount') }}" class="space-y-2">
     <input type="text" name="token" placeholder="{{ _('Token placeholder') }}" required
-      oninput="const m = this.value.match(/tricount\.com\/t(\S+)/); if(m) this.value = 't' + m[1];"
+      id="tokenInput"
       class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
     <input type="text" name="label" placeholder="{{ _('Label optional') }}"
       class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
@@ -57,7 +57,7 @@
 
 <!-- Nieuwe tricount modal -->
 <div id="newTricountModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-     onclick="if(event.target===this)this.classList.add('hidden')">
+     id="newTricountModalBackdrop">
   <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
     <h3 class="font-semibold text-lg">{{ _("New tricount") }}</h3>
     <form method="POST" action="{{ url_for('create_tricount') }}" class="space-y-3">
@@ -102,13 +102,13 @@
       </div>
       <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Create") }}</button>
     </form>
-    <button onclick="document.getElementById('newTricountModal').classList.add('hidden')"
+    <button id="closeNewTricountBtn"
       class="w-full border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">{{ _("Cancel") }}</button>
   </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
 const _i18n = {
   loading:  {{ _("Loading") | tojson }},
   error:    {{ _("Connection error") | tojson }},
@@ -120,5 +120,10 @@ const _i18n = {
 };
 loadTricounts({{ tokens | tojson }});
 document.getElementById('refreshBtn').onclick = () => loadTricounts({{ tokens | tojson }}, true);
+document.getElementById('toggleAddFormBtn').addEventListener('click', () => document.getElementById('addForm').classList.toggle('hidden'));
+document.getElementById('openNewTricountBtn').addEventListener('click', () => document.getElementById('newTricountModal').classList.remove('hidden'));
+document.getElementById('closeNewTricountBtn').addEventListener('click', () => document.getElementById('newTricountModal').classList.add('hidden'));
+document.getElementById('newTricountModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
+document.getElementById('tokenInput').addEventListener('input', function() { const m = this.value.match(/tricount\.com\/t(\S+)/); if (m) this.value = 't' + m[1]; });
 </script>
 {% endblock %}

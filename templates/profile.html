@@ -13,7 +13,7 @@
 
   <!-- Tricount verbinding info -->
   <div class="bg-white rounded-xl shadow p-4">
-    <div class="flex items-center justify-between cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+    <div class="flex items-center justify-between cursor-pointer" id="toggleConnectionInfo">
       <p class="text-sm font-semibold text-gray-700">{{ _("Tricount connection") }}</p>
       <span class="text-blue-500 text-lg font-bold leading-none select-none">?</span>
     </div>
@@ -26,7 +26,7 @@
 
   <!-- Credentials download -->
   <div class="bg-white rounded-xl shadow p-4">
-    <div class="flex items-center justify-between cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+    <div class="flex items-center justify-between cursor-pointer" id="toggleCredentialsInfo">
       <p class="text-sm font-semibold text-gray-700">{{ _("Device credentials") }}</p>
       <span class="text-blue-500 text-lg font-bold leading-none select-none">?</span>
     </div>
@@ -60,8 +60,7 @@
   <div class="bg-white rounded-xl shadow p-4 border border-red-200">
     <h2 class="text-sm font-semibold text-red-600 mb-3">{{ _("Delete account") }}</h2>
     <p class="text-xs text-gray-400 mb-3">{{ _("Delete account hint") }}</p>
-    <form method="POST" action="{{ url_for('profile_delete') }}" class="space-y-3"
-      onsubmit="return confirm('{{ _('Confirm delete account') }}')">
+    <form method="POST" action="{{ url_for('profile_delete') }}" class="space-y-3" id="deleteAccountForm">
       <input type="password" name="password" placeholder="{{ _('Current password') }}" required
         class="w-full border border-red-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
       <button class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Delete account") }}</button>
@@ -69,4 +68,10 @@
   </div>
 
 </div>
+
+<script nonce="{{ csp_nonce }}">
+document.getElementById('toggleConnectionInfo').addEventListener('click', function() { this.nextElementSibling.classList.toggle('hidden'); });
+document.getElementById('toggleCredentialsInfo').addEventListener('click', function() { this.nextElementSibling.classList.toggle('hidden'); });
+document.getElementById('deleteAccountForm').addEventListener('submit', (e) => { if (!confirm({{ _("Confirm delete account") | tojson }})) e.preventDefault(); });
+</script>
 {% endblock %}

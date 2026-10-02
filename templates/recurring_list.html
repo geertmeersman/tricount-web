@@ -45,7 +45,7 @@
           </button>
         </form>
         <form method="POST" action="{{ url_for('recurring_delete', token=token, rec_id=row.id) }}">
-          <button onclick="return confirm('{{ _('Recurring deleted') }}?')"
+          <button data-confirm="{{ _('Recurring deleted') }}?"
             class="text-xs border border-red-300 text-red-500 hover:bg-red-50 px-2 py-1 rounded-lg">{{ _("Delete") }}</button>
         </form>
       </div>
@@ -56,4 +56,7 @@
 {% else %}
 <p class="text-gray-400 text-sm text-center mt-10">{{ _("No recurring") }}</p>
 {% endif %}
+<script nonce="{{ csp_nonce }}">
+document.querySelectorAll('[data-confirm]').forEach(el => el.closest('form').addEventListener('submit', (e) => { if (!confirm(el.dataset.confirm)) e.preventDefault(); }));
+</script>
 {% endblock %}

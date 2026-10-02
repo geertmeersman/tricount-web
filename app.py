@@ -21,6 +21,9 @@ from flask_limiter.util import get_remote_address
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 app.secret_key = "tricount-web-app-secret"
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 import logging
 logging.basicConfig(level=logging.DEBUG)
 app.logger.setLevel(logging.DEBUG)
@@ -49,7 +52,29 @@ babel.init_app(app, locale_selector=get_locale)
 
 @app.context_processor
 def inject_now():
-    return {"now": datetime.now()}
+    return {"now": datetime.now(), "csp_nonce": g.get("csp_nonce", "")}
+
+
+@app.before_request
+def set_csp_nonce():
+    g.csp_nonce = secrets.token_urlsafe(16)
+
+
+@app.after_request
+def set_security_headers(response):
+    nonce = g.get("csp_nonce", "")
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Content-Security-Policy"] = (
+        f"default-src 'self'; "
+        f"script-src 'self' 'nonce-{nonce}'; "
+        f"style-src 'self' 'unsafe-inline'; "
+        f"font-src 'self' data:; "
+        f"img-src 'self' data:; "
+        f"connect-src 'self'; "
+        f"frame-ancestors 'none';"
+    )
+    return response
 
 
 @app.route("/lang/<lang>")
@@ -321,6 +346,27 @@ scheduler.start()
 
 
 # --- Routes: auth ---
+
+@app.route("/sitemap.xml")
+def sitemap():
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{request.host_url.rstrip('/')}{ url_for('login') }</loc>
+    <changefreq>yearly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>"""
+    return Response(xml, mimetype="application/xml")
+
+
+@app.route("/robots.txt")
+def robots():
+    return Response(
+        f"User-agent: *\nDisallow: /\nSitemap: {request.host_url.rstrip('/')}/sitemap.xml\n",
+        mimetype="text/plain"
+    )
+
 
 @app.route("/login", methods=["GET", "POST"])
 @limiter.limit("10 per minute")

@@ -5,14 +5,14 @@
 <div class="flex items-center justify-between mb-4">
   <h1 id="pageTitle" class="text-xl font-bold truncate">{{ _("Loading") }}</h1>
   <div class="flex items-center gap-2 ml-2 shrink-0">
-    <button onclick="document.getElementById('editModal').classList.remove('hidden')"
+    <button id="openEditModalBtn"
       class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
       </svg>
     </button>
-    <button id="shareBtn" onclick="shareTricount()"
+    <button id="shareBtn"
       class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
@@ -61,7 +61,6 @@
       <h2 class="text-sm font-semibold text-gray-500 uppercase flex-1">{{ _("Transactions") }}</h2>
       <span class="text-xs text-gray-400" id="txTotalAll"></span>
       <input id="txSearch" type="search" placeholder="{{ _('Search') }}"
-        oninput="filterTransactions(this.value)"
         class="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-36">
     </div>
     <div id="transactions"></div>
@@ -78,7 +77,7 @@
 
 <!-- Edit modal -->
 <div id="editModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-     onclick="if(event.target===this)this.classList.add('hidden')">
+     id="editModalBackdrop">
   <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
     <h3 class="font-semibold text-lg">⚙️ {{ _("Edit tricount") }}</h3>
 
@@ -98,20 +97,19 @@
       <p class="text-xs text-gray-400 mb-2">{{ _("Type to confirm remove") }}</p>
       <form method="POST" action="{{ url_for('remove_tricount', token=token) }}" class="space-y-2">
         <input type="text" id="removeConfirmInput" placeholder="{{ _('Delete verb') }}"
-          oninput="document.getElementById('removeBtn').disabled = this.value !== _t.deleteVerb"
           class="w-full border border-red-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
         <button id="removeBtn" disabled
           class="w-full bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2 rounded-lg text-sm font-medium">{{ _("Remove from list") }}</button>
       </form>
     </div>
 
-    <button onclick="document.getElementById('editModal').classList.add('hidden')"
+    <button id="closeEditModalBtn"
       class="w-full border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">{{ _("Cancel") }}</button>
   </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/tricount.js') }}"></script>
-<script>
+<script nonce="{{ csp_nonce }}">
 const _t = {
   loading:        {{ _("Loading") | tojson }},
   connecting:     {{ _("Connecting") | tojson }},
@@ -139,5 +137,11 @@ const _t = {
   youAreOwed:     {{ _("You are owed") | tojson }},
 };
 loadTricountDetail({{ token | tojson }});
+document.getElementById('openEditModalBtn').addEventListener('click', () => document.getElementById('editModal').classList.remove('hidden'));
+document.getElementById('closeEditModalBtn').addEventListener('click', () => document.getElementById('editModal').classList.add('hidden'));
+document.getElementById('editModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
+document.getElementById('shareBtn').addEventListener('click', () => shareTricount());
+document.getElementById('txSearch').addEventListener('input', function() { filterTransactions(this.value); });
+document.getElementById('removeConfirmInput').addEventListener('input', function() { document.getElementById('removeBtn').disabled = this.value !== _t.deleteVerb; });
 </script>
 {% endblock %}

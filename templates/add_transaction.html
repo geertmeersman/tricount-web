@@ -35,11 +35,11 @@
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-2">{{ _("Split among") }}</label>
       <div class="flex rounded-lg border overflow-hidden mb-3">
-        <button type="button" onclick="setSplitType('equal')" id="tab-equal"
+        <button type="button" id="tab-equal"
           class="split-tab flex-1 py-1.5 text-sm font-medium bg-blue-600 text-white">{{ _("Equal") }}</button>
-        <button type="button" onclick="setSplitType('ratio')" id="tab-ratio"
+        <button type="button" id="tab-ratio"
           class="split-tab flex-1 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50">{{ _("Parts") }}</button>
-        <button type="button" onclick="setSplitType('amount')" id="tab-amount"
+        <button type="button" id="tab-amount"
           class="split-tab flex-1 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50">{{ _("Amounts") }}</button>
       </div>
       <input type="hidden" name="split_type" id="splitType" value="equal">
@@ -95,7 +95,7 @@
   </form>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce }}">
 function setSplitType(type) {
   document.getElementById('splitType').value = type;
   ['equal','ratio','amount'].forEach(t => {
@@ -133,7 +133,10 @@ function updateAmountSum() {
   el.className = remaining < -0.01 ? 'text-red-500 text-xs' : 'text-gray-400 text-xs';
 }
 
-document.querySelectorAll('[name^="ratio_"]').forEach(i => i.addEventListener('input', updateRatioPreviews));
+document.getElementById('tab-equal').addEventListener('click', () => setSplitType('equal'));
+document.getElementById('tab-ratio').addEventListener('click', () => setSplitType('ratio'));
+document.getElementById('tab-amount').addEventListener('click', () => setSplitType('amount'));
+
 document.querySelectorAll('.amount-input').forEach(i => i.addEventListener('input', updateAmountSum));
 document.getElementById('totalAmount').addEventListener('input', () => {
   if (document.getElementById('splitType').value === 'ratio') updateRatioPreviews();
