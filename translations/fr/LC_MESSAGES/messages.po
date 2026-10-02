@@ -491,3 +491,6 @@ msgstr "Aucune étiquette"
 
 msgid "Label already exists"
 msgstr "Cette étiquette existe déjà"
+
+msgid "Label in use"
+msgstr "L'étiquette est encore utilisée"

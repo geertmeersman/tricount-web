@@ -491,3 +491,6 @@ msgstr "Nog geen labels"
 
 msgid "Label already exists"
 msgstr "Label bestaat al"
+
+msgid "Label in use"
+msgstr "Label is nog in gebruik"

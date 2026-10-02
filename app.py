@@ -775,7 +775,13 @@ def update_label(token):
 @login_required
 def labels_list():
     rows = get_db().execute("SELECT * FROM labels WHERE user_id = ? ORDER BY name", (current_user.id,)).fetchall()
-    return render_template("labels.html", labels=rows)
+    in_use = {
+        r["label"]
+        for r in get_db()
+        .execute("SELECT DISTINCT label FROM user_tokens WHERE user_id = ? AND label IS NOT NULL", (current_user.id,))
+        .fetchall()
+    }
+    return render_template("labels.html", labels=rows, in_use=in_use)
 
 
 @app.route("/labels/add", methods=["POST"])
@@ -826,6 +832,18 @@ def label_edit(label_id):
 @app.route("/labels/<int:label_id>/delete", methods=["POST"])
 @login_required
 def label_delete(label_id):
+    row = (
+        get_db().execute("SELECT name FROM labels WHERE id = ? AND user_id = ?", (label_id, current_user.id)).fetchone()
+    )
+    if row:
+        in_use = (
+            get_db()
+            .execute("SELECT COUNT(*) FROM user_tokens WHERE user_id = ? AND label = ?", (current_user.id, row["name"]))
+            .fetchone()[0]
+        )
+        if in_use:
+            flash(_("Label in use"), "danger")
+            return redirect(url_for("labels_list"))
     get_db().execute("DELETE FROM labels WHERE id = ? AND user_id = ?", (label_id, current_user.id))
     get_db().commit()
     return redirect(url_for("labels_list"))

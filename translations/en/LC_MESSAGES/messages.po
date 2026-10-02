@@ -491,3 +491,6 @@ msgstr "No labels yet"
 
 msgid "Label already exists"
 msgstr "Label already exists"
+
+msgid "Label in use"
+msgstr "Label is still in use"
