@@ -64,7 +64,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: ${{ github.repository }}
           readme-filepath: ./DOCKER_HUB.md
 
       - name: Discord notification
