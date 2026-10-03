@@ -38,7 +38,9 @@
         <a href="{{ url_for('recurring_log_view', token=token, rec_id=row.id) }}"
           class="text-xs border border-gray-300 hover:bg-gray-100 px-2 py-1 rounded-lg">{{ _("Log") }}</a>
         <a href="{{ url_for('recurring_edit', token=token, rec_id=row.id) }}"
-          class="text-xs border border-blue-300 text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-lg">✏️</a>
+          class="text-xs border border-blue-300 text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-lg flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </a>
         <form method="POST" action="{{ url_for('recurring_toggle', token=token, rec_id=row.id) }}">
           <button class="text-xs border border-gray-300 hover:bg-gray-100 px-2 py-1 rounded-lg">
             {{ _("Pause") if row.active else _("Resume") }}
