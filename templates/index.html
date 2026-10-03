@@ -5,6 +5,12 @@
 <div class="flex items-center justify-between mb-4">
   <h1 class="text-xl font-bold">{{ _("My Tricounts") }}</h1>
   <div class="flex gap-2">
+    <button id="searchToggleBtn"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
     <button id="refreshBtn"
       class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -48,6 +54,11 @@
   <p class="mt-2 text-xs text-gray-400">{{ _("Token hint") }}</p>
 </div>
 
+<div id="searchBar" class="hidden mb-4">
+  <input id="searchInput" type="search" placeholder="{{ _('Search') }}"
+    class="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white shadow">
+</div>
+
 <!-- Progress bar -->
 <div id="progressWrap" class="mb-4 hidden">
   <div class="flex justify-between text-xs text-gray-400 mb-1">
@@ -81,6 +92,13 @@
         <button type="button" id="newEmojiClearBtn"
           class="mt-2 text-xs text-gray-400 hover:text-red-500">✕ {{ _("Remove emoji") }}</button>
       </div>
+      <select name="label"
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="">— {{ _("Label optional") }} —</option>
+        {% for lbl in labels %}
+        <option value="{{ lbl.name }}" style="color:{{ lbl.color }}">{{ lbl.name }}</option>
+        {% endfor %}
+      </select>
       <select name="currency" required
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         <option value="EUR" selected>🇪🇺 EUR — Euro</option>
@@ -142,6 +160,62 @@ document.getElementById('openNewTricountBtn').addEventListener('click', () => do
 document.getElementById('closeNewTricountBtn').addEventListener('click', () => document.getElementById('newTricountModalBackdrop').classList.add('hidden'));
 document.getElementById('newTricountModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 document.getElementById('tokenInput').addEventListener('input', function() { const m = this.value.match(/tricount\.com\/t(\S+)/); if (m) this.value = 't' + m[1]; });
+
+document.getElementById('searchToggleBtn').addEventListener('click', () => {
+  const bar = document.getElementById('searchBar');
+  const input = document.getElementById('searchInput');
+  const visible = !bar.classList.contains('hidden');
+  bar.classList.toggle('hidden', visible);
+  if (!visible) { input.focus(); input.select(); }
+  else { input.value = ''; filterTricounts(''); }
+});
+
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
+    e.preventDefault();
+    const bar = document.getElementById('searchBar');
+    const input = document.getElementById('searchInput');
+    bar.classList.remove('hidden');
+    input.focus();
+    input.select();
+  }
+});
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  filterTricounts(this.value);
+});
+
+document.getElementById('searchInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const bar = document.getElementById('searchBar');
+    e.target.value = '';
+    filterTricounts('');
+    bar.classList.add('hidden');
+  }
+});
+
+function filterTricounts(query) {
+  const q = query.trim().toLowerCase();
+  document.querySelectorAll('.tricount-item').forEach(el => {
+    const title = (el.querySelector('a')?.textContent || '').toLowerCase();
+    const label = (el.dataset.label || '').toLowerCase();
+    el.classList.toggle('hidden', !!q && !title.includes(q) && !label.includes(q));
+  });
+  // verberg lege groepsheaders
+  document.querySelectorAll('#tricountList > div').forEach(el => {
+    if (el.classList.contains('space-y-2')) {
+      const anyVisible = [...el.querySelectorAll('.tricount-item')].some(c => !c.classList.contains('hidden'));
+      el.classList.toggle('hidden', !anyVisible);
+    } else {
+      // header: verberg als de bijhorende wrap leeg is
+      const wrap = el.nextElementSibling;
+      if (wrap?.classList.contains('space-y-2')) {
+        const anyVisible = [...wrap.querySelectorAll('.tricount-item')].some(c => !c.classList.contains('hidden'));
+        el.classList.toggle('hidden', !anyVisible);
+      }
+    }
+  });
+}
 
 // Emoji picker nieuwe tricount
 const EMOJIS = ['🏠','🍕','🍺','🚗','✈️','🎉','🛒','💊','🎬','🏋️','🐶','🌴','⚽','🎮','📚','🎵','🍔','☕','🚂','🏖️','🎁','💡','🔧','🏕️','🍷','🎭','🚀','🌍','💰','🎓','🏥','🛠️','🎪','🌮','🍣','🧳','🎯','🏄','🎸','🌺'];

@@ -131,8 +131,13 @@
     <div>
       <label class="text-xs text-gray-500 font-medium mb-1 block">{{ _("Label optional") }}</label>
       <form method="POST" action="{{ url_for('update_label', token=token) }}" class="flex gap-2">
-        <input type="text" name="label" value="{{ label or '' }}" placeholder="{{ _('Label optional') }}"
+        <select name="label"
           class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="">— {{ _("No label") }} —</option>
+          {% for lbl in labels %}
+          <option value="{{ lbl.name }}" {% if lbl.name == label %}selected{% endif %} style="color:{{ lbl.color }}">{{ lbl.name }}</option>
+          {% endfor %}
+        </select>
         <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm shrink-0">{{ _("Save") }}</button>
       </form>
     </div>
@@ -194,6 +199,9 @@ document.getElementById('closeEditModalBtn').addEventListener('click', () => doc
 document.getElementById('editModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 document.getElementById('shareBtn').addEventListener('click', () => shareTricount());
 document.getElementById('txSearch').addEventListener('input', function() { filterTransactions(this.value); });
+document.getElementById('txSearch').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { e.target.value = ''; filterTransactions(''); e.target.blur(); }
+});
 document.getElementById('removeConfirmInput').addEventListener('input', function() { document.getElementById('removeBtn').disabled = this.value !== _t.deleteVerb; });
 document.getElementById('bulkModeBtn').addEventListener('click', () => toggleBulkMode());
 document.getElementById('selectAllCheckbox').addEventListener('change', function() {

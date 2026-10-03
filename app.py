@@ -877,9 +877,14 @@ def profile_password():
 def index():
     rows = get_db().execute("SELECT token, label FROM user_tokens WHERE user_id = ?", (current_user.id,)).fetchall()
     tokens = [dict(row) for row in rows]
-    label_rows = get_db().execute("SELECT name, color FROM labels WHERE user_id = ?", (current_user.id,)).fetchall()
+    label_rows = (
+        get_db()
+        .execute("SELECT name, color FROM labels WHERE user_id = ? ORDER BY name", (current_user.id,))
+        .fetchall()
+    )
     label_colors = {row["name"]: row["color"] for row in label_rows}
-    return render_template("index.html", tokens=tokens, label_colors=label_colors)
+    labels = [dict(row) for row in label_rows]
+    return render_template("index.html", tokens=tokens, label_colors=label_colors, labels=labels)
 
 
 @app.route("/api/tricounts")
@@ -1011,7 +1016,7 @@ def create_tricount():
                     break
         get_db().execute(
             "INSERT OR IGNORE INTO user_tokens (user_id, token, label, public_token) VALUES (?, ?, ?, ?)",
-            (current_user.id, token, None, token),
+            (current_user.id, token, request.form.get("label", "").strip() or None, token),
         )
         get_db().commit()
         flash(_("Tricount added"), "success")
@@ -1191,9 +1196,14 @@ def tricount_detail(token):
         .fetchone()
     )
     label = row["label"] if row else None
-    label_rows = get_db().execute("SELECT name, color FROM labels WHERE user_id = ?", (current_user.id,)).fetchall()
+    label_rows = (
+        get_db()
+        .execute("SELECT name, color FROM labels WHERE user_id = ? ORDER BY name", (current_user.id,))
+        .fetchall()
+    )
     label_colors = {row["name"]: row["color"] for row in label_rows}
-    return render_template("tricount.html", token=token, label=label, label_colors=label_colors)
+    labels = [dict(row) for row in label_rows]
+    return render_template("tricount.html", token=token, label=label, label_colors=label_colors, labels=labels)
 
 
 @app.route("/api/tricount/<token>")
