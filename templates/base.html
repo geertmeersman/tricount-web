@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="nl" class="{% if request.cookies.get('darkMode') == '1' %}dark{% endif %}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,7 +28,7 @@
   <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
 
 {% block navbar %}
 <nav class="bg-blue-600 text-white px-4 py-3 flex items-center justify-between shadow">
@@ -67,6 +67,9 @@
       </div>
     </div>
     <a href="{{ url_for('logout') }}" class="text-sm bg-white/20 hover:bg-white/30 px-3 py-1 rounded">{{ _("Logout") }}</a>
+    <button id="darkToggleBtn" class="text-white/80 hover:text-white" title="Dark mode">
+      <svg id="darkIcon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
   </div>
   {% endif %}
 </nav>
@@ -89,7 +92,7 @@
   </main>
 </div>
 
-<footer class="text-center text-xs text-gray-400 py-6 mt-4">
+<footer class="text-center text-xs text-gray-400 dark:text-gray-500 py-6 mt-4">
   {{ _("Copyright", year=now.year) }} &mdash; <a href="https://github.com/geertmeersman/tricount-web/releases/tag/{{ version }}" target="_blank" class="hover:text-gray-600">{{ version }}</a>
   <br>
   <a href="{{ url_for('privacy') }}" class="hover:text-gray-600">{{ _("Privacy policy") }}</a>
@@ -109,6 +112,12 @@ document.addEventListener('click', (e) => {
 });
 document.getElementById('langToggleBtn')?.addEventListener('click', () => {
   document.getElementById('langDropdown').classList.toggle('hidden');
+});
+
+// Dark mode
+document.getElementById('darkToggleBtn')?.addEventListener('click', () => {
+  const isDark = document.documentElement.classList.toggle('dark');
+  document.cookie = `darkMode=${isDark ? '1' : '0'};path=/;max-age=${60*60*24*365};SameSite=Lax`;
 });
 
 function copyToClipboard(text) {

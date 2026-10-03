@@ -659,3 +659,27 @@ msgstr "Correo electrónico"
 
 msgid "Invite created"
 msgstr "Enlace de invitación creado"
+
+msgid "Statistics"
+msgstr "Estadísticas"
+
+msgid "Active recurring"
+msgstr "Recurrentes activos"
+
+msgid "Recurring runs"
+msgstr "Ejecuciones recurrentes"
+
+msgid "Emails sent"
+msgstr "Correos enviados"
+
+msgid "Weekly email"
+msgstr "Correo semanal"
+
+msgid "Open invites"
+msgstr "Invitaciones abiertas"
+
+msgid "Recent recurring log"
+msgstr "Registro recurrente reciente"
+
+msgid "Cookie darkmode purpose"
+msgstr "Recuerda la preferencia del modo oscuro (1 año)"

@@ -2,12 +2,12 @@ function renderTricount(item, labelColors) {
   const archived = item.archived ? `<span class="ml-1 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">${_i18n.archived}</span>` : '';
   const div = document.createElement('div');
   div.id = `tc-${item.token}`;
-  div.className = 'bg-white rounded-xl shadow px-4 py-3 tricount-item';
+  div.className = 'bg-white dark:bg-gray-800 rounded-xl shadow px-4 py-3 tricount-item';
   div.dataset.label = item.label || '';
   div.innerHTML = `
     <a href="/tricount/${item.token}" class="flex-1 min-w-0 block">
-      <div class="font-medium truncate">${item.emoji} ${item.title} ${archived}</div>
-      <div class="text-xs text-gray-400 mt-0.5">${item.currency} · ${item.members} ${_i18n.members}</div>
+      <div class="font-medium truncate dark:text-gray-100">${item.emoji} ${item.title} ${archived}</div>
+      <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">${item.currency} · ${item.members} ${_i18n.members}</div>
     </a>`;
   return div;
 }

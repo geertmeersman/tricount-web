@@ -73,6 +73,13 @@ SCHEMA = """
         status TEXT NOT NULL,
         message TEXT
     );
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        token TEXT UNIQUE NOT NULL,
+        expires_at TEXT NOT NULL,
+        used INTEGER NOT NULL DEFAULT 0
+    );
 """
 
 
@@ -423,3 +430,148 @@ def test_label_delete_blocked_when_in_use(client, db):
     lbl = db.execute("SELECT id FROM labels WHERE user_id = ? AND name = 'InGebruik'", (user["id"],)).fetchone()
     client.post(f"/labels/{lbl['id']}/delete", follow_redirects=True)
     assert db.execute("SELECT id FROM labels WHERE id = ?", (lbl["id"],)).fetchone() is not None
+
+
+# --- Health check ---
+
+
+def test_health_returns_ok(client, db):
+    resp = client.get("/health")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data["status"] == "ok"
+    assert data["db"] is True
+
+
+# --- Static pages ---
+
+
+def test_cookies_page_loads(client):
+    resp = client.get("/cookies")
+    assert resp.status_code == 200
+
+
+def test_privacy_page_loads(client):
+    resp = client.get("/privacy")
+    assert resp.status_code == 200
+
+
+# --- set_lang ---
+
+
+def test_set_lang_valid(client):
+    resp = client.get("/lang/en", follow_redirects=False)
+    assert resp.status_code == 302
+    assert "lang=en" in resp.headers.get("Set-Cookie", "")
+
+
+def test_set_lang_invalid_defaults_to_nl(client):
+    resp = client.get("/lang/xx", follow_redirects=False)
+    assert resp.status_code == 302
+    assert "lang=nl" in resp.headers.get("Set-Cookie", "")
+
+
+def test_set_lang_no_open_redirect(client):
+    resp = client.get("/lang/nl", headers={"Referer": "https://evil.com/steal"}, follow_redirects=False)
+    assert resp.status_code == 302
+    location = resp.headers["Location"]
+    assert "evil.com" not in location
+
+
+# --- Forgot / reset password ---
+
+
+def test_forgot_password_page_loads(client):
+    resp = client.get("/forgot")
+    assert resp.status_code == 200
+
+
+def test_forgot_password_unknown_email_no_error(client):
+    resp = client.post("/forgot", data={"email": "nobody@example.com"}, follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_reset_invalid_token(client):
+    resp = client.get("/reset/invalidtoken123", follow_redirects=False)
+    assert resp.status_code == 302
+
+
+def test_reset_password_flow(client, db):
+    with patch.object(application, "generate_user_credentials"):
+        register_user(client, "admin", "adminpass1")
+    db.execute("UPDATE users SET email = 'test@example.com' WHERE username = 'admin'")
+    db.commit()
+    from datetime import timedelta
+
+    token = secrets.token_urlsafe(32)
+    expires = (datetime.now() + timedelta(hours=1)).isoformat(timespec="seconds")
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute(
+        "INSERT INTO password_reset_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)",
+        (user["id"], token, expires),
+    )
+    db.commit()
+    resp = client.post(
+        f"/reset/{token}",
+        data={"new_password": "newpass99", "confirm_password": "newpass99"},
+        follow_redirects=True,
+    )
+    assert resp.status_code == 200
+    client.get("/logout")
+    login_resp = login_user(client, "admin", "newpass99")
+    assert b"invalid" not in login_resp.data.lower()
+
+
+def test_reset_token_marked_used(client, db):
+    with patch.object(application, "generate_user_credentials"):
+        register_user(client, "admin", "adminpass1")
+    from datetime import timedelta
+
+    token = secrets.token_urlsafe(32)
+    expires = (datetime.now() + timedelta(hours=1)).isoformat(timespec="seconds")
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute(
+        "INSERT INTO password_reset_tokens (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)",
+        (user["id"], token, expires),
+    )
+    db.commit()
+    client.post(
+        f"/reset/{token}",
+        data={"new_password": "newpass99", "confirm_password": "newpass99"},
+        follow_redirects=True,
+    )
+    row = db.execute("SELECT used FROM password_reset_tokens WHERE token = ?", (token,)).fetchone()
+    assert row["used"] == 1
+
+
+# --- Admin stats ---
+
+
+def test_admin_stats_requires_login(client):
+    resp = client.get("/admin/stats", follow_redirects=False)
+    assert resp.status_code == 302
+
+
+def test_admin_stats_loads(client, db):
+    register_and_login(client)
+    resp = client.get("/admin/stats")
+    assert resp.status_code == 200
+
+
+# --- is_safe_redirect ---
+
+
+def test_is_safe_redirect_relative():
+    assert application.is_safe_redirect("/profile") is True
+
+
+def test_is_safe_redirect_external():
+    assert application.is_safe_redirect("https://evil.com") is False
+
+
+def test_is_safe_redirect_empty():
+    assert application.is_safe_redirect("") is False
+
+
+def test_is_safe_redirect_no_leading_slash():
+    assert application.is_safe_redirect("evil.com/path") is False

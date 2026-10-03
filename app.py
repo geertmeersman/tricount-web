@@ -667,6 +667,19 @@ def sitemap():
     return Response(xml, mimetype="application/xml")
 
 
+@app.route("/health")
+def health():
+    try:
+        get_db().execute("SELECT 1")
+        db_ok = True
+    except Exception:
+        db_ok = False
+    status = 200 if db_ok else 503
+    return Response(
+        json.dumps({"status": "ok" if db_ok else "degraded", "db": db_ok}), status=status, mimetype="application/json"
+    )
+
+
 @app.route("/robots.txt")
 def robots():
     return Response(
@@ -1568,6 +1581,43 @@ def reimburse(token):
     return redirect(url_for("tricount_detail", token=token))
 
 
+@app.route("/tricount/<token>/export.csv")
+@login_required
+def export_csv(token):
+    try:
+        client = get_client()
+        t = get_tricount_cached(client, token, current_user.id)
+    except Exception as e:
+        flash(f"Fout: {e}", "danger")
+        return redirect(url_for("tricount_detail", token=token))
+
+    import csv
+    import io
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Date", "Description", "Amount", "Currency", "Paid by"] + [m.display_name for m in t.members])
+    for tx in sorted([tx for tx in t.transactions if tx.status.value == "ACTIVE"], key=lambda x: x.date):
+        payer = t.get_member_by_uuid(tx.membership_uuid_owner)
+        alloc_map = {a.membership_uuid: abs(float(a.amount.value)) for a in tx.allocations}
+        row = [
+            tx.date[:10],
+            tx.description,
+            abs(float(tx.amount.value)),
+            t.currency,
+            payer.display_name if payer else "?",
+        ] + [alloc_map.get(m.uuid, 0) for m in t.members]
+        writer.writerow(row)
+
+    output.seek(0)
+    filename = t.title.replace(" ", "_").replace("/", "-")
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}.csv"},
+    )
+
+
 # --- Routes: recurring ---
 
 
@@ -1712,13 +1762,42 @@ def recurring_log_view(token, rec_id):
     return render_template("recurring_log.html", token=token, row=row, logs=logs, frequency_labels=FREQUENCY_LABELS)
 
 
+@app.route("/admin/stats")
+@admin_required
+def admin_stats():
+    db = get_db()
+    stats = {
+        "users": db.execute("SELECT COUNT(*) FROM users").fetchone()[0],
+        "tricounts": db.execute("SELECT COUNT(DISTINCT token) FROM user_tokens").fetchone()[0],
+        "recurring": db.execute("SELECT COUNT(*) FROM recurring_expenses WHERE active = 1").fetchone()[0],
+        "recurring_runs": db.execute("SELECT COUNT(*) FROM recurring_log WHERE status = 'ok'").fetchone()[0],
+        "invites_used": db.execute("SELECT COUNT(*) FROM invites WHERE used = 1").fetchone()[0],
+        "invites_open": db.execute("SELECT COUNT(*) FROM invites WHERE used = 0").fetchone()[0],
+        "emails_sent": db.execute("SELECT COUNT(*) FROM email_log WHERE status = 'ok'").fetchone()[0],
+        "users_with_email": db.execute("SELECT COUNT(*) FROM users WHERE email IS NOT NULL AND email != ''").fetchone()[
+            0
+        ],
+        "users_weekly_email": db.execute("SELECT COUNT(*) FROM users WHERE weekly_email = 1").fetchone()[0],
+        "labels": db.execute("SELECT COUNT(*) FROM labels").fetchone()[0],
+    }
+    recent_log = db.execute(
+        "SELECT recurring_log.executed_at, recurring_log.status, recurring_log.message,"
+        " recurring_expenses.description FROM recurring_log"
+        " JOIN recurring_expenses ON recurring_expenses.id = recurring_log.recurring_id"
+        " ORDER BY recurring_log.executed_at DESC LIMIT 10"
+    ).fetchall()
+    return render_template("admin_stats.html", stats=stats, recent_log=recent_log)
+
+
 # --- Routes: admin ---
 
 
 @app.route("/admin")
 @admin_required
 def admin():
-    users = get_db().execute("SELECT id, username, is_admin, email FROM users ORDER BY username").fetchall()
+    users = (
+        get_db().execute("SELECT id, username, is_admin, email, weekly_email FROM users ORDER BY username").fetchall()
+    )
     invites = (
         get_db()
         .execute(

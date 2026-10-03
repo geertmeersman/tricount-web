@@ -659,3 +659,27 @@ msgstr "E-Mail"
 
 msgid "Invite created"
 msgstr "Einladungslink erstellt"
+
+msgid "Statistics"
+msgstr "Statistiken"
+
+msgid "Active recurring"
+msgstr "Aktive Wiederholungen"
+
+msgid "Recurring runs"
+msgstr "Ausgeführte Wiederholungen"
+
+msgid "Emails sent"
+msgstr "Gesendete E-Mails"
+
+msgid "Weekly email"
+msgstr "Wöchentliche E-Mail"
+
+msgid "Open invites"
+msgstr "Offene Einladungen"
+
+msgid "Recent recurring log"
+msgstr "Aktuelles Wiederholungsprotokoll"
+
+msgid "Cookie darkmode purpose"
+msgstr "Speichert die Einstellung für den Dunkelmodus (1 Jahr)"

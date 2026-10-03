@@ -659,3 +659,27 @@ msgstr "Vos droits"
 
 msgid "Privacy rights text"
 msgstr "Vous pouvez supprimer votre compte et toutes les données associées à tout moment via votre page de profil. Contactez l'administrateur pour toute question ou demande."
+
+msgid "Statistics"
+msgstr "Statistiques"
+
+msgid "Active recurring"
+msgstr "Récurrences actives"
+
+msgid "Recurring runs"
+msgstr "Exécutions récurrentes"
+
+msgid "Emails sent"
+msgstr "Emails envoyés"
+
+msgid "Weekly email"
+msgstr "Email hebdomadaire"
+
+msgid "Open invites"
+msgstr "Invitations ouvertes"
+
+msgid "Recent recurring log"
+msgstr "Journal récurrent récent"
+
+msgid "Cookie darkmode purpose"
+msgstr "Mémorise la préférence du mode sombre (1 an)"

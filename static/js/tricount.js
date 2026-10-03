@@ -9,17 +9,17 @@ let _bulkMode = false;
 
 function renderTxRow(tx) {
   return `
-    <div class="tx-row px-4 py-3 flex items-start gap-3 hover:bg-gray-50"
+    <div class="tx-row px-4 py-3 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50"
          data-id="${tx.id}" data-desc="${h(tx.description.toLowerCase())}" data-payer="${h(tx.payer.toLowerCase())}" data-amount="${tx.amount}">
       <label class="bulk-check flex items-center shrink-0 hidden mt-0.5 cursor-pointer">
         <input type="checkbox" class="tx-checkbox w-4 h-4 accent-blue-600" data-id="${tx.id}">
       </label>
       <div class="tx-row-inner flex flex-1 justify-between items-start cursor-pointer min-w-0">
         <div class="min-w-0">
-          <div class="text-sm font-medium truncate">${h(tx.description)}</div>
-          <div class="text-xs text-gray-400">${h(tx.payer)}${tx.payer_is_me ? ` <span class="text-blue-500">(${h(_t.you)})</span>` : ''} · ${h(tx.date)}</div>
+          <div class="text-sm font-medium truncate dark:text-gray-100">${h(tx.description)}</div>
+          <div class="text-xs text-gray-400 dark:text-gray-500">${h(tx.payer)}${tx.payer_is_me ? ` <span class="text-blue-500">(${h(_t.you)})</span>` : ''} · ${h(tx.date)}</div>
         </div>
-        <div class="text-sm font-semibold ml-4 shrink-0">${tx.amount.toFixed(2)} ${h(tx.currency)}</div>
+        <div class="text-sm font-semibold ml-4 shrink-0 dark:text-gray-100">${tx.amount.toFixed(2)} ${h(tx.currency)}</div>
       </div>
     </div>`;
 }
@@ -27,15 +27,15 @@ function renderTxRow(tx) {
 function renderTxModal(tx, token, data) {
   return `
     <div id="modal-${tx.id}" class="tx-modal hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4" data-modal-id="${tx.id}">
-      <div class="tx-modal-inner bg-white rounded-xl shadow-xl w-full max-w-sm p-5">
+      <div class="tx-modal-inner bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-sm p-5">
         <div class="flex justify-between items-start mb-3">
           <div>
-            <div class="font-semibold">${h(tx.description)}</div>
-            <div class="text-xs text-gray-400">${h(tx.date)} · ${h(_t.paidBy)} ${h(tx.payer)}</div>
+            <div class="font-semibold dark:text-gray-100">${h(tx.description)}</div>
+            <div class="text-xs text-gray-400 dark:text-gray-500">${h(tx.date)} · ${h(_t.paidBy)} ${h(tx.payer)}</div>
           </div>
           <button class="tx-modal-close text-gray-400 hover:text-gray-600 text-xl leading-none ml-3" data-modal-id="${tx.id}">✕</button>
         </div>
-        <div class="text-lg font-bold mb-3">${tx.amount.toFixed(2)} ${h(tx.currency)}</div>
+        <div class="text-lg font-bold mb-3 dark:text-gray-100">${tx.amount.toFixed(2)} ${h(tx.currency)}</div>
         <div class="space-y-1">
           ${tx.allocations.map(a => `
             <div class="flex justify-between text-sm">
@@ -102,15 +102,15 @@ function showPayModal(dname, cname, pay, currency, payerUuid, receiverUuid, toke
   modal.className = 'fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4';
 
   const inner = document.createElement('div');
-  inner.className = 'bg-white rounded-xl shadow-xl w-full max-w-sm p-6';
+  inner.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-sm p-6';
   inner.innerHTML = `
-    <h3 class="font-semibold text-lg mb-1">${h(_t.confirmPayment)}</h3>
-    <p class="text-sm text-gray-500 mb-4">
+    <h3 class="font-semibold text-lg mb-1 dark:text-gray-100">${h(_t.confirmPayment)}</h3>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
       <span class="font-medium text-red-500">${h(dname)}</span>
       ${h(_t.pays)}
       <span class="font-medium text-green-600">${h(cname)}</span>
     </p>
-    <div class="text-3xl font-bold text-center mb-6">${pay} ${h(currency)}</div>
+    <div class="text-3xl font-bold text-center mb-6 dark:text-gray-100">${pay} ${h(currency)}</div>
     <div class="flex gap-3">
       <button id="payModalCancel" class="flex-1 border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">${h(_t.cancel)}</button>
       <form method="POST" action="/tricount/${h(token)}/reimburse" class="flex-1">
@@ -139,10 +139,10 @@ function confirmBulkDelete(token) {
   modal.className = 'fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4';
 
   const inner = document.createElement('div');
-  inner.className = 'bg-white rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4';
+  inner.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4';
   inner.innerHTML = `
     <h3 class="font-semibold text-lg text-red-600 flex items-center gap-2"><svg xmlns='http://www.w3.org/2000/svg' class='w-5 h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='3 6 5 6 21 6'/><path d='M19 6l-1 14H6L5 6'/><path d='M10 11v6'/><path d='M14 11v6'/><path d='M9 6V4h6v2'/></svg> ${h(_t.deleteSelected)}</h3>
-    <p class="text-sm text-gray-600">${_t.confirmDelete.replace('{n}', checked.length)}</p>
+    <p class="text-sm text-gray-600 dark:text-gray-300">${_t.confirmDelete.replace('{n}', checked.length)}</p>
     <div class="flex gap-3 pt-2">
       <button id="bulkConfirmCancel" class="flex-1 border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">${h(_t.cancel)}</button>
       <button id="bulkConfirmOk" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"><svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='3 6 5 6 21 6'/><path d='M19 6l-1 14H6L5 6'/><path d='M10 11v6'/><path d='M14 11v6'/><path d='M9 6V4h6v2'/></svg> ${h(_t.deleteSelected)}</button>

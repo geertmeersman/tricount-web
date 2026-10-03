@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Statistics") }}{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-bold dark:text-gray-100">{{ _("Statistics") }}</h1>
+  <a href="{{ url_for('admin') }}" class="border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 py-2 px-4 rounded-lg text-sm">{{ _("Back") }}</a>
+</div>
+
+<div class="grid grid-cols-2 gap-3 mb-6">
+  {% for label, value, color in [
+    (_("Users"), stats.users, "text-blue-600"),
+    (_("Tricounts"), stats.tricounts, "text-purple-600"),
+    (_("Active recurring"), stats.recurring, "text-green-600"),
+    (_("Recurring runs"), stats.recurring_runs, "text-green-600"),
+    (_("Labels"), stats.labels, "text-yellow-600"),
+    (_("Emails sent"), stats.emails_sent, "text-blue-600"),
+    (_("Weekly email"), stats.users_weekly_email, "text-blue-600"),
+    (_("Open invites"), stats.invites_open, "text-gray-600"),
+  ] %}
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow px-4 py-3">
+    <div class="text-xs text-gray-400 dark:text-gray-500 uppercase font-medium mb-1">{{ label }}</div>
+    <div class="text-2xl font-bold {{ color }} dark:brightness-125">{{ value }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if recent_log %}
+<h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">{{ _("Recent recurring log") }}</h2>
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
+  {% for log in recent_log %}
+  <div class="px-4 py-3 flex items-start gap-3 text-sm">
+    <span class="shrink-0 mt-0.5">
+      {% if log.status == 'ok' %}
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      {% else %}
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      {% endif %}
+    </span>
+    <div class="min-w-0">
+      <div class="font-medium truncate dark:text-gray-100">{{ log.description }}</div>
+      <div class="text-xs text-gray-400 dark:text-gray-500">{{ log.executed_at }} — {{ log.message }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
