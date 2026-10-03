@@ -41,14 +41,18 @@
     {% if current_user.is_admin %}
     <a href="{{ url_for('admin') }}" class="text-white/80 hover:text-white">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-        <circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <path d="M9 12l2 2 4-4"/>
       </svg>
     </a>
     {% endif %}
-    <a href="{{ url_for('profile') }}" class="text-sm bg-white/20 hover:bg-white/30 px-3 py-1 rounded hidden sm:inline">{{ current_user.display_name }}</a>
+    <a href="{{ url_for('profile') }}" class="text-white/80 hover:text-white flex items-center gap-1.5" title="{{ current_user.display_name }}">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+      <span class="text-sm hidden sm:inline">{{ current_user.display_name }}</span>
+    </a>
     {% set current_lang = request.cookies.get('lang', request.accept_languages.best_match(['nl','en','fr'], default='nl')) %}
     <div class="relative" id="langMenu">
       <button id="langToggleBtn"
