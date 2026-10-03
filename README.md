@@ -50,7 +50,7 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - 🧾 Personal summary — see what you owe or are owed at a glance
 - 🔁 Recurring expenses with daily/weekly/monthly/yearly scheduling
 - 📧 Weekly email digest with tricount balances (opt-in per user)
-- 🌍 Multilingual: NL / EN / FR (auto-detected from browser)
+- 🌍 Multilingual: NL / EN / FR / DE / ES (auto-detected from browser)
 - 📱 Responsive — works on mobile
 - ⚡ Async loading with progress bar (SSE)
 - 🏷️ Custom labels per tricount with color coding, grouped view and filtering

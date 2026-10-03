@@ -34,9 +34,9 @@
       <p class="text-xs text-gray-400 leading-relaxed">{{ _("Tricount API credit") | safe }}</p>
     </div>
   </div>
-  {% set current_lang = request.cookies.get('lang', request.accept_languages.best_match(['nl','en','fr'], default='nl')) %}
+  {% set current_lang = request.cookies.get('lang', request.accept_languages.best_match(['nl','en','fr','de','es'], default='nl')) %}
   <div class="flex justify-center gap-3 mt-4">
-    {% for lang, label in [('nl','NL'),('en','EN'),('fr','FR')] %}
+    {% for lang, label in [('nl','NL'),('en','EN'),('fr','FR'),('de','DE'),('es','ES')] %}
     <a href="{{ url_for('set_lang', lang=lang) }}"
       class="text-sm px-3 py-1 rounded-lg {{ 'bg-blue-600 text-white font-medium' if lang == current_lang else 'text-gray-400 hover:text-gray-600' }}">{{ label }}</a>
     {% endfor %}

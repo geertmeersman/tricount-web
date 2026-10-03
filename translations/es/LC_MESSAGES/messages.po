@@ -1,0 +1,661 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "My Tricounts"
+msgstr "Mis Tricounts"
+
+msgid "Manage your shared expenses"
+msgstr "Gestiona tus gastos compartidos"
+
+msgid "Login"
+msgstr "Iniciar sesión"
+
+msgid "Logout"
+msgstr "Cerrar sesión"
+
+msgid "Register"
+msgstr "Registrarse"
+
+msgid "Users"
+msgstr "Usuarios"
+
+msgid "Username"
+msgstr "Nombre de usuario"
+
+msgid "Password"
+msgstr "Contraseña"
+
+msgid "Password min 6 chars"
+msgstr "Contraseña (mín. 6 caracteres)"
+
+msgid "No account yet"
+msgstr "¿Sin cuenta? Regístrate"
+
+msgid "Already have account"
+msgstr "¿Ya tienes cuenta? Inicia sesión"
+
+msgid "First user becomes admin"
+msgstr "El primer usuario se convierte automáticamente en administrador."
+
+msgid "Create admin account"
+msgstr "Crear cuenta de administrador"
+
+msgid "Create account"
+msgstr "Crear cuenta"
+
+msgid "Invalid credentials"
+msgstr "Nombre de usuario o contraseña incorrectos."
+
+msgid "Password too short"
+msgstr "La contraseña debe tener al menos 6 caracteres."
+
+msgid "Username taken"
+msgstr "El nombre de usuario ya está en uso."
+
+msgid "Account created"
+msgstr "Cuenta creada. Ya puedes iniciar sesión."
+
+msgid "Account created admin"
+msgstr "Cuenta creada (admin). Ya puedes iniciar sesión."
+
+msgid "Add tricount"
+msgstr "Añadir"
+
+msgid "Token placeholder"
+msgstr "Token (p.ej. stNvUXxxxxx)"
+
+msgid "Label optional"
+msgstr "Etiqueta (opcional)"
+
+msgid "Token hint"
+msgstr "Comparte el tricount en la app Tricount (⋯ → Compartir) y copia el token del enlace: tricount.com/tstNvUXxxxxx"
+
+msgid "No tricounts yet"
+msgstr "Aún no hay tricounts. Añade uno con el token de compartir."
+
+msgid "Tricount added"
+msgstr "¡Tricount añadido!"
+
+msgid "Tricount removed"
+msgstr "Tricount eliminado."
+
+msgid "Label saved"
+msgstr "Etiqueta guardada."
+
+msgid "Loading"
+msgstr "Cargando..."
+
+msgid "Connecting"
+msgstr "Conectando..."
+
+msgid "Ready"
+msgstr "¡Listo!"
+
+msgid "Connection error"
+msgstr "Error de conexión"
+
+msgid "Members"
+msgstr "Miembros"
+
+msgid "Balances"
+msgstr "Saldos"
+
+msgid "Everyone settled"
+msgstr "✅ ¡Todos están en paz!"
+
+msgid "Must pay"
+msgstr "debe pagar a"
+
+msgid "Paid"
+msgstr "Saldar"
+
+msgid "Confirm payment"
+msgstr "Confirmar pago"
+
+msgid "Pays"
+msgstr "paga a"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Confirm"
+msgstr "✅ Confirmar"
+
+msgid "Add transaction"
+msgstr "+ Transacción"
+
+msgid "Recurring"
+msgstr "🔁 Recurrente"
+
+msgid "Label"
+msgstr "🏷️ Guardar"
+
+msgid "Remove from list"
+msgstr "Eliminar de mi lista"
+
+msgid "Confirm remove"
+msgstr "¿Eliminar de tu lista?"
+
+msgid "Transactions"
+msgstr "Transacciones"
+
+msgid "No transactions"
+msgstr "Sin transacciones."
+
+msgid "Paid by"
+msgstr "pagado por"
+
+msgid "Edit transaction"
+msgstr "✏️ Editar"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Amount"
+msgstr "Importe"
+
+msgid "Paid by label"
+msgstr "Pagado por"
+
+msgid "Split among"
+msgstr "Dividir entre"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Transaction added"
+msgstr "¡Transacción añadida!"
+
+msgid "Transaction updated"
+msgstr "¡Transacción actualizada!"
+
+msgid "Recurring expenses"
+msgstr "🔁 Gastos recurrentes"
+
+msgid "New recurring"
+msgstr "+ Nuevo"
+
+msgid "Back"
+msgstr "← Volver"
+
+msgid "Frequency"
+msgstr "Frecuencia"
+
+msgid "Start date"
+msgstr "Primera ejecución"
+
+msgid "Start date hint"
+msgstr "Elige hoy o una fecha pasada → se añadirá inmediatamente."
+
+msgid "daily"
+msgstr "Diario"
+
+msgid "weekly"
+msgstr "Semanal"
+
+msgid "monthly"
+msgstr "Mensual"
+
+msgid "yearly"
+msgstr "Anual"
+
+msgid "Next run"
+msgstr "Próxima ejecución"
+
+msgid "Paused"
+msgstr "(pausado)"
+
+msgid "Pause"
+msgstr "Pausar"
+
+msgid "Resume"
+msgstr "Reanudar"
+
+msgid "Delete"
+msgstr "✕"
+
+msgid "Log"
+msgstr "Registro"
+
+msgid "Recurring added"
+msgstr "¡Gasto recurrente creado!"
+
+msgid "Recurring deleted"
+msgstr "Gasto recurrente eliminado."
+
+msgid "No recurring"
+msgstr "Aún no hay gastos recurrentes."
+
+msgid "User management"
+msgstr "👥 Gestión de usuarios"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "You"
+msgstr "tú"
+
+msgid "Make admin"
+msgstr "Hacer administrador"
+
+msgid "Revoke admin"
+msgstr "Revocar administrador"
+
+msgid "Delete user"
+msgstr "Eliminar"
+
+msgid "Confirm delete user"
+msgstr "¿Eliminar usuario?"
+
+msgid "Cannot delete self"
+msgstr "No puedes eliminar tu propia cuenta."
+
+msgid "User deleted"
+msgstr "Usuario eliminado."
+
+msgid "No access"
+msgstr "Sin acceso."
+
+msgid "Copyright"
+msgstr "© %(year)s Geert Meersman"
+
+msgid "Equal"
+msgstr "Igual"
+
+msgid "Parts"
+msgstr "Partes"
+
+msgid "Amounts"
+msgstr "Importes"
+
+msgid "Ratio hint"
+msgstr "Proporción entre sí, p.ej. 1/2/1"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Remaining"
+msgstr "restante"
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "Tricount App ID"
+msgstr "ID de app Tricount"
+
+msgid "Copy"
+msgstr "Copiar"
+
+msgid "Link hint"
+msgstr "Usa este ID de app en la app Tricount → Ajustes → Apps conectadas."
+
+msgid "No credentials"
+msgstr "No se encontraron credenciales."
+
+msgid "Confirm regenerate"
+msgstr "¿Generar nuevas credenciales? Deberás volver a vincular en la app Tricount."
+
+msgid "Regenerate credentials"
+msgstr "Generar nuevas credenciales"
+
+msgid "Credentials regenerated"
+msgstr "Nuevas credenciales generadas. Vuelve a vincular en la app Tricount."
+
+msgid "Admin menu"
+msgstr "Admin"
+
+msgid "Change password"
+msgstr "Cambiar contraseña"
+
+msgid "Current password"
+msgstr "Contraseña actual"
+
+msgid "New password"
+msgstr "Nueva contraseña"
+
+msgid "Confirm new password"
+msgstr "Confirmar nueva contraseña"
+
+msgid "Current password incorrect"
+msgstr "La contraseña actual es incorrecta."
+
+msgid "Passwords do not match"
+msgstr "Las contraseñas no coinciden."
+
+msgid "Password changed"
+msgstr "¡Contraseña cambiada!"
+
+msgid "App description"
+msgstr "Interfaz web para tus gastos en Tricount"
+
+msgid "Delete account"
+msgstr "Eliminar cuenta"
+
+msgid "Delete account hint"
+msgstr "Esto eliminará tu cuenta y todos los datos asociados de forma permanente."
+
+msgid "Confirm delete account"
+msgstr "¿Seguro? Esto no se puede deshacer."
+
+msgid "Account deleted"
+msgstr "Tu cuenta ha sido eliminada."
+
+msgid "Invite links"
+msgstr "Enlaces de invitación"
+
+msgid "Create invite"
+msgstr "Crear enlace de invitación"
+
+msgid "Invite used"
+msgstr "Usado"
+
+msgid "Invite invalid"
+msgstr "Este enlace de invitación es inválido o ya fue usado."
+
+msgid "Invite label placeholder"
+msgstr "Etiqueta (p.ej. nombre de la persona)"
+
+msgid "No label"
+msgstr "Sin etiqueta"
+
+msgid "New tricount"
+msgstr "Nuevo tricount"
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Currency"
+msgstr "Moneda"
+
+msgid "Create"
+msgstr "Crear"
+
+msgid "Members placeholder"
+msgstr "Participantes (p.ej. Alice, Bob, Charlie)"
+
+msgid "Members hint"
+msgstr "Separa los nombres con una coma."
+
+msgid "Emoji optional"
+msgstr "Emoji (opcional, p.ej. 🍻)"
+
+msgid "Copied"
+msgstr "¡Copiado!"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "No results"
+msgstr "Sin resultados."
+
+msgid "Edit tricount"
+msgstr "Editar tricount"
+
+msgid "Type to confirm remove"
+msgstr "Escribe \"Eliminar\" para confirmar."
+
+msgid "Delete verb"
+msgstr "Eliminar"
+
+msgid "Who are you?"
+msgstr "¿Quién eres?"
+
+msgid "Select member hint"
+msgstr "Selecciona qué miembro eres en este tricount."
+
+msgid "Nobody (spectator)"
+msgstr "Nadie (espectador)"
+
+msgid "Change member"
+msgstr "Cambiar mi miembro"
+
+msgid "Share"
+msgstr "Enlace para compartir"
+
+msgid "You owe"
+msgstr "Debes pagar a"
+
+msgid "You are owed"
+msgstr "Te deben"
+
+msgid "Tricount connection"
+msgstr "Conexión Tricount"
+
+msgid "Tricount connection info"
+msgstr "Esta app se conecta a Tricount como dispositivo anónimo — sin correo ni contraseña."
+
+msgid "Register local account note"
+msgstr "El nombre de usuario y contraseña son solo para esta interfaz web — no están vinculados a tricount.com."
+
+msgid "Device credentials"
+msgstr "Credenciales del dispositivo"
+
+msgid "Device credentials info"
+msgstr "Este archivo contiene el ID de dispositivo anónimo con el que esta app se conecta a Tricount."
+
+msgid "Password storage info"
+msgstr "Tu contraseña nunca se almacena en texto plano. Se hashea con bcrypt."
+
+msgid "Tricount API credit"
+msgstr "La conectividad con Tricount funciona a través de <a href=\"https://github.com/elrandar/tricount-api\" target=\"_blank\" class=\"underline hover:text-gray-600\">elrandar/tricount-api</a>."
+
+msgid "Admin cannot delete own account"
+msgstr "Como administrador no puedes eliminar tu propia cuenta."
+
+msgid "Select transactions"
+msgstr "Seleccionar transacciones"
+
+msgid "Select all visible"
+msgstr "Seleccionar todas las visibles"
+
+msgid "selected"
+msgstr "seleccionadas"
+
+msgid "Delete selected"
+msgstr "Eliminar seleccionadas"
+
+msgid "Confirm delete selected"
+msgstr "¿Eliminar definitivamente {n} transacción(es)?"
+
+msgid "No transactions selected"
+msgstr "No hay transacciones seleccionadas"
+
+msgid "Transactions deleted"
+msgstr "{count} transacción(es) eliminada(s)"
+
+msgid "Backfill warning"
+msgstr "⚠️ Se crearán {n} transacción(es) en el pasado ({freq})."
+
+msgid "Save recurring"
+msgstr "Guardar recurrencia"
+
+msgid "Labels"
+msgstr "Etiquetas"
+
+msgid "Add label"
+msgstr "Añadir etiqueta"
+
+msgid "Label name"
+msgstr "Nombre de etiqueta"
+
+msgid "Edit label"
+msgstr "Editar etiqueta"
+
+msgid "No labels yet"
+msgstr "Aún no hay etiquetas"
+
+msgid "Label already exists"
+msgstr "La etiqueta ya existe"
+
+msgid "Label in use"
+msgstr "La etiqueta está en uso"
+
+msgid "Email settings"
+msgstr "Configuración de correo"
+
+msgid "Your email address"
+msgstr "Tu dirección de correo"
+
+msgid "Weekly email"
+msgstr "Resumen semanal por correo"
+
+msgid "Weekly email hint"
+msgstr "Recibe cada lunes por la mañana un resumen de tus tricounts y saldos."
+
+msgid "Email settings saved"
+msgstr "Configuración de correo guardada"
+
+msgid "Send test email"
+msgstr "Enviar correo de prueba"
+
+msgid "Test email sent"
+msgstr "Correo de prueba enviado"
+
+msgid "No email address set"
+msgstr "No hay dirección de correo configurada"
+
+msgid "Email send error"
+msgstr "Error al enviar"
+
+msgid "Email log"
+msgstr "Historial de correos"
+
+msgid "Display name"
+msgstr "Nombre visible"
+
+msgid "Display name hint"
+msgstr "Se muestra en la barra de navegación y como saludo en los correos."
+
+msgid "Profile saved"
+msgstr "Perfil guardado"
+
+msgid "Test email queued"
+msgstr "Correo de prueba en cola"
+
+msgid "Show all"
+msgstr "Mostrar todo"
+
+msgid "Tricount name"
+msgstr "Nombre del tricount"
+
+msgid "Choose emoji"
+msgstr "Elegir emoji"
+
+msgid "Remove emoji"
+msgstr "Eliminar emoji"
+
+msgid "Tricount updated"
+msgstr "Tricount actualizado"
+
+msgid "Forgot password"
+msgstr "Olvidé mi contraseña"
+
+msgid "Forgot password hint"
+msgstr "Introduce tu dirección de correo y te enviaremos un enlace para restablecer tu contraseña."
+
+msgid "Send reset link"
+msgstr "Enviar enlace de restablecimiento"
+
+msgid "Reset email sent"
+msgstr "Si esta dirección de correo es conocida, recibirás un correo de restablecimiento."
+
+msgid "Reset link invalid"
+msgstr "Este enlace de restablecimiento es inválido o ha expirado."
+
+msgid "Reset password"
+msgstr "Restablecer contraseña"
+
+msgid "Confirm password"
+msgstr "Confirmar contraseña"
+
+msgid "Save new password"
+msgstr "Guardar nueva contraseña"
+
+msgid "Back to login"
+msgstr "Volver al inicio de sesión"
+
+msgid "Edit email"
+msgstr "Editar correo"
+
+msgid "Cookie notice"
+msgstr "Esta app solo usa cookies funcionales para la sesión y la preferencia de idioma."
+
+msgid "Cookie policy"
+msgstr "Política de cookies"
+
+msgid "Cookie"
+msgstr "Cookie"
+
+msgid "Purpose"
+msgstr "Finalidad"
+
+msgid "Cookie session purpose"
+msgstr "Inicio de sesión y gestión de sesión"
+
+msgid "Cookie lang purpose"
+msgstr "Recordar preferencia de idioma"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "Privacy policy"
+msgstr "Política de privacidad"
+
+msgid "Privacy who"
+msgstr "Sobre esta app"
+
+msgid "Privacy who text"
+msgstr "Esta app es una aplicación web personal para un número limitado de usuarios. Es alojada por el administrador."
+
+msgid "Privacy data collected"
+msgstr "¿Qué datos se almacenan?"
+
+msgid "Privacy data username"
+msgstr "Nombre de usuario — necesario para iniciar sesión"
+
+msgid "Privacy data email"
+msgstr "Dirección de correo (opcional) — para restablecer contraseña y resúmenes semanales"
+
+msgid "Privacy data password"
+msgstr "Contraseña — almacenada como hash bcrypt, nunca legible en texto plano"
+
+msgid "Privacy data language"
+msgstr "Preferencia de idioma — para mostrar la interfaz en el idioma correcto"
+
+msgid "Privacy data tricount"
+msgstr "Tokens de Tricount y vínculos de miembros — para mostrar tus gastos compartidos a través de la API de Tricount"
+
+msgid "Privacy purpose"
+msgstr "¿Para qué se usan los datos?"
+
+msgid "Privacy purpose text"
+msgstr "Únicamente para hacer funcionar la app: iniciar sesión, mostrar tus tricounts y opcionalmente enviar un resumen semanal por correo."
+
+msgid "Privacy third parties"
+msgstr "¿Se comparten datos con terceros?"
+
+msgid "Privacy third parties text"
+msgstr "No, excepto la API de Tricount (tricount.com) usada para obtener tus datos de transacciones. No se venden ni comparten datos con anunciantes."
+
+msgid "Privacy storage"
+msgstr "¿Dónde se almacenan los datos?"
+
+msgid "Privacy storage text"
+msgstr "Todos los datos se almacenan localmente en el servidor donde se ejecuta la app. El administrador es responsable de la seguridad de ese servidor."
+
+msgid "Privacy rights"
+msgstr "Tus derechos"
+
+msgid "Privacy rights text"
+msgstr "Puedes eliminar tu cuenta y todos los datos asociados en cualquier momento desde tu página de perfil. Contacta al administrador para cualquier consulta."
+
+msgid "Email"
+msgstr "Correo electrónico"
+
+msgid "Invite created"
+msgstr "Enlace de invitación creado"

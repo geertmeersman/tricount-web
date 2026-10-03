@@ -43,7 +43,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "warning"
 
-SUPPORTED_LANGS = ["nl", "en", "fr"]
+SUPPORTED_LANGS = ["nl", "en", "fr", "de", "es"]
 babel = Babel()
 
 

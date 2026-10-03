@@ -25,7 +25,7 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - 🏷️ Color-coded labels with grouped overview
 - 🗑️ Bulk delete transactions
 - 👤 Display name and language preference per user
-- 🌍 Multilingual: NL / EN / FR
+- 🌍 Multilingual: NL / EN / FR / DE / ES
 - 📱 Mobile-friendly
 - 🔒 CSP, X-Frame-Options, bcrypt passwords
 
