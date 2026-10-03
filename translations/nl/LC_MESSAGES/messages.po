@@ -542,3 +542,15 @@ msgstr "Test e-mail in wachtrij geplaatst"
 
 msgid "Show all"
 msgstr "Alles tonen"
+
+msgid "Tricount name"
+msgstr "Naam tricount"
+
+msgid "Choose emoji"
+msgstr "Kies emoji"
+
+msgid "Remove emoji"
+msgstr "Emoji verwijderen"
+
+msgid "Tricount updated"
+msgstr "Tricount bijgewerkt"

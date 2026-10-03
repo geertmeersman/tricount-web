@@ -542,3 +542,15 @@ msgstr "Test email queued"
 
 msgid "Show all"
 msgstr "Show all"
+
+msgid "Tricount name"
+msgstr "Tricount name"
+
+msgid "Choose emoji"
+msgstr "Choose emoji"
+
+msgid "Remove emoji"
+msgstr "Remove emoji"
+
+msgid "Tricount updated"
+msgstr "Tricount updated"

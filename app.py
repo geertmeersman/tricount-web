@@ -1077,6 +1077,22 @@ def remove_tricount(token):
     return redirect(url_for("index"))
 
 
+@app.route("/tricount/<token>/update_meta", methods=["POST"])
+@login_required
+def update_tricount_meta(token):
+    title = request.form.get("title", "").strip() or None
+    emoji = request.form.get("emoji", "").strip() or None
+    try:
+        client = get_client()
+        t = get_tricount_cached(client, token, current_user.id)
+        client.update_tricount(t, title=title, emoji=emoji)
+        cache_invalidate(token)
+        flash(_("Tricount updated"), "success")
+    except Exception as e:
+        flash(f"Fout: {e}", "danger")
+    return redirect(url_for("tricount_detail", token=token))
+
+
 @app.route("/update_label/<token>", methods=["POST"])
 @login_required
 def update_label(token):
