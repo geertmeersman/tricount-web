@@ -129,7 +129,7 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 Set these in `.env` to enable the weekly balance email (sent every Monday at 08:00):
 
 ```env
-APP_BASE_URL=https://your-domain.com
+APP_BASE_URL=https://tricount.yoursite.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your@email.com
