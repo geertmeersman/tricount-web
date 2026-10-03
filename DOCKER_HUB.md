@@ -50,6 +50,11 @@ services:
     image: geertmeersman/tricount-web:latest
     container_name: tricount-web
     env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     volumes:
       - ./data:/app/data
     ports:
@@ -72,6 +77,11 @@ services:
     image: geertmeersman/tricount-web:latest
     container_name: tricount-web
     env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     volumes:
       - ./data:/app/data
     restart: unless-stopped
@@ -100,7 +110,7 @@ Back this directory up regularly. It contains your device credentials and all tr
 Add these to your `.env` to enable a weekly balance email every Monday at 08:00. The email is sent in each user's preferred language and groups tricounts by label. A test send button is available on the profile page.
 
 ```env
-APP_BASE_URL=https://your-domain.com
+APP_BASE_URL=https://tricount.yoursite.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your@email.com
