@@ -25,6 +25,11 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - 🏷️ Color-coded labels with grouped overview
 - 🗑️ Bulk delete transactions
 - 👤 Display name and language preference per user
+- 🌙 Dark mode
+- 📤 Export transactions to CSV
+- 📊 Admin statistics dashboard
+- 🏥 Health check endpoint (`/health`)
+- 🔑 Forgot password / reset via email
 - 🌍 Multilingual: NL / EN / FR / DE / ES
 - 📱 Mobile-friendly
 - 🔒 CSP, X-Frame-Options, bcrypt passwords
@@ -104,6 +109,18 @@ SMTP_FROM=your@email.com
 ```
 
 Users opt in individually from their **Profile** page. If `SMTP_HOST` is not set, the job is skipped silently.
+
+## Health check
+
+The `/health` endpoint returns `{"status": "ok", "db": true}` (HTTP 200) or HTTP 503 when degraded. Add to your compose file:
+
+```yaml
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+  interval: 30s
+  timeout: 5s
+  retries: 3
+```
 
 ## How it connects to Tricount
 

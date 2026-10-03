@@ -659,3 +659,27 @@ msgstr "Jouw rechten"
 
 msgid "Privacy rights text"
 msgstr "Je kan je account en alle bijhorende gegevens op elk moment verwijderen via je profielpagina. Neem contact op met de beheerder voor vragen of verzoeken."
+
+msgid "Statistics"
+msgstr "Statistieken"
+
+msgid "Active recurring"
+msgstr "Actieve herhalingen"
+
+msgid "Recurring runs"
+msgstr "Uitgevoerde herhalingen"
+
+msgid "Emails sent"
+msgstr "Emails verstuurd"
+
+msgid "Weekly email"
+msgstr "Wekelijkse email"
+
+msgid "Open invites"
+msgstr "Openstaande uitnodigingen"
+
+msgid "Recent recurring log"
+msgstr "Recente herhalingslog"
+
+msgid "Cookie darkmode purpose"
+msgstr "Onthoudt de voorkeur voor donkere modus (1 jaar)"

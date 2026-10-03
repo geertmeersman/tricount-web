@@ -659,3 +659,27 @@ msgstr "Your rights"
 
 msgid "Privacy rights text"
 msgstr "You can delete your account and all associated data at any time via your profile page. Contact the administrator for any questions or requests."
+
+msgid "Statistics"
+msgstr "Statistics"
+
+msgid "Active recurring"
+msgstr "Active recurring"
+
+msgid "Recurring runs"
+msgstr "Recurring runs"
+
+msgid "Emails sent"
+msgstr "Emails sent"
+
+msgid "Weekly email"
+msgstr "Weekly email"
+
+msgid "Open invites"
+msgstr "Open invites"
+
+msgid "Recent recurring log"
+msgstr "Recent recurring log"
+
+msgid "Cookie darkmode purpose"
+msgstr "Remembers the dark mode preference (1 year)"

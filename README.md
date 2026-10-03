@@ -57,6 +57,11 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - 🗑️ Bulk delete transactions
 - 👤 Display name and language preference per user profile
 - 🔒 Security headers (CSP, X-Frame-Options, X-Content-Type-Options)
+- 🌙 Dark mode toggle
+- 📤 Export transactions to CSV
+- 📊 Admin statistics dashboard
+- 🏥 Health check endpoint (`/health`)
+- 🔑 Forgot password / reset via email
 - 🐳 Docker + docker-compose ready
 
 ## How authentication works
@@ -148,6 +153,34 @@ Each user can configure from their **Profile** page:
 ## Labels
 
 Labels can be created with a custom color from the label management page (🏷 icon on the home screen). Tricounts are grouped by label in the overview. A label cannot be deleted while it is still assigned to a tricount.
+
+## Export
+
+Transactions can be exported to CSV from the tricount detail page (download icon in the header). The file is named after the tricount title and contains one row per transaction with columns for date, description, amount, currency, payer and each member's allocation.
+
+## Dark mode
+
+Toggle dark mode via the moon icon in the navbar. The preference is saved in `localStorage` and persists across sessions.
+
+## Forgot password
+
+Users can request a password reset from the login page. A reset link is sent to the email address on file (if configured). The link expires after 1 hour and can only be used once. Requires SMTP to be configured.
+
+## Health check
+
+A health check endpoint is available at `/health`. It returns HTTP 200 with `{"status": "ok", "db": true}` when the database is reachable, or HTTP 503 when degraded. Useful for Docker health checks or load balancer probes.
+
+```yaml
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+  interval: 30s
+  timeout: 5s
+  retries: 3
+```
+
+## Admin statistics
+
+Admins can view a statistics dashboard at `/admin/stats` (linked from the admin panel). It shows user counts, tricount counts, recurring expense stats, email stats and the 10 most recent recurring log entries.
 
 ## Transactions
 

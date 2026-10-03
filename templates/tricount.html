@@ -4,26 +4,30 @@
 
 <div class="flex items-center justify-between mb-4">
   <div class="flex items-center gap-2 min-w-0">
-    <h1 id="pageTitle" class="text-xl font-bold truncate">{{ _("Loading") }}</h1>
+    <h1 id="pageTitle" class="text-xl font-bold truncate dark:text-gray-100">{{ _("Loading") }}</h1>
     <span id="pageTitleLabel" class="hidden text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 shrink-0"></span>
   </div>
   <div class="flex items-center gap-2 ml-2 shrink-0">
     <button id="openEditModalBtn"
-      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 shadow hover:shadow-md text-gray-500 dark:text-gray-400 hover:text-blue-600 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
       </svg>
     </button>
     <button id="shareBtn"
-      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 shadow hover:shadow-md text-gray-500 dark:text-gray-400 hover:text-blue-600 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
         <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
       </svg>
     </button>
+    <a id="exportBtn" href="{{ url_for('export_csv', token=token) }}"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 shadow hover:shadow-md text-gray-500 dark:text-gray-400 hover:text-green-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </a>
     <a href="{{ url_for('index') }}"
-      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow hover:shadow-md text-gray-500 hover:text-blue-600 transition">
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 shadow hover:shadow-md text-gray-500 dark:text-gray-400 hover:text-blue-600 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="15 18 9 12 15 6"/>
       </svg>
@@ -34,7 +38,7 @@
 <!-- Progress -->
 <div id="progressWrap" class="mb-4">
   <div class="text-xs text-gray-400 mb-1" id="progressLabel">{{ _("Connecting") }}</div>
-  <div class="w-full bg-gray-200 rounded-full h-1.5">
+  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
     <div id="progressBar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-500" style="width:5%"></div>
   </div>
 </div>
@@ -49,8 +53,8 @@
   <div id="membersList" class="flex flex-wrap gap-2"></div>
 
   <!-- Saldi -->
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm font-semibold text-gray-500 uppercase mb-3">{{ _("Balances") }}</h2>
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+    <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">{{ _("Balances") }}</h2>
     <div id="debts" class="space-y-2 mb-3"></div>
     <div id="balances" class="border-t pt-2 space-y-1"></div>
   </div>
@@ -59,9 +63,9 @@
   <div id="actions" class="flex gap-2"></div>
 
   <!-- Transacties -->
-  <div class="bg-white rounded-xl shadow divide-y">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
     <div class="flex items-center gap-2 px-4 py-3">
-      <h2 class="text-sm font-semibold text-gray-500 uppercase flex-1">{{ _("Transactions") }}</h2>
+      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase flex-1">{{ _("Transactions") }}</h2>
       <span class="text-xs text-gray-400" id="txTotalAll"></span>
       <button id="bulkModeBtn"
         class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition"
@@ -72,16 +76,16 @@
         </svg>
       </button>
       <input id="txSearch" type="search" placeholder="{{ _('Search') }}"
-        class="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-36">
+        class="border dark:border-gray-600 rounded-lg px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 w-36">
     </div>
-    <div id="txSelectAllRow" class="hidden px-4 py-2 bg-gray-50 flex items-center gap-2 border-b">
+    <div id="txSelectAllRow" class="hidden px-4 py-2 bg-gray-50 dark:bg-gray-700 flex items-center gap-2 border-b dark:border-gray-600">
       <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
         <input type="checkbox" id="selectAllCheckbox" class="w-4 h-4 accent-blue-600">
         {{ _("Select all visible") }}
       </label>
     </div>
     <div id="transactions"></div>
-    <div id="bulkBar" class="hidden px-4 py-3 bg-red-50 rounded-b-xl flex items-center justify-between gap-2">
+    <div id="bulkBar" class="hidden px-4 py-3 bg-red-50 dark:bg-red-900/30 rounded-b-xl flex items-center justify-between gap-2">
       <span class="text-sm text-red-700"><span id="bulkCount">0</span> {{ _("selected") }}</span>
       <form id="bulkDeleteForm" method="POST" action="{{ url_for('bulk_delete_transactions', token=token) }}" class="flex items-center gap-2">
         <div id="bulkHiddenInputs"></div>
@@ -91,9 +95,9 @@
           {{ _("Delete selected") }}</button>
       </form>
     </div>
-    <div class="flex justify-between items-center px-4 py-3 bg-blue-50 rounded-b-xl" id="txTotalBar">
-      <span class="text-sm font-semibold text-blue-600">{{ _("Total") }}</span>
-      <span class="text-sm font-bold text-blue-600"><span id="txTotal">0.00</span> <span id="txCurrency"></span></span>
+    <div class="flex justify-between items-center px-4 py-3 bg-blue-50 dark:bg-blue-900/30 rounded-b-xl" id="txTotalBar">
+      <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ _("Total") }}</span>
+      <span class="text-sm font-bold text-blue-600 dark:text-blue-400"><span id="txTotal">0.00</span> <span id="txCurrency"></span></span>
     </div>
   </div>
 
@@ -104,8 +108,8 @@
 
 <!-- Edit modal -->
 <div id="editModalBackdrop" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-  <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4 max-h-[90vh] overflow-y-auto">
-    <h3 class="font-semibold text-lg">⚙️ {{ _("Edit tricount") }}</h3>
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+    <h3 class="font-semibold text-lg dark:text-gray-100">⚙️ {{ _("Edit tricount") }}</h3>
 
     <!-- Naam & emoji -->
     <form method="POST" action="{{ url_for('update_tricount_meta', token=token) }}" class="space-y-3">
@@ -113,15 +117,15 @@
         <label class="text-xs text-gray-500 font-medium mb-1 block">{{ _("Tricount name") }}</label>
         <div class="flex gap-2">
           <button type="button" id="emojiPickerBtn"
-            class="w-10 h-10 shrink-0 border rounded-lg text-xl flex items-center justify-center hover:bg-gray-50"
+            class="w-10 h-10 shrink-0 border dark:border-gray-600 rounded-lg text-xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700"
             title="{{ _("Choose emoji") }}">❓</button>
           <input type="hidden" name="emoji" id="emojiInput" value="">
           <input type="text" name="title" id="tricountTitleInput" placeholder="{{ _("Tricount name") }}"
-            class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            class="flex-1 border dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
       </div>
       <!-- Emoji picker grid -->
-      <div id="emojiPicker" class="hidden border rounded-xl p-3 bg-gray-50">
+      <div id="emojiPicker" class="hidden border dark:border-gray-600 rounded-xl p-3 bg-gray-50 dark:bg-gray-700">
         <div class="grid grid-cols-8 gap-1" id="emojiGrid"></div>
         <button type="button" id="emojiClearBtn"
           class="mt-2 text-xs text-gray-400 hover:text-red-500">✕ {{ _("Remove emoji") }}</button>
@@ -134,7 +138,7 @@
       <label class="text-xs text-gray-500 font-medium mb-1 block">{{ _("Label optional") }}</label>
       <form method="POST" action="{{ url_for('update_label', token=token) }}" class="flex gap-2">
         <select name="label"
-          class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          class="flex-1 border dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
           <option value="">— {{ _("No label") }} —</option>
           {% for lbl in labels %}
           <option value="{{ lbl.name }}" {% if lbl.name == label %}selected{% endif %} style="color:{{ lbl.color }}">{{ lbl.name }}</option>
@@ -151,14 +155,14 @@
       <p class="text-xs text-gray-400 mb-2">{{ _("Type to confirm remove") }}</p>
       <form method="POST" action="{{ url_for('remove_tricount', token=token) }}" class="space-y-2">
         <input type="text" id="removeConfirmInput" placeholder="{{ _('Delete verb') }}"
-          class="w-full border border-red-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+          class="w-full border border-red-300 dark:border-red-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-400">
         <button id="removeBtn" disabled
           class="w-full bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2 rounded-lg text-sm font-medium">{{ _("Remove from list") }}</button>
       </form>
     </div>
 
     <button id="closeEditModalBtn"
-      class="w-full border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">{{ _("Cancel") }}</button>
+      class="w-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 py-2 rounded-lg text-sm">{{ _("Cancel") }}</button>
   </div>
 </div>
 

@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% block title %}{{ _("Profile") }}{% endblock %}
 {% block content %}
-<h1 class="text-xl font-bold mb-4">{{ _("Profile") }}</h1>
+<h1 class="text-xl font-bold mb-4 dark:text-gray-100">{{ _("Profile") }}</h1>
 
 <div class="space-y-4">
 
   <!-- Gebruikersinfo -->
-  <div class="bg-white rounded-xl shadow p-4">
-    <p class="text-sm font-medium text-gray-700 mb-1">{{ _("Username") }}</p>
-    <p class="text-sm text-gray-500 mb-3">{{ current_user.username }}</p>
-    <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ _("Display name") }}</h2>
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+    <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ _("Username") }}</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">{{ current_user.username }}</p>
+    <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{{ _("Display name") }}</h2>
     <form method="POST" action="{{ url_for('profile_display_name') }}" class="flex gap-2">
       <input type="text" name="display_name" value="{{ display_name }}" placeholder="{{ current_user.username }}"
         autocomplete="nickname"
-        class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        class="flex-1 border dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
       <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shrink-0">{{ _("Save") }}</button>
     </form>
-    <p class="text-xs text-gray-400 mt-1">{{ _("Display name hint") }}</p>
+    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ _("Display name hint") }}</p>
   </div>
 
   <!-- Tricount verbinding info -->
-  <div class="bg-white rounded-xl shadow p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
     <div class="flex items-center justify-between cursor-pointer" id="toggleConnectionInfo">
-      <p class="text-sm font-semibold text-gray-700">{{ _("Tricount connection") }}</p>
+      <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ _("Tricount connection") }}</p>
       <span class="text-blue-500 text-lg font-bold leading-none select-none">?</span>
     </div>
     <div class="hidden text-xs text-gray-500 mt-2 leading-relaxed space-y-1.5">
@@ -33,9 +33,9 @@
   </div>
 
   <!-- Credentials download -->
-  <div class="bg-white rounded-xl shadow p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
     <div class="flex items-center justify-between cursor-pointer" id="toggleCredentialsInfo">
-      <p class="text-sm font-semibold text-gray-700">{{ _("Device credentials") }}</p>
+      <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ _("Device credentials") }}</p>
       <span class="text-blue-500 text-lg font-bold leading-none select-none">?</span>
     </div>
     <div class="hidden mt-2 space-y-2">
@@ -51,13 +51,13 @@
   </div>
 
   <!-- Email instellingen -->
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ _("Email settings") }}</h2>
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+    <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{{ _("Email settings") }}</h2>
     <form method="POST" action="{{ url_for('profile_email') }}" class="space-y-3">
       <input type="email" name="email" value="{{ email }}" placeholder="{{ _('Your email address') }}"
         autocomplete="email"
-        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        class="w-full border dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
         <input type="checkbox" name="weekly_email" {% if weekly_email %}checked{% endif %}
           class="w-4 h-4 accent-blue-600">
         {{ _("Weekly email") }}
@@ -107,24 +107,24 @@
   </div>
 
   <!-- Wachtwoord wijzigen -->
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm font-semibold text-gray-700 mb-3">{{ _("Change password") }}</h2>
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+    <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{{ _("Change password") }}</h2>
     <form method="POST" action="{{ url_for('profile_password') }}" class="space-y-3">
       <input type="hidden" name="username" autocomplete="username" value="{{ current_user.username }}">
       <input type="password" name="current_password" placeholder="{{ _('Current password') }}" required autocomplete="current-password"
-        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        class="w-full border dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
       <input type="password" name="new_password" placeholder="{{ _('New password') }}" required autocomplete="new-password"
-        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        class="w-full border dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
       <input type="password" name="confirm_password" placeholder="{{ _('Confirm new password') }}" required autocomplete="new-password"
-        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        class="w-full border dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
       <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Change password") }}</button>
     </form>
   </div>
 
   <!-- Account verwijderen -->
-  <div class="bg-white rounded-xl shadow p-4 border border-red-200">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4 border border-red-200 dark:border-red-900">
     <h2 class="text-sm font-semibold text-red-600 mb-3">{{ _("Delete account") }}</h2>
-    <p class="text-xs text-gray-400 mb-3">{{ _("Delete account hint") }}</p>
+    <p class="text-xs text-gray-400 dark:text-gray-500 mb-3">{{ _("Delete account hint") }}</p>
     {% if current_user.is_admin %}
     <p class="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">{{ _("Admin cannot delete own account") }}</p>
     {% else %}
