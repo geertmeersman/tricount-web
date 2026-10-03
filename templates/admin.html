@@ -10,6 +10,10 @@
       <span class="text-sm font-medium">{{ u.username }}</span>
       {% if u.id == current_user.id | int %}<span class="ml-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{{ _("You") }}</span>{% endif %}
       {% if u.is_admin %}<span class="ml-1 text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">{{ _("Admin") }}</span>{% endif %}
+      <div class="text-xs text-gray-400 mt-0.5 cursor-pointer hover:text-blue-600"
+           data-email-user-id="{{ u.id }}" data-email-value="{{ u.email or '' }}">
+        {{ u.email or '—' }}
+      </div>
     </div>
     {% if u.id != current_user.id | int %}
     <div class="flex gap-2 shrink-0">
@@ -66,6 +70,20 @@
 </div>
 {% endif %}
 
+<!-- Email modal -->
+<div id="emailModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
+    <h3 class="font-semibold text-lg">{{ _("Edit email") }}</h3>
+    <form id="emailForm" method="POST" class="flex gap-2">
+      <input type="email" name="email" id="emailInput" placeholder="{{ _('Email') }}"
+        class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm shrink-0">{{ _("Save") }}</button>
+    </form>
+    <button id="closeEmailModalBtn"
+      class="w-full border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">{{ _("Cancel") }}</button>
+  </div>
+</div>
+
 <!-- Invite label modal -->
 <div id="inviteLabelModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
   <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
@@ -87,7 +105,15 @@ function openInviteLabelModal(id, label) {
   document.getElementById('inviteLabelModal').classList.remove('hidden');
   document.getElementById('inviteLabelInput').focus();
 }
-document.getElementById('closeInviteLabelModalBtn').addEventListener('click', () => document.getElementById('inviteLabelModal').classList.add('hidden'));
+document.getElementById('closeEmailModalBtn').addEventListener('click', () => document.getElementById('emailModal').classList.add('hidden'));
+document.getElementById('emailModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
+document.querySelectorAll('[data-email-user-id]').forEach(el => el.addEventListener('click', () => {
+  document.getElementById('emailForm').action = `/admin/user/${el.dataset.emailUserId}/email`;
+  document.getElementById('emailInput').value = el.dataset.emailValue;
+  document.getElementById('emailModal').classList.remove('hidden');
+  document.getElementById('emailInput').focus();
+}));
+
 document.getElementById('inviteLabelModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 document.querySelectorAll('[data-invite-id]').forEach(el => el.addEventListener('click', () => openInviteLabelModal(el.dataset.inviteId, el.dataset.inviteLabel)));
 document.querySelectorAll('[data-copy]').forEach(el => el.addEventListener('click', () => copyToClipboard(el.dataset.copy)));

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Privacy policy") }}{% endblock %}
+{% block content %}
+<h1 class="text-xl font-bold mb-6">{{ _("Privacy policy") }}</h1>
+
+<div class="space-y-5 text-sm text-gray-700">
+
+    <section>
+      <h2 class="font-semibold text-gray-900 mb-1">{{ _("Privacy who") }}</h2>
+      <p>{{ _("Privacy who text") }}</p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold text-gray-900 mb-1">{{ _("Privacy data collected") }}</h2>
+      <ul class="list-disc list-inside space-y-1 text-gray-600">
+        <li>{{ _("Privacy data username") }}</li>
+        <li>{{ _("Privacy data email") }}</li>
+        <li>{{ _("Privacy data password") }}</li>
+        <li>{{ _("Privacy data language") }}</li>
+        <li>{{ _("Privacy data tricount") }}</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="font-semibold text-gray-900 mb-1">{{ _("Privacy purpose") }}</h2>
+      <p>{{ _("Privacy purpose text") }}</p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold text-gray-900 mb-1">{{ _("Privacy third parties") }}</h2>
+      <p>{{ _("Privacy third parties text") }}</p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold text-gray-900 mb-1">{{ _("Privacy storage") }}</h2>
+      <p>{{ _("Privacy storage text") }}</p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold text-gray-900 mb-1">{{ _("Privacy rights") }}</h2>
+      <p>{{ _("Privacy rights text") }}</p>
+    </section>
+
+  </div>
+
+<button id="backBtn" class="mt-6 border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 px-4 rounded-lg text-sm">{{ _("Back") }}</button>
+<script nonce="{{ csp_nonce }}">document.getElementById('backBtn').addEventListener('click', () => history.back());</script>
+{% endblock %}

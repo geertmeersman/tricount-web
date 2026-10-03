@@ -91,6 +91,10 @@
 
 <footer class="text-center text-xs text-gray-400 py-6 mt-4">
   {{ _("Copyright", year=now.year) }} &mdash; <a href="https://github.com/geertmeersman/tricount-web/releases/tag/{{ version }}" target="_blank" class="hover:text-gray-600">{{ version }}</a>
+  <span class="mx-2">&middot;</span>
+  <a href="{{ url_for('privacy') }}" class="hover:text-gray-600">{{ _("Privacy policy") }}</a>
+  <span class="mx-2">&middot;</span>
+  <a href="{{ url_for('cookies') }}" class="hover:text-gray-600">{{ _("Cookie policy") }}</a>
 </footer>
 
 <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none">

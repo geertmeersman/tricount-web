@@ -554,3 +554,108 @@ msgstr "Emoji verwijderen"
 
 msgid "Tricount updated"
 msgstr "Tricount bijgewerkt"
+
+msgid "Forgot password"
+msgstr "Wachtwoord vergeten"
+
+msgid "Forgot password hint"
+msgstr "Vul je e-mailadres in en we sturen je een link om je wachtwoord te herstellen."
+
+msgid "Send reset link"
+msgstr "HerstelLink versturen"
+
+msgid "Reset email sent"
+msgstr "Als dit e-mailadres bekend is, ontvang je een herstelmail."
+
+msgid "Reset link invalid"
+msgstr "Deze herstelLink is ongeldig of verlopen."
+
+msgid "Reset password"
+msgstr "Wachtwoord herstellen"
+
+msgid "New password"
+msgstr "Nieuw wachtwoord"
+
+msgid "Confirm password"
+msgstr "Wachtwoord bevestigen"
+
+msgid "Save new password"
+msgstr "Nieuw wachtwoord opslaan"
+
+msgid "Back to login"
+msgstr "Terug naar inloggen"
+
+msgid "Edit email"
+msgstr "E-mail bewerken"
+
+msgid "Cookie notice"
+msgstr "Deze app gebruikt enkel functionele cookies voor sessie en taalvoorkeur."
+
+msgid "Cookie policy"
+msgstr "Cookiebeleid"
+
+msgid "Cookie"
+msgstr "Cookie"
+
+msgid "Purpose"
+msgstr "Doel"
+
+msgid "Cookie session purpose"
+msgstr "Inloggen en sessie bijhouden"
+
+msgid "Cookie lang purpose"
+msgstr "Taalvoorkeur onthouden"
+
+msgid "Close"
+msgstr "Sluiten"
+
+msgid "Privacy policy"
+msgstr "Privacybeleid"
+
+msgid "Privacy who"
+msgstr "Over deze app"
+
+msgid "Privacy who text"
+msgstr "Deze app is een persoonlijke webapplicatie voor een beperkt aantal gebruikers. Ze wordt zelf gehost door de beheerder."
+
+msgid "Privacy data collected"
+msgstr "Welke gegevens worden bijgehouden?"
+
+msgid "Privacy data username"
+msgstr "Gebruikersnaam — noodzakelijk om in te loggen"
+
+msgid "Privacy data email"
+msgstr "E-mailadres (optioneel) — voor wachtwoordherstel en wekelijkse overzichten"
+
+msgid "Privacy data password"
+msgstr "Wachtwoord — opgeslagen als bcrypt-hash, nooit leesbaar in klare tekst"
+
+msgid "Privacy data language"
+msgstr "Taalvoorkeur — om de interface in de juiste taal te tonen"
+
+msgid "Privacy data tricount"
+msgstr "Tricount-tokens en lidkoppelingen — om je gedeelde uitgaven te tonen via de Tricount API"
+
+msgid "Privacy purpose"
+msgstr "Waarvoor worden de gegevens gebruikt?"
+
+msgid "Privacy purpose text"
+msgstr "Uitsluitend om de app te laten werken: inloggen, je tricounts tonen en optioneel een wekelijks e-mailoverzicht sturen."
+
+msgid "Privacy third parties"
+msgstr "Worden gegevens gedeeld met derden?"
+
+msgid "Privacy third parties text"
+msgstr "Nee, met uitzondering van de Tricount API (tricount.com) die gebruikt wordt om je transactiedata op te halen. Er worden geen gegevens verkocht of gedeeld met adverteerders of andere partijen."
+
+msgid "Privacy storage"
+msgstr "Waar worden gegevens opgeslagen?"
+
+msgid "Privacy storage text"
+msgstr "Alle gegevens worden lokaal opgeslagen op de server waar de app op draait. De beheerder is verantwoordelijk voor de beveiliging van die server."
+
+msgid "Privacy rights"
+msgstr "Jouw rechten"
+
+msgid "Privacy rights text"
+msgstr "Je kan je account en alle bijhorende gegevens op elk moment verwijderen via je profielpagina. Neem contact op met de beheerder voor vragen of verzoeken."

@@ -554,3 +554,108 @@ msgstr "Remove emoji"
 
 msgid "Tricount updated"
 msgstr "Tricount updated"
+
+msgid "Forgot password"
+msgstr "Forgot password"
+
+msgid "Forgot password hint"
+msgstr "Enter your email address and we'll send you a link to reset your password."
+
+msgid "Send reset link"
+msgstr "Send reset link"
+
+msgid "Reset email sent"
+msgstr "If this email address is known, you will receive a reset email."
+
+msgid "Reset link invalid"
+msgstr "This reset link is invalid or has expired."
+
+msgid "Reset password"
+msgstr "Reset password"
+
+msgid "New password"
+msgstr "New password"
+
+msgid "Confirm password"
+msgstr "Confirm password"
+
+msgid "Save new password"
+msgstr "Save new password"
+
+msgid "Back to login"
+msgstr "Back to login"
+
+msgid "Edit email"
+msgstr "Edit email"
+
+msgid "Cookie notice"
+msgstr "This app only uses functional cookies for session and language preference."
+
+msgid "Cookie policy"
+msgstr "Cookie policy"
+
+msgid "Cookie"
+msgstr "Cookie"
+
+msgid "Purpose"
+msgstr "Purpose"
+
+msgid "Cookie session purpose"
+msgstr "Login and session management"
+
+msgid "Cookie lang purpose"
+msgstr "Remember language preference"
+
+msgid "Close"
+msgstr "Close"
+
+msgid "Privacy policy"
+msgstr "Privacy policy"
+
+msgid "Privacy who"
+msgstr "About this app"
+
+msgid "Privacy who text"
+msgstr "This app is a personal web application for a limited number of users. It is self-hosted by the administrator."
+
+msgid "Privacy data collected"
+msgstr "What data is stored?"
+
+msgid "Privacy data username"
+msgstr "Username — required to log in"
+
+msgid "Privacy data email"
+msgstr "Email address (optional) — for password reset and weekly summaries"
+
+msgid "Privacy data password"
+msgstr "Password — stored as a bcrypt hash, never readable in plain text"
+
+msgid "Privacy data language"
+msgstr "Language preference — to display the interface in the correct language"
+
+msgid "Privacy data tricount"
+msgstr "Tricount tokens and member links — to display your shared expenses via the Tricount API"
+
+msgid "Privacy purpose"
+msgstr "Why is this data used?"
+
+msgid "Privacy purpose text"
+msgstr "Solely to make the app work: logging in, displaying your tricounts, and optionally sending a weekly email summary."
+
+msgid "Privacy third parties"
+msgstr "Is data shared with third parties?"
+
+msgid "Privacy third parties text"
+msgstr "No, except for the Tricount API (tricount.com) used to fetch your transaction data. No data is sold or shared with advertisers or other parties."
+
+msgid "Privacy storage"
+msgstr "Where is data stored?"
+
+msgid "Privacy storage text"
+msgstr "All data is stored locally on the server running the app. The administrator is responsible for the security of that server."
+
+msgid "Privacy rights"
+msgstr "Your rights"
+
+msgid "Privacy rights text"
+msgstr "You can delete your account and all associated data at any time via your profile page. Contact the administrator for any questions or requests."

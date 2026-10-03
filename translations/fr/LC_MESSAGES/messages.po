@@ -554,3 +554,108 @@ msgstr "Supprimer l'emoji"
 
 msgid "Tricount updated"
 msgstr "Tricount mis à jour"
+
+msgid "Forgot password"
+msgstr "Mot de passe oublié"
+
+msgid "Forgot password hint"
+msgstr "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe."
+
+msgid "Send reset link"
+msgstr "Envoyer le lien de réinitialisation"
+
+msgid "Reset email sent"
+msgstr "Si cette adresse e-mail est connue, vous recevrez un e-mail de réinitialisation."
+
+msgid "Reset link invalid"
+msgstr "Ce lien de réinitialisation est invalide ou a expiré."
+
+msgid "Reset password"
+msgstr "Réinitialiser le mot de passe"
+
+msgid "New password"
+msgstr "Nouveau mot de passe"
+
+msgid "Confirm password"
+msgstr "Confirmer le mot de passe"
+
+msgid "Save new password"
+msgstr "Enregistrer le nouveau mot de passe"
+
+msgid "Back to login"
+msgstr "Retour à la connexion"
+
+msgid "Edit email"
+msgstr "Modifier l'e-mail"
+
+msgid "Cookie notice"
+msgstr "Cette application utilise uniquement des cookies fonctionnels pour la session et la préférence de langue."
+
+msgid "Cookie policy"
+msgstr "Politique de cookies"
+
+msgid "Cookie"
+msgstr "Cookie"
+
+msgid "Purpose"
+msgstr "Finalité"
+
+msgid "Cookie session purpose"
+msgstr "Connexion et gestion de session"
+
+msgid "Cookie lang purpose"
+msgstr "Mémoriser la préférence de langue"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Privacy policy"
+msgstr "Politique de confidentialité"
+
+msgid "Privacy who"
+msgstr "À propos de cette application"
+
+msgid "Privacy who text"
+msgstr "Cette application est une application web personnelle destinée à un nombre limité d'utilisateurs. Elle est hébergée par l'administrateur."
+
+msgid "Privacy data collected"
+msgstr "Quelles données sont conservées ?"
+
+msgid "Privacy data username"
+msgstr "Nom d'utilisateur — nécessaire pour se connecter"
+
+msgid "Privacy data email"
+msgstr "Adresse e-mail (optionnelle) — pour la réinitialisation du mot de passe et les résumés hebdomadaires"
+
+msgid "Privacy data password"
+msgstr "Mot de passe — stocké sous forme de hash bcrypt, jamais lisible en clair"
+
+msgid "Privacy data language"
+msgstr "Préférence de langue — pour afficher l'interface dans la bonne langue"
+
+msgid "Privacy data tricount"
+msgstr "Tokens Tricount et liens membres — pour afficher vos dépenses partagées via l'API Tricount"
+
+msgid "Privacy purpose"
+msgstr "Pourquoi ces données sont-elles utilisées ?"
+
+msgid "Privacy purpose text"
+msgstr "Uniquement pour faire fonctionner l'application : connexion, affichage de vos tricounts et envoi optionnel d'un résumé hebdomadaire par e-mail."
+
+msgid "Privacy third parties"
+msgstr "Les données sont-elles partagées avec des tiers ?"
+
+msgid "Privacy third parties text"
+msgstr "Non, à l'exception de l'API Tricount (tricount.com) utilisée pour récupérer vos données de transactions. Aucune donnée n'est vendue ou partagée avec des annonceurs ou d'autres parties."
+
+msgid "Privacy storage"
+msgstr "Où les données sont-elles stockées ?"
+
+msgid "Privacy storage text"
+msgstr "Toutes les données sont stockées localement sur le serveur hébergeant l'application. L'administrateur est responsable de la sécurité de ce serveur."
+
+msgid "Privacy rights"
+msgstr "Vos droits"
+
+msgid "Privacy rights text"
+msgstr "Vous pouvez supprimer votre compte et toutes les données associées à tout moment via votre page de profil. Contactez l'administrateur pour toute question ou demande."

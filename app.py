@@ -260,6 +260,16 @@ def init_db():
                 (row[0], row[1]),
             )
     db.commit()
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            token TEXT UNIQUE NOT NULL,
+            expires_at TEXT NOT NULL,
+            used INTEGER NOT NULL DEFAULT 0
+        )
+    """)
+    db.commit()
     db.close()
 
 
@@ -656,6 +666,96 @@ def robots():
     )
 
 
+@app.route("/cookies")
+def cookies():
+    return render_template("cookies.html")
+
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
+
+@app.route("/forgot", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        row = get_db().execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone() if email else None
+        if row:
+            token = secrets.token_urlsafe(32)
+            expires = (datetime.now() + timedelta(hours=1)).isoformat(timespec="seconds")
+            get_db().execute(
+                "INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
+                (row["id"], token, expires),
+            )
+            get_db().commit()
+            _send_reset_email(email, token)
+        # Altijd zelfde boodschap om user enumeration te voorkomen
+        flash(_("Reset email sent"), "success")
+        return redirect(url_for("login"))
+    return render_template("forgot.html")
+
+
+def _send_reset_email(email, token):
+    smtp_host = os.environ.get("SMTP_HOST")
+    smtp_port = int(os.environ.get("SMTP_PORT", 587))
+    smtp_user = os.environ.get("SMTP_USER")
+    smtp_password = os.environ.get("SMTP_PASSWORD")
+    smtp_from = os.environ.get("SMTP_FROM", smtp_user)
+    if not all([smtp_host, smtp_user, smtp_password]):
+        logging.warning("Reset email: SMTP niet geconfigureerd.")
+        return
+    base_url = os.environ.get("APP_BASE_URL", "http://localhost")
+    link = f"{base_url}/reset/{token}"
+    html = f"""<html><body style="font-family:sans-serif;max-width:480px;margin:0 auto">
+      <h2 style="color:#2563eb">🔑 Wachtwoord herstellen</h2>
+      <p>Klik op onderstaande link om uw wachtwoord te herstellen. De link is 1 uur geldig.</p>
+      <p><a href="{link}" style="background:#2563eb;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block">
+        Wachtwoord herstellen</a></p>
+      <p style="color:#9ca3af;font-size:12px">Als je dit niet hebt aangevraagd, kan je deze email negeren.</p>
+    </body></html>"""
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = "🔑 Wachtwoord herstellen — Tricount"
+        msg["From"] = smtp_from
+        msg["To"] = email
+        msg.attach(MIMEText(html, "html"))
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.sendmail(smtp_from, email, msg.as_string())
+    except Exception as e:
+        logging.error("Reset email versturen mislukt: %s", e)
+
+
+@app.route("/reset/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    row = get_db().execute("SELECT * FROM password_reset_tokens WHERE token = ? AND used = 0", (token,)).fetchone()
+    if not row or datetime.fromisoformat(row["expires_at"]) < datetime.now():
+        flash(_("Reset link invalid"), "danger")
+        return redirect(url_for("login"))
+    if request.method == "POST":
+        new_pw = request.form.get("new_password", "")
+        confirm_pw = request.form.get("confirm_password", "")
+        if len(new_pw) < 6:
+            flash(_("Password too short"), "danger")
+        elif new_pw != confirm_pw:
+            flash(_("Passwords do not match"), "danger")
+        else:
+            pw_hash = bcrypt.hashpw(new_pw.encode(), bcrypt.gensalt()).decode()
+            get_db().execute("UPDATE users SET password_hash = ? WHERE id = ?", (pw_hash, row["user_id"]))
+            get_db().execute("UPDATE password_reset_tokens SET used = 1 WHERE token = ?", (token,))
+            get_db().commit()
+            flash(_("Password changed"), "success")
+            return redirect(url_for("login"))
+    return render_template("reset.html", token=token)
+
+
 @app.route("/login", methods=["GET", "POST"])
 @limiter.limit("10 per minute")
 def login():
@@ -712,9 +812,11 @@ def _do_register(db, user_count, invite_token):
             return render_template("register.html", first=user_count == 0, invite_token=invite_token)
         pw_hash = bcrypt.hashpw(password, bcrypt.gensalt()).decode()
         is_admin = 1 if user_count == 0 else 0
+        email = request.form.get("email", "").strip() or None
         try:
             db.execute(
-                "INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, ?)", (username, pw_hash, is_admin)
+                "INSERT INTO users (username, password_hash, is_admin, email) VALUES (?, ?, ?, ?)",
+                (username, pw_hash, is_admin, email),
             )
             db.commit()
             new_user = db.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone()
@@ -1608,7 +1710,7 @@ def recurring_log_view(token, rec_id):
 @app.route("/admin")
 @admin_required
 def admin():
-    users = get_db().execute("SELECT id, username, is_admin FROM users ORDER BY username").fetchall()
+    users = get_db().execute("SELECT id, username, is_admin, email FROM users ORDER BY username").fetchall()
     invites = (
         get_db()
         .execute(
@@ -1648,6 +1750,16 @@ def admin_update_invite_label(invite_id):
     label = request.form.get("label", "").strip() or None
     get_db().execute("UPDATE invites SET label = ? WHERE id = ?", (label, invite_id))
     get_db().commit()
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/user/<int:user_id>/email", methods=["POST"])
+@admin_required
+def admin_set_email(user_id):
+    email = request.form.get("email", "").strip() or None
+    get_db().execute("UPDATE users SET email = ? WHERE id = ?", (email, user_id))
+    get_db().commit()
+    flash(_("Email settings saved"), "success")
     return redirect(url_for("admin"))
 
 

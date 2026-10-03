@@ -315,7 +315,9 @@ def test_change_password_wrong_current(client, db):
 
 def test_change_password_mismatch(client, db):
     register_and_login(client)
-    resp = client.post(
+    with client.session_transaction() as sess:
+        sess["_flashes"] = []  # leeg eventuele vorige flashes
+    client.post(
         "/profile/password",
         data={
             "current_password": "adminpass1",
@@ -324,7 +326,11 @@ def test_change_password_mismatch(client, db):
         },
         follow_redirects=True,
     )
-    assert b"match" in resp.data.lower() or b"overeenkomen" in resp.data.lower()
+    # wachtwoord mag niet gewijzigd zijn
+    client.get("/logout")
+    login_resp = login_user(client, "admin", "adminpass1")
+    assert login_resp.status_code == 200
+    assert b"invalid" not in login_resp.data.lower()
 
 
 # --- Sitemap & robots ---
