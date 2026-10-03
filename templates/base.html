@@ -58,7 +58,7 @@
       <button id="langToggleBtn"
         class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded font-medium uppercase">{{ current_lang }}</button>
       <div id="langDropdown" class="hidden absolute right-0 mt-1 bg-white rounded-lg shadow-lg overflow-hidden z-50">
-        {% for lang, label in [('nl','NL'),('en','EN'),('fr','FR')] %}
+        {% for lang, label in [('nl','NL'),('en','EN'),('fr','FR'),('de','DE'),('es','ES')] %}
         {% if lang != current_lang %}
         <a href="{{ url_for('set_lang', lang=lang) }}"
           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ label }}</a>
