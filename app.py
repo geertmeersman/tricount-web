@@ -424,6 +424,15 @@ def process_recurring():
         while next_run <= date.today():
             try:
                 t = client.join_tricount(row["token"])
+                member_row = db.execute(
+                    "SELECT member_uuid FROM user_tokens WHERE user_id = ? AND token = ?",
+                    (user_id, row["token"]),
+                ).fetchone()
+                if member_row and member_row["member_uuid"]:
+                    member = t.get_member_by_uuid(member_row["member_uuid"])
+                    if member:
+                        with contextlib.suppress(Exception):
+                            client.link_to_member(t, member)
                 payer = t.get_member_by_uuid(row["payer_uuid"])
                 split_uuids = json.loads(row["split_uuids"])
                 split_among = [t.get_member_by_uuid(u) for u in split_uuids if t.get_member_by_uuid(u)]
