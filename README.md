@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./static/images/tricount-web-100x100.png" width="100">
+  <img src="./static/favicon.png">
 </p>
 
 <h1 align="center">Tricount Web</h1>
@@ -168,7 +168,7 @@ The email is sent in the user's preferred language (set via the language switche
 Configure SMTP in `.env`:
 
 ```env
-APP_BASE_URL=https://tricount.mgweb.be
+APP_BASE_URL=https://tricount.yoursite.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your@email.com
