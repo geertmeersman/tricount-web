@@ -12,55 +12,75 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v7
 
-      - name: Delete draft releases
-        uses: hugo19941994/delete-draft-releases@v1.0.1
+      - name: 🔢 Calculate next semantic version
+        id: semver
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: 🧾 Display version info
+        run: |
+          echo "Current version: ${{ steps.semver.outputs.current }}"
+          echo "Next version: ${{ steps.semver.outputs.next }}"
+
+      - name: 🗑　Delete drafts
+        uses: hugo19941994/delete-draft-releases@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Draft release
-        uses: release-drafter/release-drafter@v6.1.0
-        id: release_drafter
+      - name: 🚮 Remove pre-releases
+        run: |
+          gh release list --json tagName,isPrerelease -q '.[] | select(.isPrerelease == true) | .tagName' | while read -r tag_name; do
+            echo "Deleting pre-release with tag: $tag_name"
+            gh release delete "$tag_name" --yes
+            echo "Deleting Git tag: $tag_name"
+            git push origin --delete "$tag_name" || echo "Failed to delete tag $tag_name from remote"
+            git tag -d "$tag_name" || echo "Failed to delete tag $tag_name locally"
+          done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update VERSION file
-        run: echo "${{ steps.release_drafter.outputs.tag_name }}" > VERSION
+        run: echo "${{ steps.semver.outputs.next }}" > VERSION
 
       - name: Publish release
-        uses: release-drafter/release-drafter@v6.1.0
+        uses: release-drafter/release-drafter@v7
         id: release_published
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           publish: true
+          tag: ${{ steps.semver.outputs.next }}
+          name: ${{ steps.semver.outputs.next }}
 
       - name: Commit VERSION file
-        uses: EndBug/add-and-commit@v9.1.4
+        uses: EndBug/add-and-commit@v11
         with:
-          message: "chore: bump version to ${{ steps.release_drafter.outputs.tag_name }}"
+          message: "chore: bump version to ${{ steps.semver.outputs.next }}"
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.10.0
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3.4.0
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6.15.0
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
           tags: |
             ${{ github.repository }}:latest
-            ${{ github.repository }}:${{ steps.release_drafter.outputs.tag_name }}
+            ${{ github.repository }}:${{ steps.semver.outputs.next }}
 
       - name: Update Docker Hub description
-        uses: peter-evans/dockerhub-description@v4.0.0
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -70,7 +90,6 @@ jobs:
         if: ${{ env.DISCORD_WEBHOOK != '' }}
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          tag_name: ${{ steps.release_drafter.outputs.tag_name }}
-        uses: Ilshidur/action-discord@0.3.2
+        uses: Ilshidur/action-discord@0.4
         with:
-          args: "🚀 New release published: https://github.com/${{ github.repository }}/releases/tag/${{ steps.release_drafter.outputs.tag_name }}"
+          args: "🚀 New release published: https://github.com/${{ github.repository }}/releases/tag/${{ steps.semver.outputs.next }}"

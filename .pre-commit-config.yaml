@@ -20,7 +20,7 @@ repos:
     hooks:
       - id: codespell
         args:
-          - --ignore-words-list=tricount,periode,alle,animatie,als,tabel,te,leeg
+          - --ignore-words-list=tricount,periode,alle,animatie,als,tabel,te,leeg,commitish
           - --skip=./.*,*.csv,*.po,*.pot
           - --quiet-level=2
         exclude_types: [csv, json, html]
