@@ -102,11 +102,10 @@ def set_lang(lang):
     referrer = request.referrer
     parsed = urlparse(referrer) if referrer else None
     expected = urlparse(request.host_url)
-    target = (
-        referrer
-        if parsed and parsed.scheme == expected.scheme and parsed.netloc == expected.netloc
-        else url_for("index")
-    )
+    if parsed and parsed.scheme == expected.scheme and parsed.netloc == expected.netloc:
+        target = parsed.path + ("?" + parsed.query if parsed.query else "")
+    else:
+        target = url_for("index")
     response = redirect(target)
     response.set_cookie("lang", lang, max_age=60 * 60 * 24 * 365)
     return response
