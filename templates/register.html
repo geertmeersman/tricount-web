@@ -19,6 +19,8 @@
       {% if invite_token %}<input type="hidden" name="invite_token" value="{{ invite_token }}">{% endif %}
       <input type="text" name="username" placeholder="{{ _('Username') }}" required autofocus autocomplete="username"
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <input type="email" name="email" placeholder="{{ _('Email') }}" autocomplete="email"
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
       <input type="password" name="password" placeholder="{{ _('Password min 6 chars') }}" required autocomplete="new-password"
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
       <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Create account") }}</button>

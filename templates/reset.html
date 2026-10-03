@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Reset password") }}{% endblock %}
+{% block navbar %}{% endblock %}
+{% block content %}
+<div class="max-w-sm mx-auto pt-10">
+  <div class="text-center mb-6">
+    <img src="{{ url_for('static', filename='favicon.png') }}" class="w-16 h-16 mx-auto mb-3" alt="Tricount">
+    <h1 class="text-2xl font-bold text-gray-800">Tricount Web</h1>
+  </div>
+  <div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-4">{{ _("Reset password") }}</h2>
+    <form method="POST" class="space-y-3">
+      <input type="hidden" name="token" value="{{ token }}">
+      <input type="password" name="new_password" placeholder="{{ _('New password') }}" required autofocus autocomplete="new-password"
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <input type="password" name="confirm_password" placeholder="{{ _('Confirm password') }}" required autocomplete="new-password"
+        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Save new password") }}</button>
+    </form>
+  </div>
+  <p class="text-center text-sm text-gray-400 mt-4">
+    <a href="{{ url_for('login') }}" class="text-blue-600 hover:underline">{{ _("Back to login") }}</a>
+  </p>
+</div>
+{% endblock %}
