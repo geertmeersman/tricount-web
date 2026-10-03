@@ -100,7 +100,13 @@ def set_lang(lang):
         get_db().execute("UPDATE users SET language = ? WHERE id = ?", (lang, current_user.id))
         get_db().commit()
     referrer = request.referrer
-    target = referrer if referrer and referrer.startswith(request.host_url) else url_for("index")
+    parsed = urlparse(referrer) if referrer else None
+    expected = urlparse(request.host_url)
+    target = (
+        referrer
+        if parsed and parsed.scheme == expected.scheme and parsed.netloc == expected.netloc
+        else url_for("index")
+    )
     response = redirect(target)
     response.set_cookie("lang", lang, max_age=60 * 60 * 24 * 365)
     return response
