@@ -67,10 +67,20 @@
   <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
     <h3 class="font-semibold text-lg">{{ _("New tricount") }}</h3>
     <form method="POST" action="{{ url_for('create_tricount') }}" class="space-y-3">
-      <input type="text" name="title" placeholder="{{ _('Title') }}" required autofocus
-        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <input type="text" name="emoji" placeholder="{{ _('Emoji optional') }}" maxlength="2"
-        class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <div class="flex gap-2">
+        <button type="button" id="newEmojiPickerBtn"
+          class="w-10 h-10 shrink-0 border rounded-lg text-xl flex items-center justify-center hover:bg-gray-50"
+          title="{{ _("Choose emoji") }}">❓</button>
+        <input type="hidden" name="emoji" id="newEmojiInput" value="">
+        <input type="text" name="title" placeholder="{{ _('Title') }}" required autofocus
+          class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <!-- Emoji picker grid -->
+      <div id="newEmojiPicker" class="hidden border rounded-xl p-3 bg-gray-50">
+        <div class="grid grid-cols-8 gap-1" id="newEmojiGrid"></div>
+        <button type="button" id="newEmojiClearBtn"
+          class="mt-2 text-xs text-gray-400 hover:text-red-500">✕ {{ _("Remove emoji") }}</button>
+      </div>
       <select name="currency" required
         class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         <option value="EUR" selected>🇪🇺 EUR — Euro</option>
@@ -132,5 +142,30 @@ document.getElementById('openNewTricountBtn').addEventListener('click', () => do
 document.getElementById('closeNewTricountBtn').addEventListener('click', () => document.getElementById('newTricountModalBackdrop').classList.add('hidden'));
 document.getElementById('newTricountModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 document.getElementById('tokenInput').addEventListener('input', function() { const m = this.value.match(/tricount\.com\/t(\S+)/); if (m) this.value = 't' + m[1]; });
+
+// Emoji picker nieuwe tricount
+const EMOJIS = ['🏠','🍕','🍺','🚗','✈️','🎉','🛒','💊','🎬','🏋️','🐶','🌴','⚽','🎮','📚','🎵','🍔','☕','🚂','🏖️','🎁','💡','🔧','🏕️','🍷','🎭','🚀','🌍','💰','🎓','🏥','🛠️','🎪','🌮','🍣','🧳','🎯','🏄','🎸','🌺'];
+const newEmojiGrid = document.getElementById('newEmojiGrid');
+const newEmojiInput = document.getElementById('newEmojiInput');
+const newEmojiPickerBtn = document.getElementById('newEmojiPickerBtn');
+const newEmojiPicker = document.getElementById('newEmojiPicker');
+EMOJIS.forEach(em => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = em;
+  btn.className = 'text-xl w-8 h-8 flex items-center justify-center rounded hover:bg-white hover:shadow transition';
+  btn.addEventListener('click', () => {
+    newEmojiInput.value = em;
+    newEmojiPickerBtn.textContent = em;
+    newEmojiPicker.classList.add('hidden');
+  });
+  newEmojiGrid.appendChild(btn);
+});
+newEmojiPickerBtn.addEventListener('click', () => newEmojiPicker.classList.toggle('hidden'));
+document.getElementById('newEmojiClearBtn').addEventListener('click', () => {
+  newEmojiInput.value = '';
+  newEmojiPickerBtn.textContent = '❓';
+  newEmojiPicker.classList.add('hidden');
+});
 </script>
 {% endblock %}

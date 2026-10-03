@@ -102,9 +102,32 @@
 
 <!-- Edit modal -->
 <div id="editModalBackdrop" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-  <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-5 space-y-4 max-h-[90vh] overflow-y-auto">
     <h3 class="font-semibold text-lg">⚙️ {{ _("Edit tricount") }}</h3>
 
+    <!-- Naam & emoji -->
+    <form method="POST" action="{{ url_for('update_tricount_meta', token=token) }}" class="space-y-3">
+      <div>
+        <label class="text-xs text-gray-500 font-medium mb-1 block">{{ _("Tricount name") }}</label>
+        <div class="flex gap-2">
+          <button type="button" id="emojiPickerBtn"
+            class="w-10 h-10 shrink-0 border rounded-lg text-xl flex items-center justify-center hover:bg-gray-50"
+            title="{{ _("Choose emoji") }}">❓</button>
+          <input type="hidden" name="emoji" id="emojiInput" value="">
+          <input type="text" name="title" id="tricountTitleInput" placeholder="{{ _("Tricount name") }}"
+            class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+      </div>
+      <!-- Emoji picker grid -->
+      <div id="emojiPicker" class="hidden border rounded-xl p-3 bg-gray-50">
+        <div class="grid grid-cols-8 gap-1" id="emojiGrid"></div>
+        <button type="button" id="emojiClearBtn"
+          class="mt-2 text-xs text-gray-400 hover:text-red-500">✕ {{ _("Remove emoji") }}</button>
+      </div>
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Save") }}</button>
+    </form>
+
+    <!-- Label -->
     <div>
       <label class="text-xs text-gray-500 font-medium mb-1 block">{{ _("Label optional") }}</label>
       <form method="POST" action="{{ url_for('update_label', token=token) }}" class="flex gap-2">
@@ -178,5 +201,42 @@ document.getElementById('selectAllCheckbox').addEventListener('change', function
   updateBulkBar();
 });
 document.getElementById('bulkDeleteBtn').addEventListener('click', () => confirmBulkDelete({{ token | tojson }}));
+
+// Emoji picker
+const EMOJIS = ['🏠','🍕','🍺','🚗','✈️','🎉','🛒','💊','🎬','🏋️','🐶','🌴','⚽','🎮','📚','🎵','🍔','☕','🚂','🏖️','🎁','💡','🔧','🏕️','🍷','🎭','🚀','🌍','💰','🎓','🏥','🛠️','🎪','🌮','🍣','🧳','🎯','🏄','🎸','🌺'];
+const emojiGrid = document.getElementById('emojiGrid');
+const emojiInput = document.getElementById('emojiInput');
+const emojiPickerBtn = document.getElementById('emojiPickerBtn');
+const emojiPicker = document.getElementById('emojiPicker');
+
+EMOJIS.forEach(em => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = em;
+  btn.className = 'text-xl w-8 h-8 flex items-center justify-center rounded hover:bg-white hover:shadow transition';
+  btn.addEventListener('click', () => {
+    emojiInput.value = em;
+    emojiPickerBtn.textContent = em;
+    emojiPicker.classList.add('hidden');
+  });
+  emojiGrid.appendChild(btn);
+});
+
+emojiPickerBtn.addEventListener('click', () => emojiPicker.classList.toggle('hidden'));
+document.getElementById('emojiClearBtn').addEventListener('click', () => {
+  emojiInput.value = '';
+  emojiPickerBtn.textContent = '❓';
+  emojiPicker.classList.add('hidden');
+});
+
+// Vul naam & emoji in wanneer modal opent
+document.getElementById('openEditModalBtn').addEventListener('click', () => {
+  const title = document.getElementById('pageTitle').textContent;
+  const emoji = _tricountData?.emoji || '';
+  const name = _tricountData?.title || '';
+  emojiInput.value = emoji;
+  emojiPickerBtn.textContent = emoji || '❓';
+  document.getElementById('tricountTitleInput').value = name;
+});
 </script>
 {% endblock %}

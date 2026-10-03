@@ -542,3 +542,15 @@ msgstr "E-mail de test mis en file d'attente"
 
 msgid "Show all"
 msgstr "Tout afficher"
+
+msgid "Tricount name"
+msgstr "Nom du tricount"
+
+msgid "Choose emoji"
+msgstr "Choisir un emoji"
+
+msgid "Remove emoji"
+msgstr "Supprimer l'emoji"
+
+msgid "Tricount updated"
+msgstr "Tricount mis à jour"
