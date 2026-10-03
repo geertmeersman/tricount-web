@@ -103,7 +103,7 @@ msgid "Balances"
 msgstr "Salden"
 
 msgid "Everyone settled"
-msgstr "✅ Alle sind quitt!"
+msgstr "Alle sind quitt!"
 
 msgid "Must pay"
 msgstr "muss zahlen an"
@@ -121,13 +121,13 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 msgid "Confirm"
-msgstr "✅ Bestätigen"
+msgstr "Bestätigen"
 
 msgid "Add transaction"
-msgstr "+ Transaktion"
+msgstr "Transaktion"
 
 msgid "Recurring"
-msgstr "🔁 Wiederkehrend"
+msgstr "Wiederkehrend"
 
 msgid "Label"
 msgstr "🏷️ Speichern"
@@ -148,7 +148,7 @@ msgid "Paid by"
 msgstr "bezahlt von"
 
 msgid "Edit transaction"
-msgstr "✏️ Bearbeiten"
+msgstr "Bearbeiten"
 
 msgid "Description"
 msgstr "Beschreibung"
@@ -175,7 +175,7 @@ msgid "Transaction updated"
 msgstr "Transaktion aktualisiert!"
 
 msgid "Recurring expenses"
-msgstr "🔁 Wiederkehrende Ausgaben"
+msgstr "Wiederkehrende Ausgaben"
 
 msgid "New recurring"
 msgstr "+ Neu"

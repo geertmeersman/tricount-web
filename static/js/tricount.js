@@ -141,11 +141,11 @@ function confirmBulkDelete(token) {
   const inner = document.createElement('div');
   inner.className = 'bg-white rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4';
   inner.innerHTML = `
-    <h3 class="font-semibold text-lg text-red-600">🗑 ${h(_t.deleteSelected)}</h3>
+    <h3 class="font-semibold text-lg text-red-600 flex items-center gap-2"><svg xmlns='http://www.w3.org/2000/svg' class='w-5 h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='3 6 5 6 21 6'/><path d='M19 6l-1 14H6L5 6'/><path d='M10 11v6'/><path d='M14 11v6'/><path d='M9 6V4h6v2'/></svg> ${h(_t.deleteSelected)}</h3>
     <p class="text-sm text-gray-600">${_t.confirmDelete.replace('{n}', checked.length)}</p>
     <div class="flex gap-3 pt-2">
       <button id="bulkConfirmCancel" class="flex-1 border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg text-sm">${h(_t.cancel)}</button>
-      <button id="bulkConfirmOk" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium">🗑 ${h(_t.deleteSelected)}</button>
+      <button id="bulkConfirmOk" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"><svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='3 6 5 6 21 6'/><path d='M19 6l-1 14H6L5 6'/><path d='M10 11v6'/><path d='M14 11v6'/><path d='M9 6V4h6v2'/></svg> ${h(_t.deleteSelected)}</button>
     </div>`;
 
   modal.appendChild(inner);
@@ -326,8 +326,8 @@ function renderTricount(data, token, label, labelColors) {
 
   // Acties
   document.getElementById('actions').innerHTML = data.archived ? '' : `
-    <a href="/tricount/${h(token)}/add" class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium">${h(_t.addTransaction)}</a>
-    <a href="/tricount/${h(token)}/recurring" class="flex-1 text-center bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm font-medium">${h(_t.recurring)}</a>`;
+    <a href="/tricount/${h(token)}/add" class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"><svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='12' y1='5' x2='12' y2='19'/><line x1='5' y1='12' x2='19' y2='12'/></svg>${h(_t.addTransaction)}</a>
+    <a href="/tricount/${h(token)}/recurring" class="flex-1 text-center bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"><svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='17 1 21 5 17 9'/><path d='M3 11V9a4 4 0 0 1 4-4h14'/><polyline points='7 23 3 19 7 15'/><path d='M21 13v2a4 4 0 0 1-4 4H3'/></svg>${h(_t.recurring)}</a>`;
 
   // Transacties
   let txHtml = '';

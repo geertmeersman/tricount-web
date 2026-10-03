@@ -103,7 +103,7 @@ msgid "Balances"
 msgstr "Saldi"
 
 msgid "Everyone settled"
-msgstr "✅ Iedereen is quitte!"
+msgstr "Iedereen is quitte!"
 
 msgid "Must pay"
 msgstr "moet"
@@ -121,13 +121,13 @@ msgid "Cancel"
 msgstr "Annuleren"
 
 msgid "Confirm"
-msgstr "✅ Bevestigen"
+msgstr "Bevestigen"
 
 msgid "Add transaction"
-msgstr "+ Transactie"
+msgstr "Transactie"
 
 msgid "Recurring"
-msgstr "🔁 Herhalend"
+msgstr "Herhalend"
 
 msgid "Label"
 msgstr "🏷️ Opslaan"
@@ -148,7 +148,7 @@ msgid "Paid by"
 msgstr "betaald door"
 
 msgid "Edit transaction"
-msgstr "✏️ Aanpassen"
+msgstr "Aanpassen"
 
 msgid "Description"
 msgstr "Omschrijving"
@@ -175,7 +175,7 @@ msgid "Transaction updated"
 msgstr "Transactie aangepast!"
 
 msgid "Recurring expenses"
-msgstr "🔁 Herhalende expenses"
+msgstr "Herhalende expenses"
 
 msgid "New recurring"
 msgstr "+ Nieuw"
