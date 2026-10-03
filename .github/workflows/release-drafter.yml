@@ -24,6 +24,7 @@ jobs:
         with:
           token: ${{ github.token }}
           branch: main
+          patchAll: true
 
       - name: Print next version
         run: echo "Next calculated version ${{ steps.semver.outputs.next }}"
