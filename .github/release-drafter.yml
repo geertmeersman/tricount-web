@@ -12,31 +12,47 @@ categories:
   - title: '🚀 New features'
     semver-increment: minor
     when:
-      labels:
-        - enhancement
-        - feat
+      - labels:
+          - enhancement
+          - feat
+      - conventional:
+          type: feat
   - title: '🐛 Bug fixes'
     when:
-      labels:
-        - bug
-        - fix
+      - labels:
+          - bug
+          - fix
+      - conventional:
+          type: fix
   - title: '🔒 Security'
     when:
-      label: security
+      - label: security
+      - conventional:
+          type: security
   - title: '📦 Dependencies'
     when:
-      label: dependencies
+      - label: dependencies
+      - conventional:
+          type: deps
   - title: '🔧 Maintenance'
     when:
-      labels:
-        - chore
-        - ci
-        - refactor
+      - labels:
+          - chore
+          - ci
+          - refactor
+      - conventional:
+          types:
+            - chore
+            - ci
+            - refactor
+            - perf
   - title: '📖 Documentation'
     when:
-      labels:
-        - docs
-        - documentation
+      - labels:
+          - docs
+          - documentation
+      - conventional:
+          type: docs
   - type: pre-exclude
     when:
       label: skip-changelog
