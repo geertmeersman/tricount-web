@@ -728,3 +728,117 @@ msgstr "Voer de 6-cijferige code in van je authenticator-app."
 
 msgid "Verify"
 msgstr "Verifiëren"
+
+msgid "Help"
+msgstr "Help"
+
+msgid "Tricount detail"
+msgstr "Tricount detail"
+
+msgid "Refresh"
+msgstr "Vernieuwen"
+
+msgid "Export"
+msgstr "Exporteren"
+
+msgid "help.index.intro"
+msgstr "Het overzicht toont al je tricounts, gegroepeerd per label."
+
+msgid "help.index.search"
+msgstr "Zoek op naam of label."
+
+msgid "help.index.refresh"
+msgstr "Haal de lijst opnieuw op en sla de cache over."
+
+msgid "help.index.labels"
+msgstr "Beheer labels om tricounts te groeperen."
+
+msgid "help.index.add"
+msgstr "Voeg een bestaande tricount toe via de deeltoken."
+
+msgid "help.index.new"
+msgstr "Maak een nieuwe tricount aan rechtstreeks vanuit de app."
+
+msgid "help.tricount.intro"
+msgstr "Het detailscherm toont saldi, schulden en alle transacties van één tricount."
+
+msgid "help.tricount.edit"
+msgstr "Wijzig naam, emoji of label van de tricount, of verwijder hem uit je lijst."
+
+msgid "help.tricount.share"
+msgstr "Kopieer de publieke deellink naar het klembord."
+
+msgid "help.tricount.refresh"
+msgstr "Forceer een verse ophaling van de Tricount-server, cache wordt genegeerd."
+
+msgid "help.tricount.export"
+msgstr "Download alle transacties als CSV-bestand."
+
+msgid "help.tricount.balances"
+msgstr "Toont wie hoeveel verschuldigd is aan wie, en het individueel saldo per lid."
+
+msgid "help.tricount.settle"
+msgstr "Registreer een betaling tussen twee leden om een schuld te vereffenen."
+
+msgid "help.tricount.add_tx"
+msgstr "Voeg een nieuwe uitgave toe aan de tricount."
+
+msgid "help.tricount.recurring"
+msgstr "Beheer terugkerende uitgaven die automatisch worden toegevoegd."
+
+msgid "help.tricount.bulk"
+msgstr "Selecteer meerdere transacties tegelijk om ze in bulk te verwijderen."
+
+msgid "help.transactions.intro"
+msgstr "Bij het toevoegen of bewerken van een transactie kies je hoe het bedrag verdeeld wordt."
+
+msgid "help.transactions.equal"
+msgstr "Het bedrag wordt gelijk verdeeld over de geselecteerde leden."
+
+msgid "help.transactions.amounts"
+msgstr "Je geeft per lid een exact bedrag op."
+
+msgid "help.transactions.parts"
+msgstr "Je geeft verhoudingen op (bv. 1/2/1) en het bedrag wordt proportioneel verdeeld."
+
+msgid "help.recurring.intro"
+msgstr "Herhalende uitgaven worden automatisch toegevoegd op de ingestelde frequentie. De verwerking gebeurt dagelijks om 06:00."
+
+msgid "help.recurring.start_date"
+msgstr "De eerste datum waarop de uitgave wordt aangemaakt. Kies een datum in het verleden om meteen bij te werken."
+
+msgid "help.recurring.frequency"
+msgstr "Hoe vaak de uitgave herhaald wordt: dagelijks, wekelijks, maandelijks of jaarlijks."
+
+msgid "help.recurring.pause"
+msgstr "Zet een herhaling tijdelijk on hold zonder ze te verwijderen."
+
+msgid "help.recurring.log"
+msgstr "Bekijk de uitvoeringsgeschiedenis en eventuele fouten."
+
+msgid "help.labels.intro"
+msgstr "Labels laten je tricounts groeperen op het overzichtsscherm. Je kan een kleur instellen per label. Een label kan pas verwijderd worden als geen enkele tricount het nog gebruikt."
+
+msgid "help.profile.display_name"
+msgstr "De naam die getoond wordt in de navigatiebalk en in e-mails."
+
+msgid "help.profile.connection"
+msgstr "Uitleg over hoe de app verbinding maakt met Tricount als anoniem apparaat."
+
+msgid "help.profile.credentials"
+msgstr "Download de apparaat-credentials als JSON-bestand, compatibel met de tricount-api Python library."
+
+msgid "help.profile.email"
+msgstr "Stel je e-mailadres in voor wachtwoordherstel en optioneel een wekelijks saldo-overzicht."
+
+msgid "help.profile.totp"
+msgstr "Voeg een extra beveiligingslaag toe aan je account via een authenticator-app (bv. Aegis, Google Authenticator)."
+
+msgid "help.profile.password"
+msgstr "Wijzig je wachtwoord voor deze web-UI."
+
+msgid "help.connection.intro"
+msgstr "Deze app maakt verbinding met de Tricount-servers als een anoniem apparaat, zonder je Tricount-wachtwoord te kennen."
+
+msgid "help.connection.token"
+msgstr "Een deeltoken (bv. stNvUXxxxxx) geeft volledige lees- en schrijftoegang tot een tricount. Behandel het als een wachtwoord en deel het enkel met vertrouwde personen."

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Help") }}{% endblock %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4 dark:text-gray-100">❓ {{ _("Help") }}</h1>
+
+<div class="space-y-3">
+
+  <!-- Overzicht -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
+    <button class="help-toggle w-full flex items-center justify-between px-4 py-3 text-left">
+      <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">🏠 {{ _("My Tricounts") }}</span>
+      <svg class="help-chevron w-4 h-4 text-gray-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="help-body hidden px-4 py-3 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+      <p>{{ _("help.index.intro") }}</p>
+      <ul class="space-y-1.5 mt-2">
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">🔍 {{ _("Search") }}</span> — {{ _("help.index.search") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">↻ {{ _("Refresh") }}</span> — {{ _("help.index.refresh") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">🏷️ {{ _("Labels") }}</span> — {{ _("help.index.labels") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">＋ {{ _("Add tricount") }}</span> — {{ _("help.index.add") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">✏️ {{ _("New tricount") }}</span> — {{ _("help.index.new") }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Tricount detail -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
+    <button class="help-toggle w-full flex items-center justify-between px-4 py-3 text-left">
+      <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">📊 {{ _("Tricount detail") }}</span>
+      <svg class="help-chevron w-4 h-4 text-gray-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="help-body hidden px-4 py-3 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+      <p>{{ _("help.tricount.intro") }}</p>
+      <ul class="space-y-1.5 mt-2">
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">⚙️ {{ _("Edit tricount") }}</span> — {{ _("help.tricount.edit") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">🔗 {{ _("Share") }}</span> — {{ _("help.tricount.share") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">↻ {{ _("Refresh") }}</span> — {{ _("help.tricount.refresh") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">⬇️ {{ _("Export") }}</span> — {{ _("help.tricount.export") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Balances") }}</span> — {{ _("help.tricount.balances") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Paid") }}</span> — {{ _("help.tricount.settle") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Add transaction") }}</span> — {{ _("help.tricount.add_tx") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Recurring") }}</span> — {{ _("help.tricount.recurring") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Select transactions") }}</span> — {{ _("help.tricount.bulk") }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Transacties -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
+    <button class="help-toggle w-full flex items-center justify-between px-4 py-3 text-left">
+      <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">💸 {{ _("Transactions") }}</span>
+      <svg class="help-chevron w-4 h-4 text-gray-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="help-body hidden px-4 py-3 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+      <p>{{ _("help.transactions.intro") }}</p>
+      <ul class="space-y-1.5 mt-2">
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Equal") }}</span> — {{ _("help.transactions.equal") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Amounts") }}</span> — {{ _("help.transactions.amounts") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Parts") }}</span> — {{ _("help.transactions.parts") }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Herhalende uitgaven -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
+    <button class="help-toggle w-full flex items-center justify-between px-4 py-3 text-left">
+      <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">🔁 {{ _("Recurring expenses") }}</span>
+      <svg class="help-chevron w-4 h-4 text-gray-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="help-body hidden px-4 py-3 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+      <p>{{ _("help.recurring.intro") }}</p>
+      <ul class="space-y-1.5 mt-2">
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Start date") }}</span> — {{ _("help.recurring.start_date") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Frequency") }}</span> — {{ _("help.recurring.frequency") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Pause") }} / {{ _("Resume") }}</span> — {{ _("help.recurring.pause") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Log") }}</span> — {{ _("help.recurring.log") }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Labels -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
+    <button class="help-toggle w-full flex items-center justify-between px-4 py-3 text-left">
+      <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">🏷️ {{ _("Labels") }}</span>
+      <svg class="help-chevron w-4 h-4 text-gray-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="help-body hidden px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+      <p>{{ _("help.labels.intro") }}</p>
+    </div>
+  </div>
+
+  <!-- Profiel -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
+    <button class="help-toggle w-full flex items-center justify-between px-4 py-3 text-left">
+      <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">👤 {{ _("Profile") }}</span>
+      <svg class="help-chevron w-4 h-4 text-gray-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="help-body hidden px-4 py-3 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+      <ul class="space-y-1.5">
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Display name") }}</span> — {{ _("help.profile.display_name") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Tricount connection") }}</span> — {{ _("help.profile.connection") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Device credentials") }}</span> — {{ _("help.profile.credentials") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Email settings") }}</span> — {{ _("help.profile.email") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Two-factor authentication") }}</span> — {{ _("help.profile.totp") }}</li>
+        <li><span class="font-medium text-gray-700 dark:text-gray-300">{{ _("Change password") }}</span> — {{ _("help.profile.password") }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Tricount verbinding -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
+    <button class="help-toggle w-full flex items-center justify-between px-4 py-3 text-left">
+      <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">🔌 {{ _("Tricount connection") }}</span>
+      <svg class="help-chevron w-4 h-4 text-gray-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="help-body hidden px-4 py-3 text-sm text-gray-600 dark:text-gray-400 space-y-2">
+      <p>{{ _("help.connection.intro") }}</p>
+      <p>{{ _("help.connection.token") }}</p>
+    </div>
+  </div>
+
+</div>
+
+<script nonce="{{ csp_nonce }}">
+document.querySelectorAll('.help-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const body = btn.nextElementSibling;
+    const chevron = btn.querySelector('.help-chevron');
+    body.classList.toggle('hidden');
+    chevron.classList.toggle('rotate-180');
+  });
+});
+</script>
+{% endblock %}

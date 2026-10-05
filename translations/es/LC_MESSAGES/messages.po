@@ -728,3 +728,117 @@ msgstr "Introduce el código de 6 dígitos de tu app de autenticación."
 
 msgid "Verify"
 msgstr "Verificar"
+
+msgid "Help"
+msgstr "Ayuda"
+
+msgid "Tricount detail"
+msgstr "Detalle del tricount"
+
+msgid "Refresh"
+msgstr "Actualizar"
+
+msgid "Export"
+msgstr "Exportar"
+
+msgid "help.index.intro"
+msgstr "El resumen muestra todos tus tricounts, agrupados por etiqueta."
+
+msgid "help.index.search"
+msgstr "Busca por nombre o etiqueta."
+
+msgid "help.index.refresh"
+msgstr "Recarga la lista ignorando la caché."
+
+msgid "help.index.labels"
+msgstr "Gestiona etiquetas para agrupar tricounts."
+
+msgid "help.index.add"
+msgstr "Añade un tricount existente mediante su token de compartir."
+
+msgid "help.index.new"
+msgstr "Crea un nuevo tricount directamente desde la app."
+
+msgid "help.tricount.intro"
+msgstr "La pantalla de detalle muestra saldos, deudas y todas las transacciones de un tricount."
+
+msgid "help.tricount.edit"
+msgstr "Cambia el nombre, emoji o etiqueta del tricount, o elimínalo de tu lista."
+
+msgid "help.tricount.share"
+msgstr "Copia el enlace público de compartir al portapapeles."
+
+msgid "help.tricount.refresh"
+msgstr "Fuerza una nueva obtención desde el servidor de Tricount, ignorando la caché."
+
+msgid "help.tricount.export"
+msgstr "Descarga todas las transacciones como archivo CSV."
+
+msgid "help.tricount.balances"
+msgstr "Muestra quién debe qué a quién y el saldo individual por miembro."
+
+msgid "help.tricount.settle"
+msgstr "Registra un pago entre dos miembros para saldar una deuda."
+
+msgid "help.tricount.add_tx"
+msgstr "Añade un nuevo gasto al tricount."
+
+msgid "help.tricount.recurring"
+msgstr "Gestiona gastos recurrentes que se añaden automáticamente."
+
+msgid "help.tricount.bulk"
+msgstr "Selecciona varias transacciones a la vez para eliminarlas en bloque."
+
+msgid "help.transactions.intro"
+msgstr "Al añadir o editar una transacción, elige cómo se divide el importe."
+
+msgid "help.transactions.equal"
+msgstr "El importe se divide igualmente entre los miembros seleccionados."
+
+msgid "help.transactions.amounts"
+msgstr "Especificas un importe exacto por miembro."
+
+msgid "help.transactions.parts"
+msgstr "Especificas proporciones (p.ej. 1/2/1) y el importe se divide proporcionalmente."
+
+msgid "help.recurring.intro"
+msgstr "Los gastos recurrentes se añaden automáticamente a la frecuencia configurada. El procesamiento ocurre diariamente a las 06:00."
+
+msgid "help.recurring.start_date"
+msgstr "La primera fecha en que se creará el gasto. Elige una fecha pasada para rellenar inmediatamente."
+
+msgid "help.recurring.frequency"
+msgstr "Con qué frecuencia se repite el gasto: diaria, semanal, mensual o anual."
+
+msgid "help.recurring.pause"
+msgstr "Pausa temporalmente un gasto recurrente sin eliminarlo."
+
+msgid "help.recurring.log"
+msgstr "Consulta el historial de ejecución y los posibles errores."
+
+msgid "help.labels.intro"
+msgstr "Las etiquetas permiten agrupar tricounts en la pantalla de resumen. Puedes establecer un color por etiqueta. Una etiqueta solo puede eliminarse cuando ningún tricount la usa."
+
+msgid "help.profile.display_name"
+msgstr "El nombre que se muestra en la barra de navegación y en los correos."
+
+msgid "help.profile.connection"
+msgstr "Explicación de cómo la app se conecta a Tricount como dispositivo anónimo."
+
+msgid "help.profile.credentials"
+msgstr "Descarga las credenciales del dispositivo como archivo JSON, compatible con la biblioteca Python tricount-api."
+
+msgid "help.profile.email"
+msgstr "Configura tu dirección de correo para restablecer contraseña y opcionalmente un resumen semanal."
+
+msgid "help.profile.totp"
+msgstr "Añade una capa de seguridad extra mediante una app de autenticación (p.ej. Aegis, Google Authenticator)."
+
+msgid "help.profile.password"
+msgstr "Cambia tu contraseña para esta interfaz web."
+
+msgid "help.connection.intro"
+msgstr "Esta app se conecta a los servidores de Tricount como dispositivo anónimo, sin conocer tu contraseña de Tricount."
+
+msgid "help.connection.token"
+msgstr "Un token de compartir (p.ej. stNvUXxxxxx) otorga acceso completo de lectura y escritura a un tricount. Trátalo como una contraseña y compártelo solo con personas de confianza."
