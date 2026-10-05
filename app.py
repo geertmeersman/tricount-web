@@ -1011,6 +1011,10 @@ def profile_credentials():
 @app.route("/profile/totp/setup")
 @login_required
 def profile_totp_setup():
+    row = get_db().execute("SELECT totp_secret FROM users WHERE id = ?", (current_user.id,)).fetchone()
+    if row and row["totp_secret"]:
+        flash(_("TOTP enabled"), "info")
+        return redirect(url_for("profile"))
     secret = pyotp.random_base32()
     session["totp_setup_secret"] = secret
     row = get_db().execute("SELECT username FROM users WHERE id = ?", (current_user.id,)).fetchone()
