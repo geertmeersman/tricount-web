@@ -2,25 +2,45 @@ name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 version-resolver:
   major:
-    labels: [breaking]
+    when:
+      - label: breaking
   minor:
-    labels: [enhancement, feat]
+    when:
+      - label: enhancement
+      - label: feat
   patch:
-    labels: [bug, fix, dependencies, chore, ci, docs]
+    when:
+      - label: bug
+      - label: fix
+      - label: dependencies
+      - label: chore
+      - label: ci
+      - label: docs
   default: patch
 categories:
   - title: '🚀 New features'
-    labels: [enhancement, feat]
+    when:
+      - label: enhancement
+      - label: feat
   - title: '🐛 Bug fixes'
-    labels: [bug, fix]
+    when:
+      - label: bug
+      - label: fix
   - title: '🔒 Security'
-    labels: [security]
+    when:
+      - label: security
   - title: '📦 Dependencies'
-    labels: [dependencies]
+    when:
+      - label: dependencies
   - title: '🔧 Maintenance'
-    labels: [chore, ci, refactor]
+    when:
+      - label: chore
+      - label: ci
+      - label: refactor
   - title: '📖 Documentation'
-    labels: [docs, documentation]
+    when:
+      - label: docs
+      - label: documentation
 exclude-labels: [skip-changelog]
 change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
 template: |
