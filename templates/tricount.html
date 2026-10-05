@@ -22,6 +22,13 @@
         <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
       </svg>
     </button>
+    <button id="refreshBtn"
+      class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 shadow hover:shadow-md text-gray-500 dark:text-gray-400 hover:text-blue-600 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+    </button>
     <a id="exportBtn" href="{{ url_for('export_csv', token=token) }}"
       class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 shadow hover:shadow-md text-gray-500 dark:text-gray-400 hover:text-green-600 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -204,6 +211,12 @@ document.getElementById('openEditModalBtn').addEventListener('click', () => docu
 document.getElementById('closeEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.add('hidden'));
 document.getElementById('editModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 document.getElementById('shareBtn').addEventListener('click', () => shareTricount());
+document.getElementById('refreshBtn').addEventListener('click', async () => {
+  document.getElementById('progressWrap').classList.remove('hidden');
+  document.getElementById('progressBar').style.width = '5%';
+  await fetch(`/api/tricount/{{ token }}/invalidate`, { method: 'POST' });
+  loadTricountDetail({{ token | tojson }}, {{ label | tojson }}, {{ label_colors | tojson }});
+});
 document.getElementById('txSearch').addEventListener('input', function() { filterTransactions(this.value); });
 document.getElementById('txSearch').addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { e.target.value = ''; filterTransactions(''); e.target.blur(); }

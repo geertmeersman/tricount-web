@@ -1102,6 +1102,22 @@ def refresh():
     return jsonify({"ok": True})
 
 
+@app.route("/api/tricount/<token>/invalidate", methods=["POST"])
+@login_required
+def api_tricount_invalidate(token):
+    from flask import jsonify
+
+    row = (
+        get_db()
+        .execute("SELECT id FROM user_tokens WHERE user_id = ? AND token = ?", (current_user.id, token))
+        .fetchone()
+    )
+    if not row:
+        return jsonify({"ok": False}), 403
+    cache_invalidate(token)
+    return jsonify({"ok": True})
+
+
 @app.route("/create_tricount", methods=["POST"])
 @login_required
 def create_tricount():
