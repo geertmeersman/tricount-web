@@ -1,4 +1,6 @@
+import base64
 import contextlib
+import io
 import json
 import logging
 import os
@@ -14,10 +16,12 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import bcrypt
+import pyotp
+import qrcode
 import tricount as tc
 from apscheduler.schedulers.background import BackgroundScheduler
 from dateutil.relativedelta import relativedelta
-from flask import Flask, Response, flash, g, redirect, render_template, request, url_for
+from flask import Flask, Response, flash, g, redirect, render_template, request, session, url_for
 from flask_babel import Babel
 from flask_babel import gettext as _
 from flask_limiter import Limiter
@@ -244,6 +248,7 @@ def init_db():
         ("weekly_email", "INTEGER NOT NULL DEFAULT 0"),
         ("display_name", "TEXT"),
         ("language", "TEXT"),
+        ("totp_secret", "TEXT"),
     ]:
         with contextlib.suppress(sqlite3.OperationalError):
             db.execute(f"ALTER TABLE users ADD COLUMN {col} {definition}")
@@ -787,6 +792,10 @@ def login():
         password = request.form["password"].encode()
         row = get_db().execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
         if row and bcrypt.checkpw(password, row["password_hash"].encode()):
+            if row["totp_secret"]:
+                session["totp_pending_user_id"] = row["id"]
+                session["totp_pending_next"] = request.args.get("next") or request.form.get("next", "")
+                return redirect(url_for("login_totp"))
             login_user(User(row["id"], row["username"], row["is_admin"], row["display_name"]))
             next_url = request.args.get("next") or request.form.get("next", "")
             if is_safe_redirect(next_url):
@@ -794,6 +803,30 @@ def login():
             return redirect(url_for("index"))
         flash(_("Invalid credentials"), "danger")
     return render_template("login.html", next=request.args.get("next", ""))
+
+
+@app.route("/login/totp", methods=["GET", "POST"])
+@limiter.limit("10 per minute")
+def login_totp():
+    user_id = session.get("totp_pending_user_id")
+    if not user_id:
+        return redirect(url_for("login"))
+    if request.method == "POST":
+        row = (
+            get_db()
+            .execute("SELECT id, username, is_admin, display_name, totp_secret FROM users WHERE id = ?", (user_id,))
+            .fetchone()
+        )
+        code = request.form.get("code", "").strip()
+        if row and pyotp.TOTP(row["totp_secret"]).verify(code, valid_window=1):
+            session.pop("totp_pending_user_id", None)
+            next_url = session.pop("totp_pending_next", "")
+            login_user(User(row["id"], row["username"], row["is_admin"], row["display_name"]))
+            if is_safe_redirect(next_url):
+                return redirect(next_url)
+            return redirect(url_for("index"))
+        flash(_("Invalid TOTP code"), "danger")
+    return render_template("login_totp.html")
 
 
 @app.route("/logout")
@@ -860,7 +893,7 @@ def _do_register(db, user_count, invite_token):
 def profile():
     row = (
         get_db()
-        .execute("SELECT email, weekly_email, display_name FROM users WHERE id = ?", (current_user.id,))
+        .execute("SELECT email, weekly_email, display_name, totp_secret FROM users WHERE id = ?", (current_user.id,))
         .fetchone()
     )
     email_logs = (
@@ -879,6 +912,7 @@ def profile():
         display_name=row["display_name"] or "",
         email_logs=email_logs,
         test_job_pending=test_job_pending,
+        totp_enabled=bool(row["totp_secret"]),
     )
 
 
@@ -972,6 +1006,58 @@ def profile_credentials():
         mimetype="application/json",
         headers={"Content-Disposition": "attachment; filename=tricount_credentials.json"},
     )
+
+
+@app.route("/profile/totp/setup")
+@login_required
+def profile_totp_setup():
+    secret = pyotp.random_base32()
+    session["totp_setup_secret"] = secret
+    row = get_db().execute("SELECT username FROM users WHERE id = ?", (current_user.id,)).fetchone()
+    uri = pyotp.TOTP(secret).provisioning_uri(name=row["username"], issuer_name="Tricount Web")
+    img = qrcode.make(uri)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    qr_b64 = base64.b64encode(buf.getvalue()).decode()
+    return render_template("totp_setup.html", secret=secret, qr_b64=qr_b64)
+
+
+@app.route("/profile/totp/confirm", methods=["POST"])
+@login_required
+def profile_totp_confirm():
+    secret = session.get("totp_setup_secret")
+    code = request.form.get("code", "").strip()
+    if not secret or not pyotp.TOTP(secret).verify(code, valid_window=1):
+        flash(_("Invalid TOTP code"), "danger")
+        return redirect(url_for("profile_totp_setup"))
+    get_db().execute("UPDATE users SET totp_secret = ? WHERE id = ?", (secret, current_user.id))
+    get_db().commit()
+    session.pop("totp_setup_secret", None)
+    flash(_("TOTP enabled"), "success")
+    return redirect(url_for("profile"))
+
+
+@app.route("/profile/totp/disable", methods=["POST"])
+@login_required
+def profile_totp_disable():
+    password = request.form.get("password", "").encode()
+    row = get_db().execute("SELECT password_hash FROM users WHERE id = ?", (current_user.id,)).fetchone()
+    if not bcrypt.checkpw(password, row["password_hash"].encode()):
+        flash(_("Current password incorrect"), "danger")
+        return redirect(url_for("profile"))
+    get_db().execute("UPDATE users SET totp_secret = NULL WHERE id = ?", (current_user.id,))
+    get_db().commit()
+    flash(_("TOTP disabled"), "success")
+    return redirect(url_for("profile"))
+
+
+@app.route("/admin/user/<int:user_id>/totp/reset", methods=["POST"])
+@admin_required
+def admin_reset_totp(user_id):
+    get_db().execute("UPDATE users SET totp_secret = NULL WHERE id = ?", (user_id,))
+    get_db().commit()
+    flash(_("TOTP reset"), "success")
+    return redirect(url_for("admin"))
 
 
 @app.route("/profile/password", methods=["POST"])
@@ -1812,7 +1898,9 @@ def admin_stats():
 @admin_required
 def admin():
     users = (
-        get_db().execute("SELECT id, username, is_admin, email, weekly_email FROM users ORDER BY username").fetchall()
+        get_db()
+        .execute("SELECT id, username, is_admin, email, weekly_email, totp_secret FROM users ORDER BY username")
+        .fetchall()
     )
     invites = (
         get_db()

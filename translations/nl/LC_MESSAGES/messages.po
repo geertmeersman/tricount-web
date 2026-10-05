@@ -683,3 +683,48 @@ msgstr "Recente herhalingslog"
 
 msgid "Cookie darkmode purpose"
 msgstr "Onthoudt de voorkeur voor donkere modus (1 jaar)"
+
+msgid "Two-factor authentication"
+msgstr "Tweestapsverificatie"
+
+msgid "TOTP is enabled"
+msgstr "Tweestapsverificatie is ingeschakeld"
+
+msgid "TOTP is not enabled"
+msgstr "Tweestapsverificatie is niet ingeschakeld"
+
+msgid "Enable TOTP"
+msgstr "Inschakelen"
+
+msgid "Disable TOTP"
+msgstr "Uitschakelen"
+
+msgid "Set up two-factor authentication"
+msgstr "Tweestapsverificatie instellen"
+
+msgid "Scan the QR code with your authenticator app (e.g. Google Authenticator, Aegis), then enter the 6-digit code to confirm."
+msgstr "Scan de QR-code met je authenticator-app (bv. Google Authenticator, Aegis) en voer de 6-cijferige code in om te bevestigen."
+
+msgid "Or enter this key manually:"
+msgstr "Of voer deze sleutel handmatig in:"
+
+msgid "Confirm & enable"
+msgstr "Bevestigen & inschakelen"
+
+msgid "Invalid TOTP code"
+msgstr "Ongeldige verificatiecode."
+
+msgid "TOTP enabled"
+msgstr "Tweestapsverificatie ingeschakeld!"
+
+msgid "TOTP disabled"
+msgstr "Tweestapsverificatie uitgeschakeld."
+
+msgid "TOTP reset"
+msgstr "Tweestapsverificatie gereset."
+
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Voer de 6-cijferige code in van je authenticator-app."
+
+msgid "Verify"
+msgstr "Verifiëren"

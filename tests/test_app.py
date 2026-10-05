@@ -20,7 +20,8 @@ SCHEMA = """
         email TEXT,
         weekly_email INTEGER NOT NULL DEFAULT 0,
         display_name TEXT,
-        language TEXT
+        language TEXT,
+        totp_secret TEXT
     );
     CREATE TABLE IF NOT EXISTS user_tokens (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
