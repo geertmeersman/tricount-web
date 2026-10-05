@@ -1177,6 +1177,12 @@ def api_tricounts():
     )
 
 
+@app.route("/help")
+@login_required
+def help_page():
+    return render_template("help.html")
+
+
 @app.route("/refresh")
 @login_required
 def refresh():

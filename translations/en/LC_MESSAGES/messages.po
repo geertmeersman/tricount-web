@@ -728,3 +728,117 @@ msgstr "Enter the 6-digit code from your authenticator app."
 
 msgid "Verify"
 msgstr "Verify"
+
+msgid "Help"
+msgstr "Help"
+
+msgid "Tricount detail"
+msgstr "Tricount detail"
+
+msgid "Refresh"
+msgstr "Refresh"
+
+msgid "Export"
+msgstr "Export"
+
+msgid "help.index.intro"
+msgstr "The overview shows all your tricounts, grouped by label."
+
+msgid "help.index.search"
+msgstr "Search by name or label."
+
+msgid "help.index.refresh"
+msgstr "Reload the list and bypass the cache."
+
+msgid "help.index.labels"
+msgstr "Manage labels to group tricounts."
+
+msgid "help.index.add"
+msgstr "Add an existing tricount using its sharing token."
+
+msgid "help.index.new"
+msgstr "Create a new tricount directly from the app."
+
+msgid "help.tricount.intro"
+msgstr "The detail screen shows balances, debts and all transactions of one tricount."
+
+msgid "help.tricount.edit"
+msgstr "Change the name, emoji or label of the tricount, or remove it from your list."
+
+msgid "help.tricount.share"
+msgstr "Copy the public sharing link to the clipboard."
+
+msgid "help.tricount.refresh"
+msgstr "Force a fresh fetch from the Tricount server, bypassing the cache."
+
+msgid "help.tricount.export"
+msgstr "Download all transactions as a CSV file."
+
+msgid "help.tricount.balances"
+msgstr "Shows who owes what to whom, and the individual balance per member."
+
+msgid "help.tricount.settle"
+msgstr "Register a payment between two members to settle a debt."
+
+msgid "help.tricount.add_tx"
+msgstr "Add a new expense to the tricount."
+
+msgid "help.tricount.recurring"
+msgstr "Manage recurring expenses that are added automatically."
+
+msgid "help.tricount.bulk"
+msgstr "Select multiple transactions at once to delete them in bulk."
+
+msgid "help.transactions.intro"
+msgstr "When adding or editing a transaction, choose how the amount is split."
+
+msgid "help.transactions.equal"
+msgstr "The amount is split equally among the selected members."
+
+msgid "help.transactions.amounts"
+msgstr "You specify an exact amount per member."
+
+msgid "help.transactions.parts"
+msgstr "You specify ratios (e.g. 1/2/1) and the amount is split proportionally."
+
+msgid "help.recurring.intro"
+msgstr "Recurring expenses are automatically added at the configured frequency. Processing happens daily at 06:00."
+
+msgid "help.recurring.start_date"
+msgstr "The first date the expense will be created. Choose a past date to backfill immediately."
+
+msgid "help.recurring.frequency"
+msgstr "How often the expense repeats: daily, weekly, monthly or yearly."
+
+msgid "help.recurring.pause"
+msgstr "Temporarily pause a recurring expense without deleting it."
+
+msgid "help.recurring.log"
+msgstr "View the execution history and any errors."
+
+msgid "help.labels.intro"
+msgstr "Labels let you group tricounts on the overview screen. You can set a colour per label. A label can only be deleted when no tricount uses it anymore."
+
+msgid "help.profile.display_name"
+msgstr "The name shown in the navigation bar and in emails."
+
+msgid "help.profile.connection"
+msgstr "Explanation of how the app connects to Tricount as an anonymous device."
+
+msgid "help.profile.credentials"
+msgstr "Download the device credentials as a JSON file, compatible with the tricount-api Python library."
+
+msgid "help.profile.email"
+msgstr "Set your email address for password reset and optionally a weekly balance summary."
+
+msgid "help.profile.totp"
+msgstr "Add an extra security layer to your account via an authenticator app (e.g. Aegis, Google Authenticator)."
+
+msgid "help.profile.password"
+msgstr "Change your password for this web UI."
+
+msgid "help.connection.intro"
+msgstr "This app connects to the Tricount servers as an anonymous device, without knowing your Tricount password."
+
+msgid "help.connection.token"
+msgstr "A sharing token (e.g. stNvUXxxxxx) grants full read and write access to a tricount. Treat it like a password and only share it with trusted people."
