@@ -24,6 +24,7 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 ## Features
 
 - 👥 Multi-user with invite-only registration and admin panel
+- 🔒 Two-factor authentication (TOTP) via authenticator app
 - 🔗 Add tricounts via sharing token or create new ones directly
 - 💰 Balances, transactions, search and personal summary
 - ➕ Add and edit transactions with equal, ratio or custom amount splits
@@ -38,6 +39,7 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - 📊 Admin statistics dashboard
 - 🏥 Health check endpoint (`/health`)
 - 🔑 Forgot password / reset via email
+- ❓ Built-in help page
 - 🌍 Multilingual: NL / EN / FR / DE / ES
 - 📱 Mobile-friendly
 - 🔒 CSP, X-Frame-Options, bcrypt passwords
