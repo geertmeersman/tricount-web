@@ -356,8 +356,9 @@ function renderTricount(data, token, label, labelColors) {
   document.getElementById('content').classList.remove('hidden');
 }
 
-function loadTricountDetail(token, label, labelColors) {
-  const es = new EventSource(`/api/tricount/${token}`);
+function loadTricountDetail(token, label, labelColors, force = false) {
+  const url = `/api/tricount/${token}`;
+  const es = new EventSource(url);
   es.onmessage = (e) => {
     const data = JSON.parse(e.data);
     if (data.type === 'status') {
