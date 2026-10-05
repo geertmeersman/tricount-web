@@ -43,6 +43,7 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 
 - 👥 Multi-user with login/register and invite-only registration
 - 🔐 Role-based access (admin panel for user and invite management)
+- 🔒 Two-factor authentication (TOTP) via authenticator app (Aegis, Google Authenticator, …)
 - 🔗 Add tricounts via sharing token or create new ones directly
 - 💰 View tricounts, balances and transactions with search and totals
 - ➕ Add and edit transactions with equal, ratio or custom amount splits
@@ -62,6 +63,7 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - 📊 Admin statistics dashboard
 - 🏥 Health check endpoint (`/health`)
 - 🔑 Forgot password / reset via email
+- ❓ Built-in help page
 - 🐳 Docker + docker-compose ready
 
 ## How authentication works
@@ -147,6 +149,7 @@ Each user can configure from their **Profile** page:
 - **Display name** — shown in the navbar and used as greeting in emails (falls back to username)
 - **Language** — persisted per user in the database; used for the UI and email language
 - **Email + weekly digest** — opt-in weekly balance email every Monday at 08:00
+- **Two-factor authentication (TOTP)** — enable via any authenticator app (Aegis, Google Authenticator, …); admins can reset TOTP for users who lost access
 - **Password** — change current password
 - **Device credentials** — download the Tricount device identity as `tricount_credentials.json`
 
@@ -217,6 +220,7 @@ If `SMTP_HOST` is not set, the weekly job is skipped silently.
 - [tricount-api](https://github.com/elrandar/tricount-api)
 - [Tailwind CSS](https://tailwindcss.com/) (compiled via standalone CLI at build time)
 - [APScheduler](https://apscheduler.readthedocs.io/)
+- [pyotp](https://pyauth.github.io/pyotp/) + [qrcode](https://github.com/lincolnloop/python-qrcode)
 - SQLite + bcrypt
 
 ## Contributing
