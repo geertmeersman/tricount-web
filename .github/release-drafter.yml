@@ -9,7 +9,7 @@ version-resolver:
     labels: [bug, fix, dependencies, chore, ci, docs]
   default: patch
 categories:
-  - title: '🚀 Features'
+  - title: '🚀 New features'
     labels: [enhancement, feat]
   - title: '🐛 Bug fixes'
     labels: [bug, fix]
@@ -22,11 +22,14 @@ categories:
   - title: '📖 Documentation'
     labels: [docs, documentation]
 exclude-labels: [skip-changelog]
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
 template: |
-  ## Thanks to our contributors
-  $CONTRIBUTORS
+  ## What's changed
 
   $CHANGES
+
+  ---
+  🙏 Thanks to $CONTRIBUTORS for contributing to this release!
 exclude-contributors:
   - geertmeersman[bot]
   - dependabot[bot]
