@@ -9,3 +9,5 @@ Flask-Limiter==4.1.1
 python-dotenv
 pytest
 ruff
+pyotp
+qrcode[pil]

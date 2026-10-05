@@ -683,3 +683,48 @@ msgstr "Recent recurring log"
 
 msgid "Cookie darkmode purpose"
 msgstr "Remembers the dark mode preference (1 year)"
+
+msgid "Two-factor authentication"
+msgstr "Two-factor authentication"
+
+msgid "TOTP is enabled"
+msgstr "Two-factor authentication is enabled"
+
+msgid "TOTP is not enabled"
+msgstr "Two-factor authentication is not enabled"
+
+msgid "Enable TOTP"
+msgstr "Enable"
+
+msgid "Disable TOTP"
+msgstr "Disable"
+
+msgid "Set up two-factor authentication"
+msgstr "Set up two-factor authentication"
+
+msgid "Scan the QR code with your authenticator app (e.g. Google Authenticator, Aegis), then enter the 6-digit code to confirm."
+msgstr "Scan the QR code with your authenticator app (e.g. Google Authenticator, Aegis), then enter the 6-digit code to confirm."
+
+msgid "Or enter this key manually:"
+msgstr "Or enter this key manually:"
+
+msgid "Confirm & enable"
+msgstr "Confirm & enable"
+
+msgid "Invalid TOTP code"
+msgstr "Invalid verification code."
+
+msgid "TOTP enabled"
+msgstr "Two-factor authentication enabled!"
+
+msgid "TOTP disabled"
+msgstr "Two-factor authentication disabled."
+
+msgid "TOTP reset"
+msgstr "Two-factor authentication reset."
+
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Enter the 6-digit code from your authenticator app."
+
+msgid "Verify"
+msgstr "Verify"

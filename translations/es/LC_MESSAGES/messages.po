@@ -683,3 +683,48 @@ msgstr "Registro recurrente reciente"
 
 msgid "Cookie darkmode purpose"
 msgstr "Recuerda la preferencia del modo oscuro (1 año)"
+
+msgid "Two-factor authentication"
+msgstr "Autenticación de dos factores"
+
+msgid "TOTP is enabled"
+msgstr "La autenticación de dos factores está activada"
+
+msgid "TOTP is not enabled"
+msgstr "La autenticación de dos factores no está activada"
+
+msgid "Enable TOTP"
+msgstr "Activar"
+
+msgid "Disable TOTP"
+msgstr "Desactivar"
+
+msgid "Set up two-factor authentication"
+msgstr "Configurar autenticación de dos factores"
+
+msgid "Scan the QR code with your authenticator app (e.g. Google Authenticator, Aegis), then enter the 6-digit code to confirm."
+msgstr "Escanea el código QR con tu app de autenticación (p.ej. Google Authenticator, Aegis) e introduce el código de 6 dígitos para confirmar."
+
+msgid "Or enter this key manually:"
+msgstr "O introduce esta clave manualmente:"
+
+msgid "Confirm & enable"
+msgstr "Confirmar y activar"
+
+msgid "Invalid TOTP code"
+msgstr "Código de verificación inválido."
+
+msgid "TOTP enabled"
+msgstr "¡Autenticación de dos factores activada!"
+
+msgid "TOTP disabled"
+msgstr "Autenticación de dos factores desactivada."
+
+msgid "TOTP reset"
+msgstr "Autenticación de dos factores restablecida."
+
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Introduce el código de 6 dígitos de tu app de autenticación."
+
+msgid "Verify"
+msgstr "Verificar"

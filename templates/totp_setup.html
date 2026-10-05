@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Set up two-factor authentication") }}{% endblock %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4 dark:text-gray-100">{{ _("Set up two-factor authentication") }}</h1>
+
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 space-y-4">
+  <p class="text-sm text-gray-600 dark:text-gray-400">{{ _("Scan the QR code with your authenticator app (e.g. Google Authenticator, Aegis), then enter the 6-digit code to confirm.") }}</p>
+
+  <div class="flex justify-center">
+    <img src="data:image/png;base64,{{ qr_b64 }}" class="w-48 h-48 rounded-lg border dark:border-gray-600" alt="QR code">
+  </div>
+
+  <div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ _("Or enter this key manually:") }}</p>
+    <code id="totpSecret" class="block text-xs bg-gray-100 dark:bg-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg break-all tracking-widest cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition">{{ secret }}</code>
+  </div>
+
+  <form method="POST" action="{{ url_for('profile_totp_confirm') }}" class="space-y-3">
+    <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6"
+      placeholder="000000" required autofocus
+      class="w-full border dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-center tracking-widest bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Confirm & enable") }}</button>
+  </form>
+
+  <a href="{{ url_for('profile') }}" class="block text-center text-sm text-gray-400 hover:text-gray-600">{{ _("Cancel") }}</a>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+document.getElementById('totpSecret').addEventListener('click', function() {
+  copyToClipboard(this.textContent.trim());
+});
+</script>
+{% endblock %}

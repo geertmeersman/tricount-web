@@ -106,6 +106,24 @@
 </div>
   </div>
 
+  <!-- TOTP -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+    <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{{ _("Two-factor authentication") }}</h2>
+    {% if totp_enabled %}
+    <p class="text-xs text-green-600 bg-green-50 border border-green-200 rounded-lg px-3 py-2 mb-3">✓ {{ _("TOTP is enabled") }}</p>
+    <form method="POST" action="{{ url_for('profile_totp_disable') }}" class="space-y-3">
+      <input type="hidden" name="username" autocomplete="username" value="{{ current_user.username }}">
+      <input type="password" name="password" placeholder="{{ _('Current password') }}" required autocomplete="current-password"
+        class="w-full border dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button class="w-full border border-red-300 text-red-600 hover:bg-red-50 py-2 rounded-lg text-sm font-medium">{{ _("Disable TOTP") }}</button>
+    </form>
+    {% else %}
+    <p class="text-xs text-gray-400 dark:text-gray-500 mb-3">{{ _("TOTP is not enabled") }}</p>
+    <a href="{{ url_for('profile_totp_setup') }}"
+      class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium">{{ _("Enable TOTP") }}</a>
+    {% endif %}
+  </div>
+
   <!-- Wachtwoord wijzigen -->
   <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
     <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{{ _("Change password") }}</h2>
