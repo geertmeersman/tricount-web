@@ -2,47 +2,46 @@ name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 version-resolver:
   major:
-    when:
-      - label: breaking
+    labels: [breaking]
   minor:
-    when:
-      - label: enhancement
-      - label: feat
+    labels: [enhancement, feat]
   patch:
-    when:
-      - label: bug
-      - label: fix
-      - label: dependencies
-      - label: chore
-      - label: ci
-      - label: docs
+    labels: [bug, fix, dependencies, chore, ci, docs]
   default: patch
 categories:
   - title: '🚀 New features'
+    semver-increment: minor
     when:
-      - label: enhancement
-      - label: feat
+      labels:
+        - enhancement
+        - feat
   - title: '🐛 Bug fixes'
     when:
-      - label: bug
-      - label: fix
+      labels:
+        - bug
+        - fix
   - title: '🔒 Security'
     when:
-      - label: security
+      label: security
   - title: '📦 Dependencies'
     when:
-      - label: dependencies
+      label: dependencies
   - title: '🔧 Maintenance'
     when:
-      - label: chore
-      - label: ci
-      - label: refactor
+      labels:
+        - chore
+        - ci
+        - refactor
   - title: '📖 Documentation'
     when:
-      - label: docs
-      - label: documentation
-exclude-labels: [skip-changelog]
+      labels:
+        - docs
+        - documentation
+  - type: pre-exclude
+    when:
+      label: skip-changelog
 change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+change-title-escapes: '\<*_&'
 template: |
   ## What's changed
 
