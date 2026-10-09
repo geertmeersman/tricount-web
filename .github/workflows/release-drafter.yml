@@ -7,6 +7,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: release-drafter
+  cancel-in-progress: true
+
 jobs:
   update_release_draft:
     name: ✏️ Draft release
@@ -25,6 +29,8 @@ jobs:
           token: ${{ github.token }}
           branch: main
           patchAll: true
+          fallbackTag: v0.0.0
+          noVersionBumpBehavior: patch
 
       - name: Print next version
         run: echo "Next calculated version ${{ steps.semver.outputs.next }}"

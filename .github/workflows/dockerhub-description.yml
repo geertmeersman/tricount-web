@@ -7,6 +7,10 @@ on:
       - DOCKER_HUB.md
   workflow_dispatch:
 
+concurrency:
+  group: dockerhub-description
+  cancel-in-progress: true
+
 permissions:
   contents: read
 

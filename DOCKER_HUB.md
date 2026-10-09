@@ -44,6 +44,14 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 - 📱 Mobile-friendly
 - 🔒 CSP, X-Frame-Options, bcrypt passwords
 
+## Tags
+
+| Tag | Description |
+|-----|-------------|
+| `latest` | Latest stable release |
+| `v1.2.3` | Specific release version |
+| `main` | Latest commit on main branch (may be unstable) |
+
 ## Quick start
 
 Create a `.env` file with a secret key:
