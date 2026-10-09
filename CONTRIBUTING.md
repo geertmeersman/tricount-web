@@ -6,7 +6,7 @@
 
 ```bash
 git clone <your-fork>
-cd tricount
+cd tricount-web
 ```
 
 2. Create a branch for your change:
@@ -26,20 +26,19 @@ pre-commit install
 pre-commit install --hook-type commit-msg
 ```
 
-4. Create a `.env` file and a `data/` directory:
+4. Create a `data/` directory:
 
 ```bash
-cp .env.example .env
-# set SECRET_KEY to a random value
-python3 -c "import secrets; print(secrets.token_hex(32))"
 mkdir data
 ```
 
-`SECRET_KEY` is used by Flask to sign session cookies. Changing it will log out all active users.
+SMTP variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, `APP_BASE_URL`) are optional — if `SMTP_HOST` is not set, the weekly email job is skipped silently. Copy `.env.example` to `.env` to configure them:
 
-Set `FLASK_DEBUG=1` in your `.env` to enable debug mode locally (auto-reload, debugger). Never set this in production — it allows arbitrary code execution via the debugger.
+```bash
+cp .env.example .env
+```
 
-SMTP variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, `APP_BASE_URL`) are optional — if `SMTP_HOST` is not set, the weekly email job is skipped silently.
+Set `FLASK_DEBUG=1` in your `.env` to enable debug mode locally (auto-reload, debugger). Never set this in production.
 
 The user's language preference is stored in the database and takes priority over the cookie for authenticated users.
 
