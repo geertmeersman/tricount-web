@@ -54,24 +54,11 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 
 ## Quick start
 
-```yaml
-services:
-  tricount-web:
-    image: geertmeersman/tricount-web:latest
-    container_name: tricount-web
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    volumes:
-      - ./data:/app/data
-    ports:
-      - "5000:5000"
-    restart: unless-stopped
-```
+Compose files are available in the [`deploy/`](https://github.com/geertmeersman/tricount-web/tree/main/deploy) folder of the repository.
 
 ```bash
+git clone https://github.com/geertmeersman/tricount-web.git
+cd tricount-web/deploy
 mkdir data
 docker compose up -d
 ```
@@ -80,28 +67,7 @@ Open [http://localhost:5000](http://localhost:5000) and register the first accou
 
 ## With a reverse proxy (recommended)
 
-```yaml
-services:
-  tricount-web:
-    image: geertmeersman/tricount-web:latest
-    container_name: tricount-web
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    volumes:
-      - ./data:/app/data
-    restart: unless-stopped
-    networks:
-      - proxy
-
-networks:
-  proxy:
-    external: true
-```
-
-Place behind nginx, Traefik or Caddy with HTTPS. The app sets `SESSION_COOKIE_SECURE=True` and expects to run over HTTPS in production.
+Use `docker-compose.proxy.yml` from the `deploy/` folder, or add your own network config. Place behind nginx, Traefik or Caddy with HTTPS.
 
 ## Data
 

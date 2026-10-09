@@ -1,6 +1,6 @@
 services:
   tricount-web:
-    build: .
+    build: ..
     container_name: tricount-web
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
@@ -12,9 +12,3 @@ services:
       - ./data:/app/data
     environment:
       - FLASK_DEBUG=1
-    networks:
-      - websites
-
-networks:
-  websites:
-    external: true

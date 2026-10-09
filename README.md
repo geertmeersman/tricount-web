@@ -79,6 +79,8 @@ Passwords are hashed with **bcrypt** (unique salt per password) and never stored
 ### 1. Run with Docker
 
 ```bash
+git clone https://github.com/geertmeersman/tricount-web.git
+cd tricount-web/deploy
 mkdir data
 docker compose up -d
 ```
@@ -115,10 +117,11 @@ All data is stored in `./data/` (mounted as a Docker volume):
 |------|-------------|
 | `tricount.db` | SQLite database — users, tokens, recurring expenses, invites |
 
-Copy `.env.example` to `.env` if you want to configure SMTP:
+Copy `.env.example` to `deploy/.env` if you want to configure SMTP:
 
 ```bash
-cp .env.example .env
+cp .env.example deploy/.env
+# edit deploy/.env
 ```
 
 ### Optional: SMTP for weekly email digest
