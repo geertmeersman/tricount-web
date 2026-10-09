@@ -818,6 +818,8 @@ def reset_password(token):
 def login():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
+    if get_db().execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
+        return redirect(url_for("register"))
     if request.method == "POST":
         username = request.form["username"].strip()
         password = request.form["password"].encode()
