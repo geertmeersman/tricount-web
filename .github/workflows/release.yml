@@ -21,6 +21,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
           patchAll: true
+          fallbackTag: v0.0.0
+          noVersionBumpBehavior: patch
 
       - name: 🧾 Display version info
         run: |
