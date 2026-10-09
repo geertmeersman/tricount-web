@@ -1,6 +1,6 @@
 services:
   tricount-web:
-    build: .
+    image: geertmeersman/tricount-web:latest
     container_name: tricount-web
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
@@ -10,11 +10,5 @@ services:
     restart: unless-stopped
     volumes:
       - ./data:/app/data
-    environment:
-      - FLASK_DEBUG=1
-    networks:
-      - websites
-
-networks:
-  websites:
-    external: true
+    ports:
+      - "5000:5000"
