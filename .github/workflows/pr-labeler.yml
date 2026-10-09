@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
 
       - name: Apply labels based on commit types
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { data: commits } = await github.rest.pulls.listCommits({
@@ -67,7 +67,7 @@ jobs:
 
       - name: Assign PR to author
         if: github.event.action == 'opened'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.issues.addAssignees({
