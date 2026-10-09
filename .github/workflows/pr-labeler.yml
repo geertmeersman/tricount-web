@@ -66,7 +66,7 @@ jobs:
             }
 
       - name: Assign PR to author
-        if: github.event.action == 'opened'
+        if: github.event.action == 'opened' && github.actor != 'dependabot[bot]'
         uses: actions/github-script@v9
         with:
           script: |
