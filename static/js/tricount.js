@@ -6,20 +6,36 @@ let _allTransactions = [];
 let _tricountData = null;
 let _token = null;
 let _bulkMode = false;
+let _filterMe = false;
+let _filterType = null; // null = all, 'NORMAL', 'BALANCE', 'INCOME'
 
-function renderTxRow(tx) {
+function renderTxRow(tx, involved = false) {
+  const isBalance = tx.tx_type === 'BALANCE';
+  const isIncome = tx.tx_type === 'INCOME';
+  const typeIcon = isBalance
+    ? `<span title="${h(_t.reimbursement)}" class="text-green-500 mr-1"><svg xmlns='http://www.w3.org/2000/svg' class='w-3.5 h-3.5 inline' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='17 1 21 5 17 9'/><line x1='21' y1='5' x2='3' y2='5'/><polyline points='7 23 3 19 7 15'/><line x1='3' y1='19' x2='21' y2='19'/></svg></span>`
+    : isIncome
+    ? `<span title="${h(_t.expense)}" class="text-blue-500 mr-1"><svg xmlns='http://www.w3.org/2000/svg' class='w-3.5 h-3.5 inline' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='12' y1='19' x2='12' y2='5'/><polyline points='5 12 12 5 19 12'/></svg></span>`
+    : '';
+  const hasLinked = _tricountData && _tricountData.linked_uuid;
+  const gridCols = hasLinked ? 'grid-cols-[5.5rem_1fr_8rem_6rem_6rem]' : 'grid-cols-[5.5rem_1fr_8rem_7rem]';
+  const myShareHtml = hasLinked
+    ? `<div class="text-xs text-right tabular-nums whitespace-nowrap ${tx.my_share != null ? 'text-blue-600 dark:text-blue-400' : 'text-gray-300 dark:text-gray-600'}">${tx.my_share != null ? tx.my_share.toFixed(2) : '—'}</div>`
+    : '';
   return `
-    <div class="tx-row px-4 py-3 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-         data-id="${tx.id}" data-desc="${h(tx.description.toLowerCase())}" data-payer="${h(tx.payer.toLowerCase())}" data-amount="${tx.amount}">
-      <label class="bulk-check flex items-center shrink-0 hidden mt-0.5 cursor-pointer">
-        <input type="checkbox" class="tx-checkbox w-4 h-4 accent-blue-600" data-id="${tx.id}">
-      </label>
-      <div class="tx-row-inner flex flex-1 justify-between items-start cursor-pointer min-w-0">
-        <div class="min-w-0">
-          <div class="text-sm font-medium truncate dark:text-gray-100">${h(tx.description)}</div>
-          <div class="text-xs text-gray-400 dark:text-gray-500">${h(tx.payer)}${tx.payer_is_me ? ` <span class="text-blue-500">(${h(_t.you)})</span>` : ''} · ${h(tx.date)}</div>
+    <div class="tx-row grid ${gridCols} items-center gap-x-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b dark:border-gray-700/50 last:border-0${isBalance ? ' opacity-75' : ''}"
+         data-id="${tx.id}" data-desc="${h(tx.description.toLowerCase())}" data-payer="${h(tx.payer.toLowerCase())}" data-amount="${tx.amount}" data-involved="${involved ? '1' : '0'}" data-tx-type="${h(tx.tx_type || 'NORMAL')}">
+      <div class="tx-row-inner contents cursor-pointer">
+        <div class="text-xs text-gray-400 dark:text-gray-500 tabular-nums whitespace-nowrap flex items-center gap-1.5">
+          <label class="bulk-check hidden cursor-pointer" onclick="event.stopPropagation()">
+            <input type="checkbox" class="tx-checkbox w-3.5 h-3.5 accent-blue-600" data-id="${tx.id}">
+          </label>
+          ${h(tx.date)}
         </div>
-        <div class="text-sm font-semibold ml-4 shrink-0 dark:text-gray-100">${tx.amount.toFixed(2)} ${h(tx.currency)}</div>
+        <div class="text-xs truncate dark:text-gray-100">${typeIcon}${h(tx.description)}</div>
+        <div class="text-xs text-gray-400 dark:text-gray-500 truncate">${h(tx.payer)}${tx.payer_is_me ? ` <span class="text-blue-500">(${h(_t.you)})</span>` : ''}</div>
+        <div class="text-xs text-right tabular-nums whitespace-nowrap ${isBalance ? 'text-green-600 dark:text-green-400' : 'dark:text-gray-100'}">${tx.amount.toFixed(2)}</div>
+        ${myShareHtml}
       </div>
     </div>`;
 }
@@ -67,8 +83,8 @@ function updateBulkBar() {
 function toggleBulkMode() {
   _bulkMode = !_bulkMode;
   document.querySelectorAll('.bulk-check').forEach(el => el.classList.toggle('hidden', !_bulkMode));
-  document.getElementById('bulkModeBtn').classList.toggle('text-blue-600', _bulkMode);
-  document.getElementById('bulkModeBtn').classList.toggle('bg-blue-50', _bulkMode);
+  document.getElementById('bulkModeBtn').style.color = _bulkMode ? '#2563eb' : '';
+  document.getElementById('bulkModeBtn').style.backgroundColor = _bulkMode ? '#eff6ff' : '';
   document.getElementById('txSelectAllRow').classList.toggle('hidden', !_bulkMode);
   if (!_bulkMode) {
     document.querySelectorAll('.tx-checkbox').forEach(cb => cb.checked = false);
@@ -82,9 +98,22 @@ function filterTransactions(query) {
   let visible = 0;
   let total = 0;
   rows.forEach(row => {
-    const match = !q || row.dataset.desc.includes(q) || row.dataset.payer.includes(q);
+    const matchQ = !q || row.dataset.desc.includes(q) || row.dataset.payer.includes(q);
+    const matchMe = !_filterMe || row.dataset.involved === '1';
+    const matchType = !_filterType || row.dataset.txType === _filterType;
+    const match = matchQ && matchMe && matchType;
     row.classList.toggle('hidden', !match);
     if (match) { visible++; total += parseFloat(row.dataset.amount); }
+  });
+  // toon/verberg maandheaders op basis van zichtbare rijen
+  document.querySelectorAll('.tx-month-header').forEach(header => {
+    let next = header.nextElementSibling;
+    let hasVisible = false;
+    while (next && next.classList.contains('tx-row')) {
+      if (!next.classList.contains('hidden')) { hasVisible = true; break; }
+      next = next.nextElementSibling;
+    }
+    header.classList.toggle('hidden', !hasVisible);
   });
   const noResults = document.getElementById('txNoResults');
   if (noResults) noResults.classList.toggle('hidden', visible > 0 || rows.length === 0);
@@ -178,10 +207,9 @@ document.addEventListener('keydown', (e) => {
 
 // Event delegation for tx rows, modals, pay buttons and checkboxes
 document.addEventListener('click', (e) => {
-  // tx row inner click → open modal or toggle checkbox
-  const rowInner = e.target.closest('.tx-row-inner');
-  if (rowInner) {
-    const row = rowInner.closest('.tx-row');
+  // tx row click → open modal or toggle checkbox
+  const row = e.target.closest('.tx-row');
+  if (row && !e.target.closest('.bulk-check') && !e.target.closest('.tx-checkbox')) {
     if (_bulkMode) {
       const cb = row.querySelector('.tx-checkbox');
       cb.checked = !cb.checked;
@@ -272,7 +300,8 @@ function renderTricount(data, token, label, labelColors) {
   }
 
   // Persoonlijke samenvatting
-  const myName = data.linked_uuid ? (data.members.find(m => m.uuid === data.linked_uuid) || {}).name : null;
+  const myMember = data.linked_uuid ? data.members.find(m => m.uuid === data.linked_uuid) : null;
+  const myName = myMember ? myMember.name : null;
   let myHtml = '';
   if (myName) {
     const myBal = data.balances[myName] || 0;
@@ -317,12 +346,74 @@ function renderTricount(data, token, label, labelColors) {
     });
   }
   document.getElementById('debts').innerHTML = debtsHtml;
+  // Scheidingslijn tussen persoonlijke alerts en algemene schulden
+  const mySummaryEl = document.getElementById('mySummary');
+  const debtsEl = document.getElementById('debts');
+  if (myHtml && debtsHtml) {
+    debtsEl.classList.add('border-t', 'pt-3', 'mt-1');
+  } else {
+    debtsEl.classList.remove('border-t', 'pt-3', 'mt-1');
+  }
 
   document.getElementById('balances').innerHTML = Object.entries(data.balances).map(([name, bal]) => `
     <div class="flex justify-between text-xs text-gray-400">
       <span>${h(name)}</span>
       <span class="${bal > 0 ? 'text-green-600' : bal < 0 ? 'text-red-500' : ''}">${bal > 0 ? '+' : ''}${bal.toFixed(2)} ${h(data.currency)}</span>
     </div>`).join('');
+
+  // Globaal saldo + totaal in header
+  const myBalEl = document.getElementById('myBalanceSummary');
+  const tricountTotalEl = document.getElementById('tricountTotal');
+  const grandTotal = data.transactions.reduce((sum, tx) => sum + tx.amount, 0);
+  if (tricountTotalEl) {
+    tricountTotalEl.textContent = `${grandTotal.toFixed(2)} ${data.currency}`;
+  }
+  if (myBalEl && myName) {
+    const myBal = data.balances[myName] || 0;
+    if (Math.abs(myBal) < 0.01) {
+      myBalEl.textContent = '✓';
+      myBalEl.className = 'text-sm font-semibold text-green-600';
+    } else {
+      myBalEl.textContent = `${myBal > 0 ? '+' : ''}${myBal.toFixed(2)} ${data.currency}`;
+      myBalEl.className = `text-sm font-semibold ${myBal > 0 ? 'text-green-600' : 'text-red-500'}`;
+    }
+  }
+
+  // Mijn betaald vs aandeel
+  const myPaidTotal = data.transactions
+    .filter(tx => tx.payer_is_me && tx.tx_type === 'NORMAL')
+    .reduce((sum, tx) => sum + tx.amount, 0);
+  const myShareTotal = data.transactions
+    .filter(tx => tx.tx_type === 'NORMAL' && tx.my_share != null)
+    .reduce((sum, tx) => sum + tx.my_share, 0);
+  const myPaidEl = document.getElementById('myPaidVsShare');
+  if (myPaidEl && myName && (myPaidTotal > 0 || myShareTotal > 0)) {
+    const diff = myPaidTotal - myShareTotal;
+    myPaidEl.innerHTML = `
+      <div class="flex justify-between text-xs pt-2 mt-2 border-t dark:border-gray-700">
+        <span class="text-gray-400">${h(_t.myPaid)}</span>
+        <span class="tabular-nums dark:text-gray-100">${myPaidTotal.toFixed(2)} ${h(data.currency)}</span>
+      </div>
+      <div class="flex justify-between text-xs mt-1">
+        <span class="text-gray-400">${h(_t.myShare)}</span>
+        <span class="tabular-nums dark:text-gray-100">${myShareTotal.toFixed(2)} ${h(data.currency)}</span>
+      </div>
+      <div class="flex justify-between text-xs mt-1">
+        <span class="text-gray-400">${h(_t.myDiff)}</span>
+        <span class="tabular-nums font-semibold ${diff >= 0 ? 'text-green-600' : 'text-red-500'}">${diff >= 0 ? '+' : ''}${diff.toFixed(2)} ${h(data.currency)}</span>
+      </div>`;
+    myPaidEl.classList.remove('hidden');
+  }
+
+  // Header grid aanpassen op basis van linked_uuid
+  const txHeader = document.getElementById('txHeader');
+  const txHeaderShare = document.getElementById('txHeaderShare');
+  if (data.linked_uuid) {
+    txHeader.style.gridTemplateColumns = '5.5rem 1fr 8rem 6rem 6rem';
+    txHeaderShare.classList.remove('hidden');
+  } else {
+    txHeader.style.gridTemplateColumns = '5.5rem 1fr 8rem 7rem';
+  }
 
   // Acties
   document.getElementById('actions').innerHTML = data.archived ? '' : `
@@ -335,19 +426,73 @@ function renderTricount(data, token, label, labelColors) {
   if (data.transactions.length === 0) {
     txHtml = `<p class="px-4 py-3 text-sm text-gray-400">${h(_t.noTransactions)}</p>`;
   } else {
+    let currentMonth = null;
+    let currentMonthLabel = null;
+    let monthTotal = 0;
+    let monthRows = [];
+
+    const flushMonth = () => {
+      if (!currentMonth) return '';
+      return `<div class="tx-month-header grid grid-cols-[5.5rem_1fr_8rem_7rem] gap-x-3 px-4 py-1.5 bg-gray-100 dark:bg-gray-700 border-b dark:border-gray-600">
+        <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 col-span-3">${h(currentMonthLabel)}</div>
+        <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 text-right tabular-nums">${monthTotal.toFixed(2)} ${h(data.currency)}</div>
+      </div>` + monthRows.join('');
+    };
+
     data.transactions.forEach(tx => {
-      txHtml += renderTxRow(tx);
+      const month = tx.date.slice(0, 7);
+      const localeMap = { nl: 'nl-NL', fr: 'fr-FR', de: 'de-DE', es: 'es-ES', en: 'en-GB' };
+      const locale = localeMap[_t.locale] || _t.locale;
+      const monthLabel = new Date(tx.date + 'T00:00:00').toLocaleDateString(locale, { year: 'numeric', month: 'long' });
+      if (month !== currentMonth) {
+        txHtml += flushMonth();
+        currentMonth = month;
+        currentMonthLabel = monthLabel;
+        monthTotal = 0;
+        monthRows = [];
+      }
+      monthTotal += tx.amount;
+      const involved = tx.payer_is_me || (myName && tx.allocations.some(a => a.name === myName));
+      monthRows.push(renderTxRow(tx, involved));
       modalsHtml += renderTxModal(tx, token, data);
     });
+    txHtml += flushMonth();
   }
   document.getElementById('transactions').innerHTML = txHtml +
     `<p id="txNoResults" class="hidden px-4 py-3 text-sm text-gray-400">${h(_t.noResults)}</p>`;
   document.getElementById('modals').innerHTML = modalsHtml;
 
+  // Stats
+  const expenses = data.transactions.filter(tx => tx.tx_type === 'NORMAL');
+  if (expenses.length > 0) {
+    const biggest = expenses.reduce((a, b) => a.amount > b.amount ? a : b);
+    const avg = expenses.reduce((sum, tx) => sum + tx.amount, 0) / expenses.length;
+    const payerCount = {};
+    expenses.forEach(tx => { payerCount[tx.payer] = (payerCount[tx.payer] || 0) + 1; });
+    const topPayer = Object.entries(payerCount).sort((a, b) => b[1] - a[1])[0];
+    const statsEl = document.getElementById('txStats');
+    statsEl.innerHTML = `
+      <div class="text-center">
+        <div class="text-xs text-gray-400 mb-1">${h(_t.biggestExpense)}</div>
+        <div class="text-sm font-semibold dark:text-gray-100 tabular-nums">${biggest.amount.toFixed(2)} ${h(data.currency)}</div>
+        <div class="text-xs text-gray-400 truncate">${h(biggest.description)}</div>
+      </div>
+      <div class="text-center border-x dark:border-gray-700">
+        <div class="text-xs text-gray-400 mb-1">${h(_t.avgExpense)}</div>
+        <div class="text-sm font-semibold dark:text-gray-100 tabular-nums">${avg.toFixed(2)} ${h(data.currency)}</div>
+        <div class="text-xs text-gray-400">${expenses.length}×</div>
+      </div>
+      <div class="text-center">
+        <div class="text-xs text-gray-400 mb-1">${h(_t.topPayer)}</div>
+        <div class="text-sm font-semibold dark:text-gray-100 truncate">${h(topPayer[0])}</div>
+        <div class="text-xs text-gray-400">${topPayer[1]}×</div>
+      </div>`;
+    statsEl.classList.remove('hidden');
+  }
+
   const total = data.transactions.reduce((sum, tx) => sum + tx.amount, 0);
   document.getElementById('txTotal').textContent = total.toFixed(2);
   document.getElementById('txCurrency').textContent = data.currency;
-  document.getElementById('txTotalAll').textContent = `${total.toFixed(2)} ${data.currency}`;
   if (data.public_token) {
     document.getElementById('shareBtn').dataset.shareUrl = `https://tricount.com/${data.public_token}`;
   } else {

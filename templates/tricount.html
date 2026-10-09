@@ -53,29 +53,56 @@
 <!-- Content (hidden until loaded) -->
 <div id="content" class="hidden space-y-4">
 
-  <!-- Persoonlijke samenvatting -->
-  <div id="mySummary" class="space-y-2"></div>
-
   <!-- Leden -->
   <div id="membersList" class="flex flex-wrap gap-2"></div>
 
   <!-- Saldi -->
-  <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
-    <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">{{ _("Balances") }}</h2>
-    <div id="debts" class="space-y-2 mb-3"></div>
-    <div id="balances" class="border-t pt-2 space-y-1"></div>
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow">
+    <button id="balancesToggle" class="w-full flex items-center justify-between px-4 py-3 text-left">
+      <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase">{{ _("Balances") }}</h2>
+      <div class="flex items-center gap-3">
+        <span id="tricountTotal" class="text-xs text-gray-400 tabular-nums"></span>
+        <span id="myBalanceSummary" class="text-sm font-semibold"></span>
+        <svg id="balancesChevron" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+    </button>
+    <div id="balancesBody" class="hidden px-4 pb-4">
+      <div id="mySummary" class="space-y-2 mb-3"></div>
+      <div id="debts" class="space-y-2"></div>
+      <div id="balances" class="border-t pt-2 mt-3 space-y-1"></div>
+      <div id="myPaidVsShare" class="hidden"></div>
+    </div>
   </div>
+
+  <!-- Stats -->
+  <div id="txStats" class="hidden bg-white dark:bg-gray-800 rounded-xl shadow px-4 py-3 grid grid-cols-3 gap-3"></div>
 
   <!-- Acties -->
   <div id="actions" class="flex gap-2"></div>
 
   <!-- Transacties -->
   <div class="bg-white dark:bg-gray-800 rounded-xl shadow divide-y dark:divide-gray-700">
-    <div class="flex items-center gap-2 px-4 py-3">
+    <div class="flex items-center gap-2 px-4 py-3 border-b dark:border-gray-700">
       <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase flex-1">{{ _("Transactions") }}</h2>
-      <span class="text-xs text-gray-400" id="txTotalAll"></span>
+      <button id="filterMeBtn"
+        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 transition"
+        title="{{ _('My transactions') }}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+      <button id="filterTypeBtn"
+        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 transition"
+        title="{{ _('Filter by type') }}">
+        <svg id="filterTypeIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="17 1 21 5 17 9"/><line x1="21" y1="5" x2="3" y2="5"/>
+          <polyline points="7 23 3 19 7 15"/><line x1="3" y1="19" x2="21" y2="19"/>
+        </svg>
+      </button>
       <button id="bulkModeBtn"
-        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition"
+        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 transition"
         title="{{ _('Select transactions') }}">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="5" width="4" height="4" rx="1"/><rect x="3" y="11" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/>
@@ -90,6 +117,13 @@
         <input type="checkbox" id="selectAllCheckbox" class="w-4 h-4 accent-blue-600">
         {{ _("Select all visible") }}
       </label>
+    </div>
+    <div id="txHeader" class="grid gap-x-3 px-4 py-1.5 bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700">
+      <div class="text-xs font-semibold text-gray-400 uppercase">{{ _("Date") }}</div>
+      <div class="text-xs font-semibold text-gray-400 uppercase">{{ _("Description") }}</div>
+      <div class="text-xs font-semibold text-gray-400 uppercase">{{ _("Paid by") }}</div>
+      <div class="text-xs font-semibold text-gray-400 uppercase text-right" id="txHeaderAmount">{{ _("Amount") }}</div>
+      <div class="text-xs font-semibold text-gray-400 uppercase text-right hidden" id="txHeaderShare">{{ _("My share") }}</div>
     </div>
     <div id="transactions"></div>
     <div id="bulkBar" class="hidden px-4 py-3 bg-red-50 dark:bg-red-900/30 rounded-b-xl flex items-center justify-between gap-2">
@@ -205,6 +239,16 @@ const _t = {
   selected:           {{ _("selected") | tojson }},
   deleteSelected:     {{ _("Delete selected") | tojson }},
   confirmDelete:      {{ _("Confirm delete selected") | tojson }},
+  reimbursement:      {{ _("Reimbursement") | tojson }},
+  expense:            {{ _("Expense") | tojson }},
+  filterByType:       {{ _("Filter by type") | tojson }},
+  biggestExpense:     {{ _("Biggest expense") | tojson }},
+  avgExpense:         {{ _("Average expense") | tojson }},
+  topPayer:           {{ _("Most active payer") | tojson }},
+  myPaid:             {{ _("I paid") | tojson }},
+  myShare:            {{ _("My share") | tojson }},
+  myDiff:             {{ _("Difference") | tojson }},
+  locale:             {{ current_locale | tojson }},
 };
 loadTricountDetail({{ token | tojson }}, {{ label | tojson }}, {{ label_colors | tojson }});
 document.getElementById('openEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.remove('hidden'));
@@ -222,7 +266,39 @@ document.getElementById('txSearch').addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { e.target.value = ''; filterTransactions(''); e.target.blur(); }
 });
 document.getElementById('removeConfirmInput').addEventListener('input', function() { document.getElementById('removeBtn').disabled = this.value !== _t.deleteVerb; });
+document.getElementById('balancesToggle').addEventListener('click', () => {
+  const body = document.getElementById('balancesBody');
+  const chevron = document.getElementById('balancesChevron');
+  body.classList.toggle('hidden');
+  chevron.classList.toggle('rotate-180');
+});
 document.getElementById('bulkModeBtn').addEventListener('click', () => toggleBulkMode());
+document.getElementById('filterMeBtn').addEventListener('click', function() {
+  _filterMe = !_filterMe;
+  this.style.color = _filterMe ? '#2563eb' : '';
+  this.style.backgroundColor = _filterMe ? '#eff6ff' : '';
+  this.querySelector('svg').style.stroke = _filterMe ? '#2563eb' : '';
+  filterTransactions(document.getElementById('txSearch').value);
+});
+document.getElementById('filterTypeBtn').addEventListener('click', function() {
+  const cycle = [null, 'BALANCE', 'NORMAL'];
+  const idx = cycle.indexOf(_filterType);
+  _filterType = cycle[(idx + 1) % cycle.length];
+  this.style.backgroundColor = _filterType !== null ? '#eff6ff' : '';
+  this.title = _filterType === 'BALANCE' ? _t.reimbursement : _filterType === 'NORMAL' ? _t.expense : _t.filterByType;
+  const icon = document.getElementById('filterTypeIcon');
+  if (_filterType === 'BALANCE') {
+    icon.style.stroke = '#2563eb';
+    icon.innerHTML = '<polyline points="17 1 21 5 17 9"/><line x1="21" y1="5" x2="3" y2="5"/><polyline points="7 23 3 19 7 15"/><line x1="3" y1="19" x2="21" y2="19"/>';
+  } else if (_filterType === 'NORMAL') {
+    icon.style.stroke = '#2563eb';
+    icon.innerHTML = '<text x="12" y="18" text-anchor="middle" font-size="18" font-weight="bold" stroke="none" fill="#2563eb">€</text>';
+  } else {
+    icon.style.stroke = '';
+    icon.innerHTML = '<polyline points="17 1 21 5 17 9"/><line x1="21" y1="5" x2="3" y2="5"/><polyline points="7 23 3 19 7 15"/><line x1="3" y1="19" x2="21" y2="19"/>';
+  }
+  filterTransactions(document.getElementById('txSearch').value);
+});
 document.getElementById('selectAllCheckbox').addEventListener('change', function() {
   document.querySelectorAll('.tx-row:not(.hidden) .tx-checkbox').forEach(cb => cb.checked = this.checked);
   updateBulkBar();

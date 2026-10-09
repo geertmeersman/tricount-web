@@ -840,5 +840,35 @@ msgstr "Passwort für diese Web-Oberfläche ändern."
 msgid "help.connection.intro"
 msgstr "Diese App verbindet sich als anonymes Gerät mit den Tricount-Servern, ohne dein Tricount-Passwort zu kennen."
 
-msgid "help.connection.token"
-msgstr "Ein Sharing-Token (z.B. stNvUXxxxxx) gewährt vollen Lese- und Schreibzugriff auf einen Tricount. Behandle ihn wie ein Passwort und teile ihn nur mit vertrauenswürdigen Personen."
+msgid "Total balance"
+msgstr "Gesamtsaldo"
+
+msgid "I paid"
+msgstr "Ich habe bezahlt"
+
+msgid "Difference"
+msgstr "Differenz"
+
+msgid "Biggest expense"
+msgstr "Größte Ausgabe"
+
+msgid "Average expense"
+msgstr "Durchschnittliche Ausgabe"
+
+msgid "Most active payer"
+msgstr "Aktivster Zahler"
+
+msgid "My share"
+msgstr "Mein Anteil"
+
+msgid "My transactions"
+msgstr "Meine Transaktionen"
+
+msgid "Filter by type"
+msgstr "Nach Typ filtern"
+
+msgid "Reimbursement"
+msgstr "Rückerstattung"
+
+msgid "Expense"
+msgstr "Ausgabe"
