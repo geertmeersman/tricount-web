@@ -54,20 +54,11 @@ A self-hosted web frontend for [Tricount](https://tricount.com) (by bunq), built
 
 ## Quick start
 
-Create a `.env` file with a secret key:
-
-```bash
-echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" > .env
-```
-
-`SECRET_KEY` is used by Flask to sign session cookies — keep it private and don't reuse it across deployments.
-
 ```yaml
 services:
   tricount-web:
     image: geertmeersman/tricount-web:latest
     container_name: tricount-web
-    env_file: .env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
@@ -94,7 +85,6 @@ services:
   tricount-web:
     image: geertmeersman/tricount-web:latest
     container_name: tricount-web
-    env_file: .env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
@@ -125,7 +115,7 @@ Back this directory up regularly. It contains your device credentials and all tr
 
 ## Optional: weekly email digest
 
-Add these to your `.env` to enable a weekly balance email every Monday at 08:00. The email is sent in each user's preferred language and groups tricounts by label. A test send button is available on the profile page.
+Add these to your `.env` to enable a weekly balance email every Monday at 08:00.
 
 ```env
 APP_BASE_URL=https://tricount.yoursite.com
