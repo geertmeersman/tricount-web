@@ -14,7 +14,7 @@ from flask import g
 _tmp_data = tempfile.mkdtemp()
 os.environ["TRICOUNT_DATA_DIR"] = _tmp_data
 
-import app as application
+import app as application  # noqa: E402
 
 SCHEMA = """
     CREATE TABLE IF NOT EXISTS users (
@@ -674,13 +674,16 @@ def test_profile_delete_success(client, db):
 
 def test_profile_credentials_download(client, db):
     with patch.object(application, "generate_user_credentials") as mock_gen:
+
         def fake_gen(user_id):
             import json
+
             db.execute(
                 "UPDATE users SET credentials_json = ? WHERE id = ?",
                 (json.dumps({"app_id": "test-app-id", "public_key_pem": "test-pem"}), user_id),
             )
             db.commit()
+
         mock_gen.side_effect = fake_gen
         register_user(client, "admin", "adminpass1")
     login_user(client, "admin", "adminpass1")
@@ -975,7 +978,9 @@ def _insert_recurring(db, user_id, token="tREC"):
         (user_id, token),
     )
     db.commit()
-    return db.execute("SELECT id FROM recurring_expenses WHERE user_id = ? AND token = ?", (user_id, token)).fetchone()["id"]
+    return db.execute("SELECT id FROM recurring_expenses WHERE user_id = ? AND token = ?", (user_id, token)).fetchone()[
+        "id"
+    ]
 
 
 def test_recurring_toggle(client, db):
