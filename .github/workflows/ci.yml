@@ -69,8 +69,6 @@ jobs:
         run: pip install -r requirements.txt pytest
 
       - name: Run tests
-        env:
-          SECRET_KEY: test-secret-key
         run: pytest tests/ -v
 
   docker:

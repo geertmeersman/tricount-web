@@ -3,10 +3,16 @@ import secrets
 import sqlite3
 import tempfile
 from datetime import date, datetime
+from pathlib import Path
 from unittest.mock import patch
 
+import pyotp
 import pytest
 from flask import g
+
+# Redirect DB_PATH to a temp dir before importing so init_db() never touches the real data/
+_tmp_data = tempfile.mkdtemp()
+os.environ["TRICOUNT_DATA_DIR"] = _tmp_data
 
 import app as application
 
@@ -106,6 +112,7 @@ def client():
             "SESSION_COOKIE_HTTPONLY": False,
         }
     )
+    application.app.secret_key = "test-secret-key"
     application.limiter.enabled = False
 
     with patch.object(application, "get_db", get_test_db), application.app.test_client() as c:
@@ -576,3 +583,435 @@ def test_is_safe_redirect_empty():
 
 def test_is_safe_redirect_no_leading_slash():
     assert application.is_safe_redirect("evil.com/path") is False
+
+
+# --- Login redirect when no users ---
+
+
+def test_login_redirects_to_register_when_no_users(client):
+    resp = client.get("/login", follow_redirects=False)
+    assert resp.status_code == 302
+    assert "/register" in resp.headers["Location"]
+
+
+# --- Profile: display name & email ---
+
+
+def test_profile_display_name(client, db):
+    register_and_login(client)
+    client.post("/profile/display_name", data={"display_name": "Geert"}, follow_redirects=True)
+    user = db.execute("SELECT display_name FROM users WHERE username = 'admin'").fetchone()
+    assert user["display_name"] == "Geert"
+
+
+def test_profile_display_name_empty_clears(client, db):
+    register_and_login(client)
+    client.post("/profile/display_name", data={"display_name": ""}, follow_redirects=True)
+    user = db.execute("SELECT display_name FROM users WHERE username = 'admin'").fetchone()
+    assert user["display_name"] is None
+
+
+def test_profile_email_save(client, db):
+    register_and_login(client)
+    client.post("/profile/email", data={"email": "test@example.com", "weekly_email": "1"}, follow_redirects=True)
+    user = db.execute("SELECT email, weekly_email FROM users WHERE username = 'admin'").fetchone()
+    assert user["email"] == "test@example.com"
+    assert user["weekly_email"] == 1
+
+
+def test_profile_email_clear(client, db):
+    register_and_login(client)
+    client.post("/profile/email", data={"email": ""}, follow_redirects=True)
+    user = db.execute("SELECT email FROM users WHERE username = 'admin'").fetchone()
+    assert user["email"] is None
+
+
+def test_profile_email_log_returns_json(client, db):
+    register_and_login(client)
+    resp = client.get("/profile/email/log")
+    assert resp.status_code == 200
+    assert resp.is_json
+    assert isinstance(resp.get_json(), list)
+
+
+# --- Profile: delete account ---
+
+
+def test_profile_delete_blocked_for_admin(client, db):
+    register_and_login(client)
+    resp = client.post("/profile/delete", data={"password": "adminpass1"}, follow_redirects=True)
+    assert db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone() is not None
+    assert b"admin" in resp.data.lower() or resp.status_code == 200
+
+
+def test_profile_delete_wrong_password(client, db):
+    register_and_login(client, "admin", "adminpass1")
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    token = create_invite(db, admin["id"])
+    with patch.object(application, "generate_user_credentials"):
+        client.post(f"/invite/{token}", data={"username": "regular", "password": "pass1234"}, follow_redirects=True)
+    client.get("/logout")
+    login_user(client, "regular", "pass1234")
+    resp = client.post("/profile/delete", data={"password": "wrongpass"}, follow_redirects=True)
+    assert db.execute("SELECT id FROM users WHERE username = 'regular'").fetchone() is not None
+    assert resp.status_code == 200
+
+
+def test_profile_delete_success(client, db):
+    register_and_login(client, "admin", "adminpass1")
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    token = create_invite(db, admin["id"])
+    with patch.object(application, "generate_user_credentials"):
+        client.post(f"/invite/{token}", data={"username": "regular", "password": "pass1234"}, follow_redirects=True)
+    client.get("/logout")
+    login_user(client, "regular", "pass1234")
+    client.post("/profile/delete", data={"password": "pass1234"}, follow_redirects=True)
+    assert db.execute("SELECT id FROM users WHERE username = 'regular'").fetchone() is None
+
+
+# --- Profile: credentials download ---
+
+
+def test_profile_credentials_download(client, db):
+    with patch.object(application, "generate_user_credentials") as mock_gen:
+        def fake_gen(user_id):
+            import json
+            db.execute(
+                "UPDATE users SET credentials_json = ? WHERE id = ?",
+                (json.dumps({"app_id": "test-app-id", "public_key_pem": "test-pem"}), user_id),
+            )
+            db.commit()
+        mock_gen.side_effect = fake_gen
+        register_user(client, "admin", "adminpass1")
+    login_user(client, "admin", "adminpass1")
+    resp = client.get("/profile/credentials.json")
+    assert resp.status_code == 200
+    assert resp.mimetype == "application/json"
+    data = resp.get_json()
+    assert "app_id" in data
+    assert "public_key_pem" in data
+
+
+# --- Profile: TOTP ---
+
+
+def test_totp_setup_page_loads(client, db):
+    register_and_login(client)
+    resp = client.get("/profile/totp/setup")
+    assert resp.status_code == 200
+
+
+def test_totp_confirm_invalid_code(client, db):
+    register_and_login(client)
+    with client.session_transaction() as sess:
+        sess["totp_setup_secret"] = pyotp.random_base32()
+    resp = client.post("/profile/totp/confirm", data={"code": "000000"}, follow_redirects=True)
+    assert resp.status_code == 200
+    user = db.execute("SELECT totp_secret FROM users WHERE username = 'admin'").fetchone()
+    assert user["totp_secret"] is None
+
+
+def test_totp_confirm_valid_code(client, db):
+    register_and_login(client)
+    secret = pyotp.random_base32()
+    with client.session_transaction() as sess:
+        sess["totp_setup_secret"] = secret
+    code = pyotp.TOTP(secret).now()
+    client.post("/profile/totp/confirm", data={"code": code}, follow_redirects=True)
+    user = db.execute("SELECT totp_secret FROM users WHERE username = 'admin'").fetchone()
+    assert user["totp_secret"] == secret
+
+
+def test_totp_disable_wrong_password(client, db):
+    register_and_login(client)
+    secret = pyotp.random_base32()
+    db.execute("UPDATE users SET totp_secret = ? WHERE username = 'admin'", (secret,))
+    db.commit()
+    resp = client.post("/profile/totp/disable", data={"password": "wrongpass"}, follow_redirects=True)
+    user = db.execute("SELECT totp_secret FROM users WHERE username = 'admin'").fetchone()
+    assert user["totp_secret"] == secret
+    assert resp.status_code == 200
+
+
+def test_totp_disable_correct_password(client, db):
+    register_and_login(client)
+    secret = pyotp.random_base32()
+    db.execute("UPDATE users SET totp_secret = ? WHERE username = 'admin'", (secret,))
+    db.commit()
+    client.post("/profile/totp/disable", data={"password": "adminpass1"}, follow_redirects=True)
+    user = db.execute("SELECT totp_secret FROM users WHERE username = 'admin'").fetchone()
+    assert user["totp_secret"] is None
+
+
+def test_login_totp_flow(client, db):
+    register_and_login(client)
+    secret = pyotp.random_base32()
+    db.execute("UPDATE users SET totp_secret = ? WHERE username = 'admin'", (secret,))
+    db.commit()
+    client.get("/logout")
+    # login stuurt door naar totp pagina
+    resp = client.post("/login", data={"username": "admin", "password": "adminpass1"}, follow_redirects=False)
+    assert resp.status_code == 302
+    assert "/login/totp" in resp.headers["Location"]
+    # totp pagina laden
+    resp = client.get("/login/totp")
+    assert resp.status_code == 200
+    # correcte code invoeren
+    code = pyotp.TOTP(secret).now()
+    resp = client.post("/login/totp", data={"code": code}, follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_login_totp_wrong_code(client, db):
+    register_and_login(client)
+    secret = pyotp.random_base32()
+    db.execute("UPDATE users SET totp_secret = ? WHERE username = 'admin'", (secret,))
+    db.commit()
+    client.get("/logout")
+    client.post("/login", data={"username": "admin", "password": "adminpass1"}, follow_redirects=False)
+    resp = client.post("/login/totp", data={"code": "000000"}, follow_redirects=True)
+    assert resp.status_code == 200
+    # nog steeds op totp pagina of login pagina, niet ingelogd
+    resp2 = client.get("/", follow_redirects=False)
+    assert resp2.status_code == 302
+
+
+def test_login_totp_no_session_redirects(client):
+    resp = client.get("/login/totp", follow_redirects=False)
+    assert resp.status_code == 302
+    assert "/login" in resp.headers["Location"]
+
+
+# --- Admin: invite management ---
+
+
+def test_admin_page_loads(client, db):
+    register_and_login(client)
+    resp = client.get("/admin")
+    assert resp.status_code == 200
+
+
+def test_admin_create_invite(client, db):
+    register_and_login(client)
+    client.post("/admin/invite", data={"label": "Vriend"}, follow_redirects=True)
+    row = db.execute("SELECT * FROM invites WHERE label = 'Vriend'").fetchone()
+    assert row is not None
+    assert row["used"] == 0
+
+
+def test_admin_create_invite_no_label(client, db):
+    register_and_login(client)
+    client.post("/admin/invite", data={}, follow_redirects=True)
+    row = db.execute("SELECT * FROM invites").fetchone()
+    assert row is not None
+    assert row["label"] is None
+
+
+def test_admin_delete_invite(client, db):
+    register_and_login(client)
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    token = create_invite(db, admin["id"])
+    invite = db.execute("SELECT id FROM invites WHERE token = ?", (token,)).fetchone()
+    client.post(f"/admin/invite/{invite['id']}/delete", follow_redirects=True)
+    assert db.execute("SELECT id FROM invites WHERE id = ?", (invite["id"],)).fetchone() is None
+
+
+def test_admin_update_invite_label(client, db):
+    register_and_login(client)
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    token = create_invite(db, admin["id"])
+    invite = db.execute("SELECT id FROM invites WHERE token = ?", (token,)).fetchone()
+    client.post(f"/admin/invite/{invite['id']}/label", data={"label": "Collega"}, follow_redirects=True)
+    row = db.execute("SELECT label FROM invites WHERE id = ?", (invite["id"],)).fetchone()
+    assert row["label"] == "Collega"
+
+
+# --- Admin: user management ---
+
+
+def test_admin_set_email(client, db):
+    register_and_login(client)
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    client.post(f"/admin/user/{admin['id']}/email", data={"email": "admin@example.com"}, follow_redirects=True)
+    row = db.execute("SELECT email FROM users WHERE id = ?", (admin["id"],)).fetchone()
+    assert row["email"] == "admin@example.com"
+
+
+def test_admin_delete_user(client, db):
+    register_and_login(client, "admin", "adminpass1")
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    token = create_invite(db, admin["id"])
+    with patch.object(application, "generate_user_credentials"):
+        client.post(f"/invite/{token}", data={"username": "regular", "password": "pass1234"}, follow_redirects=True)
+    regular = db.execute("SELECT id FROM users WHERE username = 'regular'").fetchone()
+    client.post(f"/admin/delete/{regular['id']}", follow_redirects=True)
+    assert db.execute("SELECT id FROM users WHERE username = 'regular'").fetchone() is None
+
+
+def test_admin_cannot_delete_self(client, db):
+    register_and_login(client)
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    client.post(f"/admin/delete/{admin['id']}", follow_redirects=True)
+    assert db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone() is not None
+
+
+def test_admin_toggle_admin(client, db):
+    register_and_login(client, "admin", "adminpass1")
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    token = create_invite(db, admin["id"])
+    with patch.object(application, "generate_user_credentials"):
+        client.post(f"/invite/{token}", data={"username": "regular", "password": "pass1234"}, follow_redirects=True)
+    regular = db.execute("SELECT id FROM users WHERE username = 'regular'").fetchone()
+    assert regular is not None
+    client.post(f"/admin/toggle_admin/{regular['id']}", follow_redirects=True)
+    row = db.execute("SELECT is_admin FROM users WHERE id = ?", (regular["id"],)).fetchone()
+    assert row["is_admin"] == 1
+    client.post(f"/admin/toggle_admin/{regular['id']}", follow_redirects=True)
+    row = db.execute("SELECT is_admin FROM users WHERE id = ?", (regular["id"],)).fetchone()
+    assert row["is_admin"] == 0
+
+
+def test_admin_cannot_toggle_own_admin(client, db):
+    register_and_login(client)
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    client.post(f"/admin/toggle_admin/{admin['id']}", follow_redirects=True)
+    row = db.execute("SELECT is_admin FROM users WHERE id = ?", (admin["id"],)).fetchone()
+    assert row["is_admin"] == 1
+
+
+def test_admin_reset_totp(client, db):
+    register_and_login(client, "admin", "adminpass1")
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    token = create_invite(db, admin["id"])
+    with patch.object(application, "generate_user_credentials"):
+        client.post(f"/invite/{token}", data={"username": "regular", "password": "pass1234"}, follow_redirects=True)
+    regular = db.execute("SELECT id FROM users WHERE username = 'regular'").fetchone()
+    db.execute("UPDATE users SET totp_secret = 'SOMESECRET' WHERE id = ?", (regular["id"],))
+    db.commit()
+    client.post(f"/admin/user/{regular['id']}/totp/reset", follow_redirects=True)
+    row = db.execute("SELECT totp_secret FROM users WHERE id = ?", (regular["id"],)).fetchone()
+    assert row["totp_secret"] is None
+
+
+# --- Help & refresh ---
+
+
+def test_help_page_requires_login(client):
+    resp = client.get("/help", follow_redirects=False)
+    assert resp.status_code == 302
+
+
+def test_help_page_loads(client, db):
+    register_and_login(client)
+    resp = client.get("/help")
+    assert resp.status_code == 200
+
+
+def test_refresh_requires_login(client):
+    resp = client.get("/refresh", follow_redirects=False)
+    assert resp.status_code == 302
+
+
+def test_refresh_returns_ok(client, db):
+    register_and_login(client)
+    resp = client.get("/refresh")
+    assert resp.status_code == 200
+    assert resp.get_json()["ok"] is True
+
+
+# --- api_tricount_invalidate ---
+
+
+def test_api_tricount_invalidate_unknown_token(client, db):
+    register_and_login(client)
+    resp = client.post("/api/tricount/nonexistent/invalidate")
+    assert resp.status_code == 403
+    assert resp.get_json()["ok"] is False
+
+
+def test_api_tricount_invalidate_own_token(client, db):
+    register_and_login(client)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute("INSERT INTO user_tokens (user_id, token, public_token) VALUES (?, 'tABC', 'tABC')", (user["id"],))
+    db.commit()
+    resp = client.post("/api/tricount/tABC/invalidate")
+    assert resp.status_code == 200
+    assert resp.get_json()["ok"] is True
+
+
+# --- remove_tricount ---
+
+
+def test_remove_tricount(client, db):
+    register_and_login(client)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute("INSERT INTO user_tokens (user_id, token, public_token) VALUES (?, 'tDEL', 'tDEL')", (user["id"],))
+    db.commit()
+    client.post("/remove_tricount/tDEL", follow_redirects=True)
+    assert db.execute("SELECT id FROM user_tokens WHERE token = 'tDEL'").fetchone() is None
+
+
+# --- update_label ---
+
+
+def test_update_label(client, db):
+    register_and_login(client)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute("INSERT INTO user_tokens (user_id, token, public_token) VALUES (?, 'tLBL', 'tLBL')", (user["id"],))
+    db.commit()
+    client.post("/update_label/tLBL", data={"label": "Vakantie"}, follow_redirects=True)
+    row = db.execute("SELECT label FROM user_tokens WHERE token = 'tLBL'").fetchone()
+    assert row["label"] == "Vakantie"
+
+
+# --- Recurring (DB-only, geen externe API) ---
+
+
+def _insert_recurring(db, user_id, token="tREC"):
+    db.execute(
+        """INSERT INTO recurring_expenses
+           (user_id, token, description, amount, payer_uuid, split_uuids, frequency, start_date, next_run, active)
+           VALUES (?, ?, 'Huur', 500.0, 'uuid-a', '["uuid-a"]', 'monthly', '2024-01-01', '2024-01-01', 1)""",
+        (user_id, token),
+    )
+    db.commit()
+    return db.execute("SELECT id FROM recurring_expenses WHERE user_id = ? AND token = ?", (user_id, token)).fetchone()["id"]
+
+
+def test_recurring_toggle(client, db):
+    register_and_login(client)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute("INSERT INTO user_tokens (user_id, token, public_token) VALUES (?, 'tREC', 'tREC')", (user["id"],))
+    db.commit()
+    rec_id = _insert_recurring(db, user["id"])
+    client.post(f"/tricount/tREC/recurring/{rec_id}/toggle", follow_redirects=True)
+    row = db.execute("SELECT active FROM recurring_expenses WHERE id = ?", (rec_id,)).fetchone()
+    assert row["active"] == 0
+    client.post(f"/tricount/tREC/recurring/{rec_id}/toggle", follow_redirects=True)
+    row = db.execute("SELECT active FROM recurring_expenses WHERE id = ?", (rec_id,)).fetchone()
+    assert row["active"] == 1
+
+
+def test_recurring_delete(client, db):
+    register_and_login(client)
+    user = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    db.execute("INSERT INTO user_tokens (user_id, token, public_token) VALUES (?, 'tREC2', 'tREC2')", (user["id"],))
+    db.commit()
+    rec_id = _insert_recurring(db, user["id"], token="tREC2")
+    client.post(f"/tricount/tREC2/recurring/{rec_id}/delete", follow_redirects=True)
+    assert db.execute("SELECT id FROM recurring_expenses WHERE id = ?", (rec_id,)).fetchone() is None
+
+
+def test_recurring_toggle_other_user_ignored(client, db):
+    """Een recurring van een andere user mag niet gewijzigd worden."""
+    register_and_login(client, "admin", "adminpass1")
+    admin = db.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()
+    token = create_invite(db, admin["id"])
+    with patch.object(application, "generate_user_credentials"):
+        client.post(f"/invite/{token}", data={"username": "other", "password": "pass1234"}, follow_redirects=True)
+    other = db.execute("SELECT id FROM users WHERE username = 'other'").fetchone()
+    rec_id = _insert_recurring(db, other["id"], token="tOTHER")
+    # admin probeert toggle van other's recurring
+    client.post(f"/tricount/tOTHER/recurring/{rec_id}/toggle", follow_redirects=True)
+    row = db.execute("SELECT active FROM recurring_expenses WHERE id = ?", (rec_id,)).fetchone()
+    assert row["active"] == 1  # ongewijzigd

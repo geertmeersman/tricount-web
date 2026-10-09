@@ -40,7 +40,7 @@ app.logger.setLevel(logging.DEBUG)
 
 limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="memory://")
 
-DATA_DIR = Path("data")
+DATA_DIR = Path(os.environ.get("TRICOUNT_DATA_DIR", "data"))
 DB_PATH = DATA_DIR / "tricount.db"
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -70,7 +70,12 @@ def inject_now():
         version = (Path("VERSION")).read_text().strip()
     except OSError:
         version = "dev"
-    return {"now": datetime.now(), "csp_nonce": g.get("csp_nonce", ""), "version": version, "current_locale": get_locale()}
+    return {
+        "now": datetime.now(),
+        "csp_nonce": g.get("csp_nonce", ""),
+        "version": version,
+        "current_locale": get_locale(),
+    }
 
 
 @app.before_request
@@ -1534,8 +1539,10 @@ def api_tricount(token):
                         "tx_type": tx.transaction_type.value,
                         "my_share": next(
                             (abs(float(a.amount.value)) for a in tx.allocations if a.membership_uuid == linked_uuid),
-                            None
-                        ) if linked_uuid else None,
+                            None,
+                        )
+                        if linked_uuid
+                        else None,
                     }
                 )
 
