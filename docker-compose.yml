@@ -2,8 +2,6 @@ services:
   tricount-web:
     image: geertmeersman/tricount-web:latest
     container_name: tricount-web
-    environment:
-      - SECRET_KEY=${SECRET_KEY}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s

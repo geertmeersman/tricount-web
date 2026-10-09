@@ -31,7 +31,6 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
-app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 app.config["SESSION_COOKIE_SECURE"] = True
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
@@ -273,8 +272,40 @@ def init_db():
             used INTEGER NOT NULL DEFAULT 0
         )
     """)
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    """)
     db.commit()
     db.close()
+
+
+def get_setting(key):
+    db = sqlite3.connect(DB_PATH)
+    db.row_factory = sqlite3.Row
+    row = db.execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
+    db.close()
+    return row["value"] if row else None
+
+
+def set_setting(key, value):
+    db = sqlite3.connect(DB_PATH)
+    db.execute(
+        "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+        (key, value),
+    )
+    db.commit()
+    db.close()
+
+
+def _get_or_create_secret_key():
+    key = get_setting("secret_key")
+    if not key:
+        key = secrets.token_hex(32)
+        set_setting("secret_key", key)
+    return key
 
 
 # --- Auth ---
@@ -1990,6 +2021,7 @@ def admin_toggle_admin(user_id):
 
 
 init_db()
+app.secret_key = _get_or_create_secret_key()
 
 if __name__ == "__main__":
     app.run(debug=os.environ.get("FLASK_DEBUG", "0") == "1", port=5000)

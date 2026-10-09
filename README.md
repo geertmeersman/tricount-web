@@ -79,7 +79,6 @@ Passwords are hashed with **bcrypt** (unique salt per password) and never stored
 ### 1. Run with Docker
 
 ```bash
-echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" > .env
 mkdir data
 docker compose up -d
 ```
@@ -116,15 +115,11 @@ All data is stored in `./data/` (mounted as a Docker volume):
 |------|-------------|
 | `tricount.db` | SQLite database — users, tokens, recurring expenses, invites |
 
-Copy `.env.example` to `.env` and set a strong secret key:
+Copy `.env.example` to `.env` if you want to configure SMTP:
 
 ```bash
 cp .env.example .env
-# edit .env and set SECRET_KEY to a random value, e.g.:
-python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
-
-`SECRET_KEY` is used by Flask to sign session cookies. It must be a long random string and kept private. If it changes, all active sessions are invalidated and users will need to log in again.
 
 ### Optional: SMTP for weekly email digest
 
