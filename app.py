@@ -70,7 +70,7 @@ def inject_now():
         version = (Path("VERSION")).read_text().strip()
     except OSError:
         version = "dev"
-    return {"now": datetime.now(), "csp_nonce": g.get("csp_nonce", ""), "version": version}
+    return {"now": datetime.now(), "csp_nonce": g.get("csp_nonce", ""), "version": version, "current_locale": get_locale()}
 
 
 @app.before_request
@@ -1531,6 +1531,11 @@ def api_tricount(token):
                         "payer_is_me": payer.uuid == linked_uuid if payer else False,
                         "date": tx.date[:10],
                         "allocations": allocations,
+                        "tx_type": tx.transaction_type.value,
+                        "my_share": next(
+                            (abs(float(a.amount.value)) for a in tx.allocations if a.membership_uuid == linked_uuid),
+                            None
+                        ) if linked_uuid else None,
                     }
                 )
 

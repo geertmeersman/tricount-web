@@ -840,5 +840,35 @@ msgstr "Wijzig je wachtwoord voor deze web-UI."
 msgid "help.connection.intro"
 msgstr "Deze app maakt verbinding met de Tricount-servers als een anoniem apparaat, zonder je Tricount-wachtwoord te kennen."
 
-msgid "help.connection.token"
-msgstr "Een deeltoken (bv. stNvUXxxxxx) geeft volledige lees- en schrijftoegang tot een tricount. Behandel het als een wachtwoord en deel het enkel met vertrouwde personen."
+msgid "Total balance"
+msgstr "Totaal saldo"
+
+msgid "I paid"
+msgstr "Ik betaalde"
+
+msgid "Difference"
+msgstr "Verschil"
+
+msgid "Biggest expense"
+msgstr "Grootste uitgave"
+
+msgid "Average expense"
+msgstr "Gemiddelde uitgave"
+
+msgid "Most active payer"
+msgstr "Meest actieve betaler"
+
+msgid "My share"
+msgstr "Mijn aandeel"
+
+msgid "My transactions"
+msgstr "Mijn transacties"
+
+msgid "Filter by type"
+msgstr "Filteren op type"
+
+msgid "Reimbursement"
+msgstr "Terugbetaling"
+
+msgid "Expense"
+msgstr "Uitgave"

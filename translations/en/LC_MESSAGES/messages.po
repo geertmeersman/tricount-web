@@ -842,3 +842,36 @@ msgstr "This app connects to the Tricount servers as an anonymous device, withou
 
 msgid "help.connection.token"
 msgstr "A sharing token (e.g. stNvUXxxxxx) grants full read and write access to a tricount. Treat it like a password and only share it with trusted people."
+
+msgid "Total balance"
+msgstr "Total balance"
+
+msgid "I paid"
+msgstr "I paid"
+
+msgid "Difference"
+msgstr "Difference"
+
+msgid "Biggest expense"
+msgstr "Biggest expense"
+
+msgid "Average expense"
+msgstr "Average expense"
+
+msgid "Most active payer"
+msgstr "Most active payer"
+
+msgid "My share"
+msgstr "My share"
+
+msgid "My transactions"
+msgstr "My transactions"
+
+msgid "Filter by type"
+msgstr "Filter by type"
+
+msgid "Reimbursement"
+msgstr "Reimbursement"
+
+msgid "Expense"
+msgstr "Expense"
