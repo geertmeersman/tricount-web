@@ -511,9 +511,15 @@ function loadTricountDetail(token, label, labelColors, force = false) {
       document.getElementById('progressBar').style.width = '50%';
     } else if (data.type === 'data') {
       document.getElementById('progressBar').style.width = '100%';
-      document.getElementById('progressLabel').textContent = _t.ready;
+      const ts = document.getElementById('syncTimestamp');
+      if (ts) {
+        const now = new Date();
+        ts.textContent = `${_t.synced}: ${now.toLocaleString(_t.locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}`;
+        ts.classList.remove('hidden');
+      }
       setTimeout(() => {
-        document.getElementById('progressWrap').classList.add('hidden');
+        document.getElementById('progressBarWrap').classList.add('hidden');
+        document.getElementById('progressLabel').textContent = '';
         renderTricount(data, token, label, labelColors);
       }, 300);
       es.close();

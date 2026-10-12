@@ -872,3 +872,6 @@ msgstr "Remboursement"
 
 msgid "Expense"
 msgstr "Dépense"
+
+msgid "Synced"
+msgstr "Synchronisé"

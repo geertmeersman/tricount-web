@@ -872,3 +872,6 @@ msgstr "Rückerstattung"
 
 msgid "Expense"
 msgstr "Ausgabe"
+
+msgid "Synced"
+msgstr "Synchronisiert"

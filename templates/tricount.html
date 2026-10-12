@@ -44,8 +44,11 @@
 
 <!-- Progress -->
 <div id="progressWrap" class="mb-4">
-  <div class="text-xs text-gray-400 mb-1" id="progressLabel">{{ _("Connecting") }}</div>
-  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+  <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+    <span id="progressLabel">{{ _("Connecting") }}</span>
+    <span id="syncTimestamp" class="hidden"></span>
+  </div>
+  <div id="progressBarWrap" class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
     <div id="progressBar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-500" style="width:5%"></div>
   </div>
 </div>
@@ -249,6 +252,7 @@ const _t = {
   myShare:            {{ _("My share") | tojson }},
   myDiff:             {{ _("Difference") | tojson }},
   locale:             {{ current_locale | tojson }},
+  synced:             {{ _("Synced") | tojson }},
 };
 loadTricountDetail({{ token | tojson }}, {{ label | tojson }}, {{ label_colors | tojson }});
 document.getElementById('openEditModalBtn').addEventListener('click', () => document.getElementById('editModalBackdrop').classList.remove('hidden'));
@@ -256,8 +260,9 @@ document.getElementById('closeEditModalBtn').addEventListener('click', () => doc
 document.getElementById('editModalBackdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
 document.getElementById('shareBtn').addEventListener('click', () => shareTricount());
 document.getElementById('refreshBtn').addEventListener('click', async () => {
-  document.getElementById('progressWrap').classList.remove('hidden');
+  document.getElementById('progressBarWrap').classList.remove('hidden');
   document.getElementById('progressBar').style.width = '5%';
+  document.getElementById('syncTimestamp').classList.add('hidden');
   await fetch(`/api/tricount/{{ token }}/invalidate`, { method: 'POST' });
   loadTricountDetail({{ token | tojson }}, {{ label | tojson }}, {{ label_colors | tojson }});
 });
