@@ -5,6 +5,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      tag_latest:
+        description: "Also push :latest tag"
+        required: false
+        default: "false"
 
 concurrency:
   group: docker-main
@@ -34,4 +39,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ github.repository }}:main
+          tags: |
+            ${{ github.repository }}:main
+            ${{ inputs.tag_latest == 'true' && format('{0}:latest', github.repository) || '' }}
