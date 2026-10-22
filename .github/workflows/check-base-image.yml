@@ -49,7 +49,8 @@ jobs:
       - name: Update FROM in Dockerfile and docs
         if: steps.compare.outputs.changed == 'true'
         run: |
-          sed -i "s|^FROM python:3.13-slim.*|FROM python:3.13-slim@${{ steps.upstream.outputs.digest }} # ${{ steps.upstream.outputs.version }}|" Dockerfile
+          sed -i "s|^# python:3.13-slim .*|# python:3.13-slim ${{ steps.upstream.outputs.version }}|" Dockerfile
+          sed -i "s|^FROM python:3.13-slim.*|FROM python:3.13-slim@${{ steps.upstream.outputs.digest }}|" Dockerfile
           sed -i "s|currently pinned to \`.*\`|currently pinned to \`${{ steps.upstream.outputs.version }}\`|g" README.md DOCKER_HUB.md
 
       - name: Update stored digest
