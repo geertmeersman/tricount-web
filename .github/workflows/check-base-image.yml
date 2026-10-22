@@ -9,15 +9,19 @@ jobs:
   check:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       actions: write
 
     steps:
-      - name: Get upstream digest
+      - name: Get upstream digest and version
         id: upstream
         run: |
-          DIGEST=$(docker buildx imagetools inspect python:3.13-slim --format '{{index .Manifest.Digest}}')
+          DIGEST=$(curl -s "https://hub.docker.com/v2/repositories/library/python/tags/3.13-slim" | jq -r '.digest')
+          VERSION=$(curl -s "https://hub.docker.com/v2/repositories/library/python/tags/?name=3.13." \
+            | jq -r '.results[] | select(.name | test("^3\\.13\\.[0-9]+-slim$")) | .name' \
+            | sort -V | tail -1)
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Get last known digest
         id: stored
@@ -38,6 +42,15 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Checkout
+        if: steps.compare.outputs.changed == 'true'
+        uses: actions/checkout@v7
+
+      - name: Update FROM in Dockerfile
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          sed -i "s|^FROM python:3.13-slim.*|FROM python:3.13-slim@${{ steps.upstream.outputs.digest }} # ${{ steps.upstream.outputs.version }}|" Dockerfile
+
       - name: Update stored digest
         if: steps.compare.outputs.changed == 'true'
         run: |
@@ -52,19 +65,20 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/actions/variables" \
             -d "{\"name\":\"BASE_IMAGE_DIGEST\",\"value\":\"${{ steps.upstream.outputs.digest }}\"}"
 
-      - name: Trigger docker-main workflow
+      - name: Commit and push updated Dockerfile
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Dockerfile
+          git commit -m "fix: pin python:3.13-slim to ${{ steps.upstream.outputs.version }} (${{ steps.upstream.outputs.digest }})"
+          git push
+
+      - name: Trigger release workflow
         if: steps.compare.outputs.changed == 'true'
         run: |
           curl -s -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/docker-main.yml/dispatches" \
-            -d '{"ref":"main","inputs":{"tag_latest":"true"}}'
-
-      - name: Discord notification
-        if: steps.compare.outputs.changed == 'true' && env.DISCORD_WEBHOOK != ''
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        uses: Ilshidur/action-discord@0.4.0
-        with:
-          args: "🐳 **tricount-web** base image `python:3.13-slim` has changed — rebuild triggered.\nNew digest: `${{ steps.upstream.outputs.digest }}`"
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/release.yml/dispatches" \
+            -d '{"ref":"main"}'
