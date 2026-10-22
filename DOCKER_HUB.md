@@ -110,6 +110,10 @@ healthcheck:
 
 This app does **not** use your Tricount email or password. It connects as an anonymous device (UUID + RSA key pair), generated automatically when you register. Your username and password are local to this web UI only.
 
+## Base image
+
+`python:3.13-slim` — currently pinned to `3.13.17-slim`
+
 ## Source & docs
 
 - GitHub: [geertmeersman/tricount-web](https://github.com/geertmeersman/tricount-web)
