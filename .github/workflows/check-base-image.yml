@@ -1,0 +1,70 @@
+name: Check base image 🐳
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+
+    steps:
+      - name: Get upstream digest
+        id: upstream
+        run: |
+          DIGEST=$(docker buildx imagetools inspect python:3.13-slim --format '{{index .Manifest.Digest}}')
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+
+      - name: Get last known digest
+        id: stored
+        run: |
+          STORED=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables/BASE_IMAGE_DIGEST" \
+            | jq -r '.value // ""')
+          echo "digest=${STORED}" >> $GITHUB_OUTPUT
+
+      - name: Compare digests
+        id: compare
+        run: |
+          if [[ "${{ steps.upstream.outputs.digest }}" != "${{ steps.stored.outputs.digest }}" ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update stored digest
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          curl -s -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables/BASE_IMAGE_DIGEST" \
+            -d "{\"name\":\"BASE_IMAGE_DIGEST\",\"value\":\"${{ steps.upstream.outputs.digest }}\"}" \
+          || curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables" \
+            -d "{\"name\":\"BASE_IMAGE_DIGEST\",\"value\":\"${{ steps.upstream.outputs.digest }}\"}"
+
+      - name: Trigger docker-main workflow
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/docker-main.yml/dispatches" \
+            -d '{"ref":"main"}'
+
+      - name: Discord notification
+        if: steps.compare.outputs.changed == 'true' && env.DISCORD_WEBHOOK != ''
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@0.4.0
+        with:
+          args: "🐳 **tricount-web** base image `python:3.13-slim` is gewijzigd — rebuild getriggerd.\nNieuwe digest: `${{ steps.upstream.outputs.digest }}`"
