@@ -46,10 +46,11 @@ jobs:
         if: steps.compare.outputs.changed == 'true'
         uses: actions/checkout@v7
 
-      - name: Update FROM in Dockerfile
+      - name: Update FROM in Dockerfile and docs
         if: steps.compare.outputs.changed == 'true'
         run: |
           sed -i "s|^FROM python:3.13-slim.*|FROM python:3.13-slim@${{ steps.upstream.outputs.digest }} # ${{ steps.upstream.outputs.version }}|" Dockerfile
+          sed -i "s|currently pinned to \`.*\`|currently pinned to \`${{ steps.upstream.outputs.version }}\`|g" README.md DOCKER_HUB.md
 
       - name: Update stored digest
         if: steps.compare.outputs.changed == 'true'
@@ -70,7 +71,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Dockerfile
+          git add Dockerfile README.md DOCKER_HUB.md
           git commit -m "fix: pin python:3.13-slim to ${{ steps.upstream.outputs.version }} (${{ steps.upstream.outputs.digest }})"
           git push
 
