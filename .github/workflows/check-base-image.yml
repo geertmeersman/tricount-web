@@ -67,4 +67,4 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@0.4.0
         with:
-          args: "🐳 **tricount-web** base image `python:3.13-slim` is gewijzigd — rebuild getriggerd.\nNieuwe digest: `${{ steps.upstream.outputs.digest }}`"
+          args: "🐳 **tricount-web** base image `python:3.13-slim` has changed — rebuild triggered.\nNew digest: `${{ steps.upstream.outputs.digest }}`"
