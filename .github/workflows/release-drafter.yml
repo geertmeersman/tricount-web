@@ -5,6 +5,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'app.py'
+      - 'requirements.txt'
+      - 'templates/**'
+      - 'translations/**'
+      - 'static/**'
   workflow_dispatch:
 
 concurrency:
