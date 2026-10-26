@@ -45,7 +45,7 @@ jobs:
         run: |
           sed -i "s|^# python:3.13-slim .*|# python:3.13-slim ${{ steps.upstream.outputs.version }}|" Dockerfile
           sed -i "s|^FROM python:3.13-slim@.*|FROM python:3.13-slim@${{ steps.upstream.outputs.digest }}|" Dockerfile
-          sed -i "/| Python |/s/| [^ ]* |$/| ${{ steps.upstream.outputs.version }} |/" README.md DOCKERHUB.md
+          sed -i "/| Python |/s/| [^ ]* |$/| ${{ steps.upstream.outputs.version }} |/" README.md DOCKER_HUB.md
 
       - name: Create PR
         if: steps.compare.outputs.changed == 'true'
@@ -54,7 +54,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           BRANCH="fix/pin-python-3.13-slim-${{ steps.upstream.outputs.version }}"
           git checkout -b "${BRANCH}"
-          git add Dockerfile README.md DOCKERHUB.md
+          git add Dockerfile README.md DOCKER_HUB.md
           git diff --cached --quiet && echo "Nothing to commit" && exit 0
           git commit -m "fix: pin python:3.13-slim to ${{ steps.upstream.outputs.version }} (${{ steps.upstream.outputs.digest }})"
           git push --force origin "${BRANCH}"
