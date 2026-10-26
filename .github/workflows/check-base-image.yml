@@ -13,8 +13,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v4
 
       - name: Get upstream digest and version
         id: upstream
@@ -41,31 +40,44 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Update FROM in Dockerfile and docs
+      - name: Update Dockerfile and docs
         if: steps.compare.outputs.changed == 'true'
         run: |
           sed -i "s|^# python:3.13-slim .*|# python:3.13-slim ${{ steps.upstream.outputs.version }}|" Dockerfile
-          sed -i "s|^FROM python:3.13-slim.*|FROM python:3.13-slim@${{ steps.upstream.outputs.digest }}|" Dockerfile
-          sed -i "s|currently pinned to \`.*\`|currently pinned to \`${{ steps.upstream.outputs.version }}\`|g" README.md DOCKER_HUB.md
+          sed -i "s|^FROM python:3.13-slim@.*|FROM python:3.13-slim@${{ steps.upstream.outputs.digest }}|" Dockerfile
+          sed -i "/| Python |/s/| [^ ]* |$/| ${{ steps.upstream.outputs.version }} |/" README.md DOCKERHUB.md
 
-      - name: Create PR with updated files
+      - name: Create PR
         if: steps.compare.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           BRANCH="fix/pin-python-3.13-slim-${{ steps.upstream.outputs.version }}"
           git checkout -b "${BRANCH}"
-          git add Dockerfile README.md DOCKER_HUB.md
+          git add Dockerfile README.md DOCKERHUB.md
           git diff --cached --quiet && echo "Nothing to commit" && exit 0
           git commit -m "fix: pin python:3.13-slim to ${{ steps.upstream.outputs.version }} (${{ steps.upstream.outputs.digest }})"
-          git push origin "${BRANCH}"
-          curl -s -X POST \
+          git push --force origin "${BRANCH}"
+          EXISTING=$(curl -s \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls" \
-            -d "{
-              \"title\": \"fix: pin python:3.13-slim to ${{ steps.upstream.outputs.version }}\",
-              \"body\": \"Automated base image update.\n\n- New digest: \`${{ steps.upstream.outputs.digest }}\`\n- New version: \`${{ steps.upstream.outputs.version }}\`\",
-              \"head\": \"${BRANCH}\",
-              \"base\": \"main\"
-            }"
+            "https://api.github.com/repos/${{ github.repository }}/pulls?head=${{ github.repository_owner }}:${BRANCH}&state=open" \
+            | jq 'length')
+          if [[ "${EXISTING}" == "0" ]]; then
+            PR_RESPONSE=$(curl -s -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/pulls" \
+              -d "{
+                \"title\": \"fix: pin python:3.13-slim to ${{ steps.upstream.outputs.version }}\",
+                \"body\": \"Automated base image update.\n\n- New digest: \`${{ steps.upstream.outputs.digest }}\`\n- New version: \`${{ steps.upstream.outputs.version }}\`\",
+                \"head\": \"${BRANCH}\",
+                \"base\": \"main\"
+              }")
+            PR_NODE_ID=$(echo "${PR_RESPONSE}" | jq -r '.node_id')
+            curl -s -X POST \
+              -H "Authorization: bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"query\": \"mutation { enablePullRequestAutoMerge(input: { pullRequestId: \\\"${PR_NODE_ID}\\\", mergeMethod: SQUASH }) { pullRequest { autoMergeRequest { enabledAt } } } }\"}" \
+              "https://api.github.com/graphql"
+          fi
