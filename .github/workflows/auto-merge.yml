@@ -7,19 +7,28 @@ on:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    if: github.actor == 'github-actions[bot]'
+    if: github.actor == 'github-actions[bot]' || github.actor == 'dependabot[bot]'
     permissions:
       contents: write
       pull-requests: write
 
     steps:
-      - name: Auto-merge
-        uses: actions/github-script@v9
+      - name: Enable auto-merge
+        uses: actions/github-script@v7
         with:
           script: |
-            await github.rest.pulls.merge({
+            const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
-              merge_method: 'squash',
             });
+            await github.graphql(`
+              mutation {
+                enablePullRequestAutoMerge(input: {
+                  pullRequestId: "${pr.node_id}",
+                  mergeMethod: SQUASH
+                }) {
+                  pullRequest { autoMergeRequest { enabledAt } }
+                }
+              }
+            `);
