@@ -11,7 +11,6 @@
 
 <p align="center" style="display: flex;">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg"></a>
-  <a href="https://discord.gg/VT3JXzZdvx"><img src="https://img.shields.io/discord/1555506302854234182?logo=discord&label=discord"></a>
 </p>
 
 <p align="center" style="display: flex;">
