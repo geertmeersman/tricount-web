@@ -102,11 +102,3 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           readme-filepath: ./DOCKER_HUB.md
-
-      - name: Discord notification
-        if: ${{ env.DISCORD_WEBHOOK != '' }}
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        uses: Ilshidur/action-discord@0.4.0
-        with:
-          args: "🚀 New release published: https://github.com/${{ github.repository }}/releases/tag/${{ steps.semver.outputs.next }}"
