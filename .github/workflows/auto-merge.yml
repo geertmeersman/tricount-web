@@ -22,13 +22,24 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number,
             });
-            await github.graphql(`
-              mutation {
-                enablePullRequestAutoMerge(input: {
-                  pullRequestId: "${pr.node_id}",
-                  mergeMethod: SQUASH
-                }) {
-                  pullRequest { autoMergeRequest { enabledAt } }
-                }
+            for (let i = 0; i < 5; i++) {
+              try {
+                await github.graphql(`
+                  mutation {
+                    enablePullRequestAutoMerge(input: {
+                      pullRequestId: "${pr.node_id}",
+                      mergeMethod: SQUASH
+                    }) {
+                      pullRequest { autoMergeRequest { enabledAt } }
+                    }
+                  }
+                `);
+                console.log('Auto-merge enabled');
+                break;
+              } catch (e) {
+                if (i < 4 && e.message.includes('unstable')) {
+                  console.log(`PR unstable, retrying in 15s... (${i + 1}/5)`);
+                  await new Promise(r => setTimeout(r, 15000));
+                } else throw e;
               }
-            `);
+            }
