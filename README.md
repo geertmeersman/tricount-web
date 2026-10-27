@@ -213,7 +213,7 @@ If `SMTP_HOST` is not set, the weekly job is skipped silently.
 
 ## Base image
 
-`python:3.13-slim` — currently pinned to `3.13.17-slim`
+`python:3.13-slim` — currently pinned to `3.13.18-slim`
 
 ## Stack
 

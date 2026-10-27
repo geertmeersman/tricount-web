@@ -111,7 +111,7 @@ This app does **not** use your Tricount email or password. It connects as an ano
 
 ## Base image
 
-`python:3.13-slim` — currently pinned to `3.13.17-slim`
+`python:3.13-slim` — currently pinned to `3.13.18-slim`
 
 ## Source & docs
 
