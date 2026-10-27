@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: 🔢 Calculate next semantic version
         id: semver
@@ -68,6 +70,8 @@ jobs:
         uses: EndBug/add-and-commit@v11
         with:
           message: "chore: bump version to ${{ steps.semver.outputs.next }}"
+          pull_strategy: rebase
+          push_attempts: 3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
