@@ -41,6 +41,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 🏷️ Delete existing tag if present
+        run: git push origin --delete "${{ steps.semver.outputs.next }}" || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 🚮 Remove pre-releases
         run: |
           gh release list --json tagName,isPrerelease -q '.[] | select(.isPrerelease == true) | .tagName' | while read -r tag_name; do
