@@ -46,6 +46,7 @@ jobs:
           sed -i "s|^# python:3.13-slim .*|# python:3.13-slim ${{ steps.upstream.outputs.version }}|" Dockerfile
           sed -i "s|^FROM python:3.13-slim@.*|FROM python:3.13-slim@${{ steps.upstream.outputs.digest }}|" Dockerfile
           sed -i "/| Python |/s/| [^ ]* |$/| ${{ steps.upstream.outputs.version }} |/" README.md DOCKER_HUB.md
+          sed -i "s|python:3.13-slim\` — currently pinned to \`[^\`]*\`|python:3.13-slim\` — currently pinned to \`${{ steps.upstream.outputs.version }}\`|g" README.md DOCKER_HUB.md
 
       - name: Create PR
         if: steps.compare.outputs.changed == 'true'
