@@ -59,13 +59,13 @@ jobs:
           git commit -m "fix: pin python:3.13-slim to ${{ steps.upstream.outputs.version }} (${{ steps.upstream.outputs.digest }})"
           git push --force origin "${BRANCH}"
           EXISTING=$(curl -s \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.GH_PAT }}" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/pulls?head=${{ github.repository_owner }}:${BRANCH}&state=open" \
             | jq 'length')
           if [[ "${EXISTING}" == "0" ]]; then
             PR_RESPONSE=$(curl -s -X POST \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Authorization: token ${{ secrets.GH_PAT }}" \
               -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/${{ github.repository }}/pulls" \
               -d "{
@@ -74,9 +74,15 @@ jobs:
                 \"head\": \"${BRANCH}\",
                 \"base\": \"main\"
               }")
+            PR_NUMBER=$(echo "${PR_RESPONSE}" | jq -r '.number')
             PR_NODE_ID=$(echo "${PR_RESPONSE}" | jq -r '.node_id')
             curl -s -X POST \
-              -H "Authorization: bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Authorization: token ${{ secrets.GH_PAT }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
+              -d '{"labels":["dependencies"]}'
+            curl -s -X POST \
+              -H "Authorization: bearer ${{ secrets.GH_PAT }}" \
               -H "Content-Type: application/json" \
               -d "{\"query\": \"mutation { enablePullRequestAutoMerge(input: { pullRequestId: \\\"${PR_NODE_ID}\\\", mergeMethod: SQUASH }) { pullRequest { autoMergeRequest { enabledAt } } } }\"}" \
               "https://api.github.com/graphql"
