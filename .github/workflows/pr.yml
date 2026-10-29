@@ -1,11 +1,11 @@
-name: PR Labeler 🏷️
+name: PR 🏷️
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, edited, synchronize, reopened]
 
 concurrency:
-  group: pr-labeler-${{ github.ref }}
+  group: pr-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -76,3 +76,53 @@ jobs:
               issue_number: context.issue.number,
               assignees: [context.payload.pull_request.user.login],
             });
+
+  check-title:
+    name: Check PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Conventional Commits title
+        uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            test
+            chore
+            ci
+            build
+          requireScope: false
+
+  skip-changelog:
+    name: Skip changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add skip-changelog label if no code changes
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            const codePaths = ["app.py", "requirements.txt", "templates/", "translations/", "static/"];
+
+            const hasCodeChanges = files.some(f =>
+              codePaths.some(p => f.filename.startsWith(p) || f.filename === p)
+            );
+
+            if (!hasCodeChanges) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: ['skip-changelog'],
+              });
+            }
