@@ -2,7 +2,7 @@ name: Auto-merge bot PRs 🤖
 
 on:
   workflow_run:
-    workflows: ["PR Labeler 🏷️"]
+    workflows: ["PR 🏷️"]
     types: [completed]
 
 jobs:
