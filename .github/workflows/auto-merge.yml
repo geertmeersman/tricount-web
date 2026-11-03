@@ -13,7 +13,6 @@ jobs:
       (
         github.event.workflow_run.actor.login == 'github-actions[bot]' ||
         github.event.workflow_run.actor.login == 'dependabot[bot]' ||
-        github.event.workflow_run.actor.login == 'geertmeersman'
       )
     permissions:
       contents: write
